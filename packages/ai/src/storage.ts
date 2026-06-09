@@ -1,32 +1,37 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
-const s3 = new S3Client({
-  region: process.env.S3_REGION!,
-  endpoint: process.env.S3_ENDPOINT!,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY!,
-    secretAccessKey: process.env.S3_SECRET_KEY!,
-  },
-  forcePathStyle: true,
-})
+function getS3Client() {
+  const region = process.env.S3_REGION
+  const endpoint = process.env.S3_ENDPOINT
+  const accessKeyId = process.env.S3_ACCESS_KEY
+  const secretAccessKey = process.env.S3_SECRET_KEY
+  if (!region || !endpoint || !accessKeyId || !secretAccessKey) {
+    throw new Error("S3 environment variables (S3_REGION, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY) are not set")
+  }
+  return new S3Client({ region, endpoint, credentials: { accessKeyId, secretAccessKey }, forcePathStyle: true })
+}
 
-const BUCKET = process.env.S3_BUCKET!
+function getBucket() {
+  const bucket = process.env.S3_BUCKET
+  if (!bucket) throw new Error("S3_BUCKET is not set")
+  return bucket
+}
 
 export async function presignUpload(key: string, contentType: string, expiresIn = 300) {
-  const command = new PutObjectCommand({ Bucket: BUCKET, Key: key, ContentType: contentType })
-  return getSignedUrl(s3, command, { expiresIn })
+  const command = new PutObjectCommand({ Bucket: getBucket(), Key: key, ContentType: contentType })
+  return getSignedUrl(getS3Client(), command, { expiresIn })
 }
 
 export async function presignDownload(key: string, expiresIn = 300) {
-  const command = new GetObjectCommand({ Bucket: BUCKET, Key: key })
-  return getSignedUrl(s3, command, { expiresIn })
+  const command = new GetObjectCommand({ Bucket: getBucket(), Key: key })
+  return getSignedUrl(getS3Client(), command, { expiresIn })
 }
 
 export async function deleteObject(key: string) {
-  await s3.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }))
+  await getS3Client().send(new DeleteObjectCommand({ Bucket: getBucket(), Key: key }))
 }
 
 export async function uploadBuffer(key: string, body: Buffer, contentType: string) {
-  await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: body, ContentType: contentType }))
+  await getS3Client().send(new PutObjectCommand({ Bucket: getBucket(), Key: key, Body: body, ContentType: contentType }))
 }

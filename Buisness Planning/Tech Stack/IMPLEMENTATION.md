@@ -130,7 +130,7 @@ export const profiles = pgTable("profiles", {
   fullName: text("full_name"),
   voice: jsonb("voice"),            // tone/preferences for AI generation
   visaStatus: text("visa_status"),  // for Werkstudent/visa filtering
-  embedding: vector("embedding", { dimensions: 1536 }),
+  embedding: vector("embedding", { dimensions: 1024 }), // Cohere embed-multilingual-v3 = 1024 (NOT 1536)
 });
 
 export const jobs = pgTable("jobs", {
@@ -141,7 +141,7 @@ export const jobs = pgTable("jobs", {
   company: text("company").notNull(),
   location: text("location"),
   raw: jsonb("raw"),
-  embedding: vector("embedding", { dimensions: 1536 }),
+  embedding: vector("embedding", { dimensions: 1024 }), // Cohere embed-multilingual-v3 = 1024 (NOT 1536)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -188,9 +188,20 @@ pnpm add @trpc/server zod superjson @agora/db
 ```ts
 // packages/api/src/trpc.ts
 import { initTRPC, TRPCError } from "@trpc/server";
-const t = initTRPC.context<{ userId?: string }>().create();
-export const router = t.router;
-export const publicProcedure = t.procedure;
+
+// opts.headers needed so context works in both RSC callers and fetch-adapter route handler (tRPC v11)
+export const createTRPCContext = async (opts: { headers: Headers }) => ({
+  userId: undefined as string | undefined,
+  headers: opts.headers,
+});
+
+const t = initTRPC
+  .context<Awaited<ReturnType<typeof createTRPCContext>>>()
+  .create();
+
+export const createTRPCRouter = t.router;
+export const createCallerFactory = t.createCallerFactory;
+export const baseProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.userId) throw new TRPCError({ code: "UNAUTHORIZED" });
   return next({ ctx: { userId: ctx.userId } });

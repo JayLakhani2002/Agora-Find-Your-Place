@@ -93,7 +93,7 @@ export const jobs = pgTable("jobs", {
   company: text("company").notNull(),
   source: text("source").notNull(),
   raw: jsonb("raw"),
-  embedding: vector("embedding", { dimensions: 1536 }),
+  embedding: vector("embedding", { dimensions: 1024 }), // Cohere embed-multilingual-v3 = 1024 (NOT 1536)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -137,13 +137,22 @@ pnpm add @trpc/server zod superjson
 import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 
-const t = initTRPC.create();
-export const router = t.router;
-export const publicProcedure = t.procedure;
+// opts.headers needed for RSC callers and fetch-adapter route handler (tRPC v11)
+export const createTRPCContext = async (opts: { headers: Headers }) => ({
+  headers: opts.headers,
+});
 
-export const appRouter = router({
-  jobs: router({
-    list: publicProcedure
+const t = initTRPC
+  .context<Awaited<ReturnType<typeof createTRPCContext>>>()
+  .create();
+
+export const createTRPCRouter = t.router;
+export const createCallerFactory = t.createCallerFactory;
+export const baseProcedure = t.procedure;
+
+export const appRouter = createTRPCRouter({
+  jobs: createTRPCRouter({
+    list: baseProcedure
       .input(z.object({ query: z.string().optional() }))
       .query(async ({ input }) => {
         // TODO: query Postgres FTS + pgvector

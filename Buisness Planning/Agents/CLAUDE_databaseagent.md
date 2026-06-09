@@ -107,3 +107,52 @@ no type-safe query. Ship both or you've shipped nothing.
 - NEVER use integer/serial PKs — cuid2 text IDs (enumeration resistance)
 - NEVER ship a model without its migration, or a migration without its model
 - NEVER fork a second schema — one canonical schema; extend, don't duplicate
+
+## Safety Rules — Mandatory (learned from Agent 1 code review)
+
+These rules apply to every agent. Violating them caused real bugs in Agent 1 that only appeared at runtime.
+
+### 1. Never initialise clients at module scope
+Never construct DB, Redis, S3, AI, or any external-service client at the top level of a file.
+Always use a factory function or lazy singleton called at use-time.
+
+```ts
+// BAD — crashes the whole process at import if env var is missing
+const redis = new Redis(process.env.REDIS_URL!)
+
+// GOOD — fails only when actually called, with a clear error
+function getRedis() {
+  const url = process.env.REDIS_URL
+  if (!url) throw new Error("REDIS_URL is not set")
+  return new Redis(url, { maxRetriesPerRequest: null })
+}
+```
+
+### 2. Never use ! to assert env vars exist
+Always validate required env vars explicitly with a readable error message.
+
+```ts
+// BAD
+const url = process.env.DATABASE_URL!
+
+// GOOD
+const url = process.env.DATABASE_URL
+if (!url) throw new Error("DATABASE_URL is not set")
+```
+
+### 3. Wire framework middleware before writing code that depends on it
+If your code calls `auth()`, `currentUser()`, or any context injected by middleware,
+confirm that middleware is already registered in `apps/web/src/middleware.ts`.
+Agent 1 added Clerk middleware — do not remove or bypass it.
+
+### 4. Always add SIGTERM/SIGINT handlers if you register workers or hold open connections
+Any agent that adds a BullMQ Worker or opens a persistent connection must register:
+```ts
+process.on("SIGTERM", async () => { await worker.close(); await connection.quit(); process.exit(0) })
+process.on("SIGINT",  async () => { await worker.close(); await connection.quit(); process.exit(0) })
+```
+
+### 5. Be explicit about paths and working directories in deployment config
+Never assume a relative path is correct. If you add a Railway/Vercel config, always set
+`rootDirectory` explicitly and verify `startCommand` is relative to that directory.
+

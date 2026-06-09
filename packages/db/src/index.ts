@@ -1,4 +1,4 @@
-export { db } from "./client"
+export { getDb } from "./client"
 export type { DB } from "./client"
 export * from "./schema"
-export * from "./enums"
+// enums re-exported from schema only — avoid dual re-export path causing bundler conflicts

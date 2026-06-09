@@ -8,6 +8,13 @@
       "when": 1781048368833,
       "tag": "0000_sparkling_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781048783765,
+      "tag": "0001_chubby_ego",
+      "breakpoints": true
     }
   ]
 }

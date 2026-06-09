@@ -44,3 +44,22 @@ export const generationStatusEnum = pgEnum("generation_status", [
   "complete",
   "failed",
 ])
+
+export const swipeActionEnum = pgEnum("swipe_action", [
+  "right",
+  "left",
+  "save",
+])
+
+export const documentTypeEnum = pgEnum("document_type", [
+  "cv_upload",
+  "generated_cv",
+  "generated_cl",
+])
+
+export const enrollmentStatusEnum = pgEnum("enrollment_status", [
+  "enrolled",
+  "near_graduation",
+  "graduated",
+  "leave_of_absence",
+])

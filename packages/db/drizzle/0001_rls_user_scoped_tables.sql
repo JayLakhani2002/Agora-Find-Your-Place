@@ -1,9 +1,7 @@
--- Enable pgvector and pg_trgm extensions
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-
 -- ── Row Level Security — user-scoped tables only ──────────────────────────────
 -- jobs table has NO RLS — jobs are public to all authenticated users
+-- current_setting returns '' (empty string) when unset with missing_ok=true,
+-- so we cast to text and guard against empty string to prevent silent allow-all
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
@@ -12,31 +10,44 @@ ALTER TABLE user_job_actions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE follow_up_drafts ENABLE ROW LEVEL SECURITY;
 
--- users: can only see own row
+-- users: own row only
 CREATE POLICY users_isolation ON users
-  USING (id = current_setting('app.current_user_id', true));
+  USING (
+    current_setting('app.current_user_id', true) <> ''
+    AND id = current_setting('app.current_user_id', true)
+  );
 
--- user_profiles: scoped to owner
+-- user_profiles
 CREATE POLICY user_profiles_isolation ON user_profiles
-  USING (user_id = current_setting('app.current_user_id', true));
+  USING (
+    current_setting('app.current_user_id', true) <> ''
+    AND user_id = current_setting('app.current_user_id', true)
+  );
 
--- user_documents: scoped to owner
+-- user_documents
 CREATE POLICY user_documents_isolation ON user_documents
-  USING (user_id = current_setting('app.current_user_id', true));
+  USING (
+    current_setting('app.current_user_id', true) <> ''
+    AND user_id = current_setting('app.current_user_id', true)
+  );
 
--- user_job_actions: scoped to owner
+-- user_job_actions
 CREATE POLICY user_job_actions_isolation ON user_job_actions
-  USING (user_id = current_setting('app.current_user_id', true));
+  USING (
+    current_setting('app.current_user_id', true) <> ''
+    AND user_id = current_setting('app.current_user_id', true)
+  );
 
--- applications: scoped to owner
+-- applications
 CREATE POLICY applications_isolation ON applications
-  USING (user_id = current_setting('app.current_user_id', true));
+  USING (
+    current_setting('app.current_user_id', true) <> ''
+    AND user_id = current_setting('app.current_user_id', true)
+  );
 
--- follow_up_drafts: scoped via application ownership
+-- follow_up_drafts — direct user_id column, no subquery needed
 CREATE POLICY follow_up_drafts_isolation ON follow_up_drafts
   USING (
-    application_id IN (
-      SELECT id FROM applications
-      WHERE user_id = current_setting('app.current_user_id', true)
-    )
+    current_setting('app.current_user_id', true) <> ''
+    AND user_id = current_setting('app.current_user_id', true)
   );

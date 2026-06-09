@@ -1,5 +1,25 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# OS
 .DS_Store
 **/.DS_Store
+
+# Tooling
 .claude/
 graphify-out/
 .sixth/
+
+# pnpm
+.pnpm-store/

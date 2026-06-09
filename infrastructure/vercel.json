@@ -1,0 +1,7 @@
+{
+  "framework": "nextjs",
+  "rootDirectory": "apps/web",
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=@agora/web",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "regions": ["fra1"]
+}

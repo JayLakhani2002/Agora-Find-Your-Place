@@ -1,0 +1,26 @@
+{
+  "name": "@agora/db",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:check": "drizzle-kit check"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "0.10.4",
+    "@paralleldrive/cuid2": "2.2.2",
+    "drizzle-orm": "0.38.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.30.4",
+    "typescript": "5.7.3"
+  }
+}

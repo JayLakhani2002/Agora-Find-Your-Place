@@ -23,6 +23,17 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", ".next", "dist", ".turbo", "*.tsbuildinfo", "packages/db/drizzle/**"]
+    "ignore": [
+      "node_modules",
+      ".next",
+      "dist",
+      ".turbo",
+      "*.tsbuildinfo",
+      "next-env.d.ts",
+      "packages/db/drizzle/**",
+      "apps/web/public/sw.js",
+      "apps/web/public/workbox-*.js",
+      "apps/web/public/swe-worker-*.js"
+    ]
   }
 }

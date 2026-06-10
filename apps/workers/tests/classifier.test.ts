@@ -8,7 +8,7 @@ import {
   extractSkills,
   inferRequiresEnrollment,
   visaRequirementToAllowedTypes,
-} from "./classifier"
+} from "../src/scrapers/classifier"
 
 describe("extractHourlyRate", () => {
   // Regression: the original regex misread "20 hours/week" as €20/h. A currency

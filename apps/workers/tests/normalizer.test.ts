@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { computeDedupHash } from "./base"
-import { normalizeJob, stripHtml } from "./normalizer"
+import { computeDedupHash } from "../src/scrapers/base"
+import { normalizeJob, stripHtml } from "../src/scrapers/normalizer"
 
 describe("stripHtml", () => {
   it("removes tags, scripts and styles and collapses whitespace", () => {

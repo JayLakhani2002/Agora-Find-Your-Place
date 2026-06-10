@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { weeklyHoursForVisa } from "./visa"
+import { weeklyHoursForVisa } from "../src/server/lib/visa"
 
 describe("weeklyHoursForVisa", () => {
   it("caps student-type visas at 20h/week (legal limit)", () => {

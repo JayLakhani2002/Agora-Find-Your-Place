@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { collectErasureKeys } from "./erasure"
+import { collectErasureKeys } from "../src/server/lib/erasure"
 
 describe("collectErasureKeys", () => {
   it("collects CV uploads plus application CV/cover-letter keys", () => {

@@ -18,7 +18,20 @@ export const baseProcedure = t.procedure
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.clerkId) throw new TRPCError({ code: "UNAUTHORIZED" })
   const clerkId = ctx.clerkId
-  const user = await ctx.db.query.users.findFirst({ where: eq(users.clerkId, clerkId) })
+
+  let user = await ctx.db.query.users.findFirst({ where: eq(users.clerkId, clerkId) })
+
+  // Just-in-time provisioning: the Clerk session is already verified, but the
+  // user.created webhook may not have landed yet (delivery races the first request).
+  // Create the row now so onboarding works immediately; the webhook backfills email.
+  if (!user) {
+    await ctx.db
+      .insert(users)
+      .values({ clerkId, email: "" })
+      .onConflictDoNothing({ target: users.clerkId })
+    user = await ctx.db.query.users.findFirst({ where: eq(users.clerkId, clerkId) })
+  }
+
   if (!user) throw new TRPCError({ code: "UNAUTHORIZED", message: "User not found" })
   return next({ ctx: { ...ctx, user } })
 })

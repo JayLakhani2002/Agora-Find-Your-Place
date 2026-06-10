@@ -1,6 +1,7 @@
 import "./env" // MUST be first — loads .env.local before any client reads process.env
 import { Worker } from "bullmq"
 import { embedPendingJobs } from "./jobs/embed-jobs"
+import { type ExtractProfileJob, extractProfile } from "./jobs/extract-profile"
 import { scrapeBerlinStartupJobs } from "./jobs/scrape-berlin-startup-jobs"
 import { scrapeJobicco } from "./jobs/scrape-jobicco"
 import { scrapeStellenticket } from "./jobs/scrape-stellenticket"
@@ -69,6 +70,18 @@ async function main() {
   )
   embeddingWorker.on("failed", (job, err) => console.error(`embed job ${job?.id} failed:`, err))
   workers.push(embeddingWorker)
+
+  // ── Profile-extraction worker (Agent 4): CV → PII-free profile + embedding ──
+  const profileWorker = new Worker(
+    "profile-extract",
+    async (job) => {
+      await extractProfile(job.data as ExtractProfileJob)
+      console.log(`Extracted profile for user ${(job.data as ExtractProfileJob).userId}`)
+    },
+    { connection: getConnection(), concurrency: 2 },
+  )
+  profileWorker.on("failed", (job, err) => console.error(`profile job ${job?.id} failed:`, err))
+  workers.push(profileWorker)
 
   // ── Nightly repeat: 02:00 Europe/Berlin (tz CRITICAL — UTC breaks on DST) ───
   await getScraperQueue().add(

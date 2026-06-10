@@ -29,6 +29,12 @@ export function getEmbeddingQueue(): Queue {
   return _embeddingQueue
 }
 
-// Agent 4: export const profileQueue = new Queue("profile-extract", { connection: getConnection() })
+// Agent 4 — CV → profile extraction
+let _profileQueue: Queue | undefined
+export function getProfileQueue(): Queue {
+  if (!_profileQueue) _profileQueue = new Queue("profile-extract", { connection: getConnection() })
+  return _profileQueue
+}
+
 // Agent 6: export const generationQueue = new Queue("ai-generation", { connection: getConnection() })
 // Agent 6: export const followUpQueue = new Queue("follow-up", { connection: getConnection() })

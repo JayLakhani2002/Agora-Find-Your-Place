@@ -49,3 +49,11 @@ export async function uploadBuffer(key: string, body: Buffer, contentType: strin
     new PutObjectCommand({ Bucket: getBucket(), Key: key, Body: body, ContentType: contentType }),
   )
 }
+
+/** Download an object's bytes (e.g. an uploaded CV for the extraction worker). */
+export async function getObjectBuffer(key: string): Promise<Buffer> {
+  const res = await getS3Client().send(new GetObjectCommand({ Bucket: getBucket(), Key: key }))
+  const bytes = await res.Body?.transformToByteArray()
+  if (!bytes) throw new Error(`getObjectBuffer: empty body for key ${key}`)
+  return Buffer.from(bytes)
+}

@@ -7,8 +7,8 @@
 ---
 
 **Project:** Agora Jobs
-**Generated:** 2026-06-10 02:11:20
-**Category:** Fintech/Crypto
+**Generated:** 2026-06-10 03:33:47
+**Category:** Newsletter Platform
 
 ---
 
@@ -18,25 +18,17 @@
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#0369A1` | `--color-primary` |
-| Secondary | `#0EA5E9` | `--color-secondary` |
-| CTA/Accent | `#22C55E` | `--color-cta` |
-| Background | `#F0F9FF` | `--color-background` |
-| Text | `#0C4A6E` | `--color-text` |
-
-**Color Notes:** Professional blue + success green
+| Primary | `#2563EB` | `--color-primary` |
+| Secondary | `#3B82F6` | `--color-secondary` |
+| CTA/Accent | `#F97316` | `--color-cta` |
+| Background | `#F8FAFC` | `--color-background` |
+| Text | `#1E293B` | `--color-text` |
 
 ### Typography
 
-- **Heading Font:** IBM Plex Sans
-- **Body Font:** IBM Plex Sans
-- **Mood:** financial, trustworthy, professional, corporate, banking, serious
-- **Google Fonts:** [IBM Plex Sans + IBM Plex Sans](https://fonts.google.com/share?selection.family=IBM+Plex+Sans:wght@300;400;500;600;700)
-
-**CSS Import:**
-```css
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
-```
+- **Heading Font:** Inter
+- **Body Font:** Inter
+- **Mood:** Clean + Readable typography
 
 ### Spacing Variables
 
@@ -68,7 +60,7 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #22C55E;
+  background: #F97316;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -85,8 +77,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #0369A1;
-  border: 2px solid #0369A1;
+  color: #2563EB;
+  border: 2px solid #2563EB;
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,7 +91,7 @@
 
 ```css
 .card {
-  background: #F0F9FF;
+  background: #F8FAFC;
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -125,9 +117,9 @@
 }
 
 .input:focus {
-  border-color: #0369A1;
+  border-color: #2563EB;
   outline: none;
-  box-shadow: 0 0 0 3px #0369A120;
+  box-shadow: 0 0 0 3px #2563EB20;
 }
 ```
 
@@ -153,31 +145,28 @@
 
 ## Style Guidelines
 
-**Style:** Glassmorphism
+**Style:** Exaggerated Minimalism
 
-**Keywords:** Frosted glass, transparent, blurred background, layered, vibrant background, light source, depth, multi-layer
+**Keywords:** Bold minimalism, oversized typography, high contrast, negative space, loud minimal, statement design
 
-**Best For:** Modern SaaS, financial dashboards, high-end corporate, lifestyle apps, modal overlays, navigation
+**Best For:** Fashion, architecture, portfolios, agency landing pages, luxury brands, editorial
 
-**Key Effects:** Backdrop blur (10-20px), subtle border (1px solid rgba white 0.2), light reflection, Z-depth
+**Key Effects:** font-size: clamp(3rem 10vw 12rem), font-weight: 900, letter-spacing: -0.05em, massive whitespace
 
 ### Page Pattern
 
-**Pattern Name:** Horizontal Scroll Journey
+**Pattern Name:** Funnel (3-Step Conversion)
 
-- **Conversion Strategy:** Immersive product discovery. High engagement. Keep navigation visible.
-28,Bento Grid Showcase,bento,  grid,  features,  modular,  apple-style,  showcase", 1. Hero, 2. Bento Grid (Key Features), 3. Detail Cards, 4. Tech Specs, 5. CTA, Floating Action Button or Bottom of Grid, Card backgrounds: #F5F5F7 or Glass. Icons: Vibrant brand colors. Text: Dark., Hover card scale (1.02), video inside cards, tilt effect, staggered reveal, Scannable value props. High information density without clutter. Mobile stack.
-29,Interactive 3D Configurator,3d,  configurator,  customizer,  interactive,  product", 1. Hero (Configurator), 2. Feature Highlight (synced), 3. Price/Specs, 4. Purchase, Inside Configurator UI + Sticky Bottom Bar, Neutral studio background. Product: Realistic materials. UI: Minimal overlay., Real-time rendering, material swap animation, camera rotate/zoom, light reflection, Increases ownership feeling. 360 view reduces return rates. Direct add-to-cart.
-30,AI-Driven Dynamic Landing,ai,  dynamic,  personalized,  adaptive,  generative", 1. Prompt/Input Hero, 2. Generated Result Preview, 3. How it Works, 4. Value Prop, Input Field (Hero) + 'Try it' Buttons, Adaptive to user input. Dark mode for compute feel. Neon accents., Typing text effects, shimmering generation loaders, morphing layouts, Immediate value demonstration. 'Show, don't tell'. Low friction start.
-- **CTA Placement:** Floating Sticky CTA or End of Horizontal Track
-- **Section Order:** 1. Intro (Vertical), 2. The Journey (Horizontal Track), 3. Detail Reveal, 4. Vertical Footer
+- **Conversion Strategy:** Progressive disclosure. Show only essential info per step. Use progress indicators. Multiple CTAs.
+- **CTA Placement:** Each step: mini-CTA. Final: main CTA
+- **Section Order:** 1. Hero, 2. Step 1 (problem), 3. Step 2 (solution), 4. Step 3 (action), 5. CTA progression
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Light backgrounds
-- ❌ No security indicators
+- ❌ Complex signup
+- ❌ No preview
 
 ### Additional Forbidden Patterns
 

@@ -8,9 +8,9 @@
 
 ## What This Folder Is
 
-This folder contains the formal business documentation suite for **Agora Jobs** — a mobile-first AI job platform for international students in Germany. These documents are synthesized from the source planning material in `../Buisness Planning/` and formatted to enterprise standards for use with co-founders, grant applications (BSS, EXIST), investors, and engineers.
+This folder contains the formal business documentation suite for **Agora Jobs** — a mobile-first AI job platform for international students in Germany. These documents are synthesized from the source planning material in `../` and formatted to enterprise standards for use with co-founders, grant applications (BSS, EXIST), investors, and engineers.
 
-The source documents in `../Buisness Planning/` are the working notes and remain untouched. This folder is the formalized, cross-referenced, shareable output.
+The source documents in `../` are the working notes and remain untouched. This folder is the formalized, cross-referenced, shareable output.
 
 ---
 
@@ -61,7 +61,7 @@ BRD (BR-xx)
 | Market Analysis | `competitor-analysis.md`, `v1-project-scope.md` |
 | GTM Plan | `agora-brand-marketing-playbook.md`, `competitor-analysis.md` |
 
-All source files are in `../Buisness Planning/` and are unchanged.
+All source files are in `../` and are unchanged.
 
 ---
 

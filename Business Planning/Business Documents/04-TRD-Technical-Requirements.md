@@ -1,7 +1,7 @@
 # Technical Requirements Document (TRD)
 **Project:** Agora Jobs · **Document:** TRD-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Engineering  
-**Source documents:** `../Buisness Planning/technical tech stack/IMPLEMENTATION.md` · `../Buisness Planning/technical tech stack/Agora-Jobs-Monorepo-Scaffold.md` · `../Buisness Planning/technical tech stack/Agora-Jobs-Tech-Stack.md`
+**Source documents:** `../Tech Stack/IMPLEMENTATION.md` · `../Tech Stack/Agora-Jobs-Monorepo-Scaffold.md` · `../Tech Stack/Agora-Jobs-Tech-Stack.md`
 
 ---
 

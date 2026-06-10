@@ -1,7 +1,7 @@
 # Market & Competitive Analysis
 **Project:** Agora Jobs · **Document:** MKT-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Founding Team  
-**Source documents:** `../Buisness Planning/Competetor's Data /competitor-analysis.md` · `../Buisness Planning/Agora Context Guidlines/v1-project-scope.md` · `../Buisness Planning/Employeers Side /employer-side-scope.md`
+**Source documents:** `../Competitor Data /competitor-analysis.md` · `../Agora Context Guidelines/v1-project-scope.md` · `../Employer Side /employer-side-scope.md`
 
 ---
 
@@ -88,7 +88,7 @@ Germany is materially different:
 
 ### 2.3 Tertiary Segment (Future) — Employers
 
-Berlin SMEs and startups with recurring Werkstudent hiring needs are the employer-side opportunity. This segment is deferred to Phase 5 (Month 18+) but is the B2B revenue multiplier. See `../Buisness Planning/Employeers Side/employer-side-scope.md` for scope.
+Berlin SMEs and startups with recurring Werkstudent hiring needs are the employer-side opportunity. This segment is deferred to Phase 5 (Month 18+) but is the B2B revenue multiplier. See `../Employer Side/employer-side-scope.md` for scope.
 
 ---
 

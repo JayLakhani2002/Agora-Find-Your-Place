@@ -1,7 +1,7 @@
 # Architecture Review & Finding Log
 **Project:** Agora Jobs · **Document:** REV-001 · **Version:** 1.0  
 **Status:** Complete · **Date:** 2026-06-08 · **Reviewer:** Senior Solution Architect (independent review)  
-**Scope:** All eight business documents (01–08), pressure-tested against the source planning material in `../Buisness Planning/`.
+**Scope:** All eight business documents (01–08), pressure-tested against the source planning material in `../`.
 
 ---
 

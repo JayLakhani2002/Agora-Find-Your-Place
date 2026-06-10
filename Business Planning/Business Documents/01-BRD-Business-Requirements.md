@@ -1,7 +1,7 @@
 # Business Requirements Document (BRD)
 **Project:** Agora Jobs · **Document:** BRD-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Founding Team  
-**Source documents:** `../Buisness Planning/Agora Context Guidlines/v1-project-scope.md` · `../Buisness Planning/Employeers Side/employer-side-scope.md` · `../Buisness Planning/Competetor's Data/competitor-analysis.md`
+**Source documents:** `../Agora Context Guidelines/v1-project-scope.md` · `../Employer Side/employer-side-scope.md` · `../Competitor Data/competitor-analysis.md`
 
 ---
 

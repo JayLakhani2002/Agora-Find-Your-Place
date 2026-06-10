@@ -1,7 +1,7 @@
 # Go-To-Market & Marketing Plan
 **Project:** Agora Jobs · **Document:** GTM-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Founding Team  
-**Source documents:** `../Buisness Planning/Branding & Marketing/agora-brand-marketing-playbook.md` · `../Buisness Planning/Agora Context Guidlines/v1-project-scope.md` · `../Buisness Planning/Competetor's Data /competitor-analysis.md`
+**Source documents:** `../Branding & Marketing/agora-brand-marketing-playbook.md` · `../Agora Context Guidelines/v1-project-scope.md` · `../Competitor Data /competitor-analysis.md`
 
 ---
 

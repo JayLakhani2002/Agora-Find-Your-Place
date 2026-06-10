@@ -1,7 +1,7 @@
 # Agora Jobs — Project Instructions
 
 ## Project Overview
-Agora Jobs is a job-matching platform targeting the EU market, built as a TypeScript Turborepo monorepo with GDPR-first design. See `Buisness Planning/` for full documentation.
+Agora Jobs is a job-matching platform targeting the EU market, built as a TypeScript Turborepo monorepo with GDPR-first design. See `Business Planning/` for full documentation.
 
 ## Tech Stack
 - **Monorepo**: Turborepo + pnpm workspaces
@@ -35,7 +35,7 @@ This applies to (non-exhaustive):
 Never rely on training-data knowledge for library APIs — versions change and patterns drift.
 
 ## Architecture Decisions
-- **8-agent decomposition** — see `Buisness Planning/Agents/` for each agent's spec
+- **8-agent decomposition** — see `Business Planning/Agents/` for each agent's spec
 - **Mode 3 permanently prohibited** — no server-side automated job submission on behalf of users (GDPR constraint)
 - **EU-only data residency** — all infra must stay in EU regions
 - **No Opus model** — use Claude Sonnet 4.x for hot path, Haiku for volume tasks
@@ -49,7 +49,7 @@ Never rely on training-data knowledge for library APIs — versions change and p
 
 ## File Layout
 ```
-Buisness Planning/
+Business Planning/
   Agents/           # 8 agent specs + stress-test report
   Prototype/        # MVP overview, phase plans, BSS demo strategy
   Tech Stack/       # Stack decisions and library patterns

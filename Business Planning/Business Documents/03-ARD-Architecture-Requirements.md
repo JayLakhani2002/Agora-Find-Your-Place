@@ -1,7 +1,7 @@
 # Architecture Requirements Document (ARD)
 **Project:** Agora Jobs · **Document:** ARD-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Engineering / Founding Team  
-**Source documents:** `../Buisness Planning/technical tech stack/Agora-Jobs-Tech-Stack.md` · `../Buisness Planning/technical tech stack/Agora-Jobs-Architecture.md`
+**Source documents:** `../Tech Stack/Agora-Jobs-Tech-Stack.md` · `../Tech Stack/Agora-Jobs-Architecture.md`
 
 ---
 

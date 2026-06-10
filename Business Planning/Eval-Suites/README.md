@@ -40,7 +40,7 @@ Categories: **Boundary · Security · Correctness · Coordination · Completenes
 This folder **is** a self-contained Vite app — no wiring needed:
 
 ```bash
-cd "Buisness Planning/Eval-Suites"
+cd "Business Planning/Eval-Suites"
 npm install
 npm run dev          # opens http://localhost:5180
 ```

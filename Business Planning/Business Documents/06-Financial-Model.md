@@ -1,7 +1,7 @@
 # Financial Model & Cost Estimate
 **Project:** Agora Jobs · **Document:** FIN-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Founding Team  
-**Source documents:** `../Buisness Planning/technical tech stack/Agora-Jobs-Cost-Estimate.md` · `../Buisness Planning/Agora Context Guidlines/v1-project-scope.md` · `../Buisness Planning/Founders Visa and Funding Guidlines/werkstudent-founder-roadmap.md`
+**Source documents:** `../Tech Stack/Agora-Jobs-Cost-Estimate.md` · `../Agora Context Guidelines/v1-project-scope.md` · `../Founder Visa & Funding Guidelines/werkstudent-founder-roadmap.md`
 
 ---
 
@@ -31,7 +31,7 @@
 
 ### 1.2 Timeline Anchor (aligned to the Founder Roadmap)
 
-> **Correction (F-C2 / F-H7):** Earlier drafts used an undefined "Month N" and put payments at "Month 4". That contradicts the BSS rules in `../Buisness Planning/Founders Visa and Funding Guidlines/werkstudent-founder-roadmap.md`, which prohibit economic activity before the grant is funded. The table below anchors every financial event to the **real calendar** from the founder roadmap. There are two clocks: the **build calendar** (now→launch) and **"BSS month N"** (months counted from when the grant funding actually starts, ~March 2027).
+> **Correction (F-C2 / F-H7):** Earlier drafts used an undefined "Month N" and put payments at "Month 4". That contradicts the BSS rules in `../Founder Visa & Funding Guidelines/werkstudent-founder-roadmap.md`, which prohibit economic activity before the grant is funded. The table below anchors every financial event to the **real calendar** from the founder roadmap. There are two clocks: the **build calendar** (now→launch) and **"BSS month N"** (months counted from when the grant funding actually starts, ~March 2027).
 
 | Event | Calendar | Note |
 |-------|----------|------|
@@ -99,7 +99,7 @@ Employer features are out of scope for V1 financial planning. Included as future
 
 ## 3. Revenue Projections
 
-> **Reconciliation note (F-C3):** These figures are the **canonical projections** from `../Buisness Planning/Agora Context Guidlines/werkstudent-match-story-walkthrough.md` §10, and they match the BRD (`01-BRD-Business-Requirements.md` §7.3). An earlier draft of this section contained an independently-invented ramp (Year-1 ≈ €1,576) that contradicted both — that error is corrected here. There is now one set of revenue numbers across the suite.
+> **Reconciliation note (F-C3):** These figures are the **canonical projections** from `../Agora Context Guidelines/werkstudent-match-story-walkthrough.md` §10, and they match the BRD (`01-BRD-Business-Requirements.md` §7.3). An earlier draft of this section contained an independently-invented ramp (Year-1 ≈ €1,576) that contradicted both — that error is corrected here. There is now one set of revenue numbers across the suite.
 
 ### 3.1 Revenue Scenarios (MRR snapshots + annual totals, EUR)
 

@@ -1,7 +1,7 @@
 # Project Implementation Plan
 **Project:** Agora Jobs · **Document:** IMPL-001 · **Version:** 1.0  
 **Status:** Draft · **Date:** 2026-06-08 · **Owner:** Founding Team  
-**Source documents:** `../Buisness Planning/technical tech stack/Agora-Jobs-Implementation-Plan.md` · `../Buisness Planning/technical tech stack/IMPLEMENTATION.md`
+**Source documents:** `../Tech Stack/Agora-Jobs-Implementation-Plan.md` · `../Tech Stack/IMPLEMENTATION.md`
 
 ---
 

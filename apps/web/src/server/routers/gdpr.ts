@@ -2,6 +2,7 @@ import { deleteObject } from "@agora/ai"
 import { applications, userDocuments, users } from "@agora/db/schema"
 import { clerkClient } from "@clerk/nextjs/server"
 import { eq } from "drizzle-orm"
+import { collectErasureKeys } from "../lib/erasure"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 /**
@@ -26,9 +27,7 @@ export const gdprRouter = createTRPCRouter({
       .from(applications)
       .where(eq(applications.userId, userId))
 
-    const keys = [...docs.map((d) => d.key), ...apps.flatMap((a) => [a.cv, a.cl])].filter(
-      (k): k is string => !!k,
-    )
+    const keys = collectErasureKeys(docs, apps)
 
     // 2. Delete storage objects (best-effort — a missing object must not block erasure).
     await Promise.allSettled(keys.map((k) => deleteObject(k)))

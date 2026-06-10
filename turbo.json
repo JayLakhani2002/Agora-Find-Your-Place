@@ -37,6 +37,9 @@
     "lint": {
       "outputs": []
     },
+    "test": {
+      "outputs": []
+    },
     "db:generate": {
       "cache": false
     },

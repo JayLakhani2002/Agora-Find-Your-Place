@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: pnpm biome check .
 
+      - name: Test
+        run: pnpm turbo test
+
       - name: Build packages (exclude apps)
         run: pnpm turbo build --filter=!@agora/web --filter=!@agora/workers
 

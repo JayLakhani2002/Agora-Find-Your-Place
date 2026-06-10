@@ -5,17 +5,9 @@ import { germanLevelEnum, userDocuments, userProfiles, visaTypeEnum } from "@ago
 import { TRPCError } from "@trpc/server"
 import { and, eq } from "drizzle-orm"
 import { z } from "zod"
+import { weeklyHoursForVisa } from "../lib/visa"
 import { getProfileQueue } from "../queue"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
-
-// Weekly working-hours cap by visa type — drives ALL downstream eligibility filtering.
-const WEEKLY_HOURS_LIMIT: Record<string, number> = {
-  student_visa_16b: 20,
-  chancenkarte_20a: 20,
-  near_graduation: 20,
-  eu_citizen: 40,
-  blue_card: 40,
-}
 
 const visaEnum = z.enum(visaTypeEnum.enumValues)
 const germanEnum = z.enum(germanLevelEnum.enumValues)
@@ -66,7 +58,7 @@ export const onboardingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await upsertProfile(ctx.db, ctx.user.id, {
         visaType: input.visaType,
-        weeklyHoursLimit: WEEKLY_HOURS_LIMIT[input.visaType] ?? 20,
+        weeklyHoursLimit: weeklyHoursForVisa(input.visaType),
         daysRemainingThisYear: input.daysRemainingThisYear ?? null,
         semesterEnd: input.semesterEnd ?? null,
       })

@@ -7,7 +7,7 @@
  *  - Tick independence: each tick computed from its own data slice, not from others
  */
 
-import { checkEligibility } from "@agora/legal"
+import { type GermanLevel, checkEligibility } from "@agora/legal"
 import { describe, expect, it } from "vitest"
 import { type CardTicks, buildTicks, combineSignals } from "../src/server/routers/deck"
 
@@ -32,12 +32,17 @@ const baseProfile = {
   skills: ["Python", "SQL", "Docker", "React"],
 }
 
-const noOpinionJob = {
+const noOpinionJob: {
+  hoursPerWeek: number | null
+  hourlyRate: number | null
+  germanLevelRequired: GermanLevel | null
+  requiredSkills: string[]
+} = {
   hoursPerWeek: null,
   hourlyRate: null,
   germanLevelRequired: null,
   requiredSkills: [],
-} as const
+}
 
 // ── combineSignals — weight invariants ────────────────────────────────────────
 

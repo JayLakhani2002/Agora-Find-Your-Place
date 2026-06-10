@@ -5,7 +5,8 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./queries/matching": "./src/queries/matching.ts"
   },
   "scripts": {
     "db:generate": "drizzle-kit generate",

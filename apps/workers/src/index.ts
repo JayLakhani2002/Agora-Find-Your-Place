@@ -2,6 +2,9 @@ import "./env" // MUST be first — loads .env.local before any client reads pro
 import { Worker } from "bullmq"
 import { embedPendingJobs } from "./jobs/embed-jobs"
 import { type ExtractProfileJob, extractProfile } from "./jobs/extract-profile"
+import { type GenerateDocumentsJob, generateDocuments } from "./jobs/generate-documents"
+import { type GenerateFollowUpJob, generateFollowUpDraft } from "./jobs/generate-followup"
+import { type GenerateQuestionsJob, generateQuestions } from "./jobs/generate-questions"
 import { scrapeBerlinStartupJobs } from "./jobs/scrape-berlin-startup-jobs"
 import { scrapeJobicco } from "./jobs/scrape-jobicco"
 import { scrapeStellenticket } from "./jobs/scrape-stellenticket"
@@ -83,6 +86,48 @@ async function main() {
   profileWorker.on("failed", (job, err) => console.error(`profile job ${job?.id} failed:`, err))
   workers.push(profileWorker)
 
+  // ── Generation worker (Agent 6): CV + CL + eval + auto-regenerate ──────────
+  const generationWorker = new Worker(
+    "ai-generation",
+    async (job) => {
+      if (job.name === "generate_documents") {
+        const result = await generateDocuments(job.data as GenerateDocumentsJob)
+        console.log(
+          `Generated documents for ${(job.data as GenerateDocumentsJob).applicationId} ` +
+            `(attempt ${result.attempt}, cv ${result.cvOverall.toFixed(1)})`,
+        )
+        return result
+      }
+      if (job.name === "generate_questions") {
+        const questions = await generateQuestions(job.data as GenerateQuestionsJob)
+        return { questions }
+      }
+      throw new Error(`Unknown ai-generation job name: ${job.name}`)
+    },
+    // Generation is the hot path (target < ~15s) — allow a little parallelism,
+    // but each job already fans out (2 Sonnet + up to 10 Haiku calls).
+    { connection: getConnection(), concurrency: 2 },
+  )
+  generationWorker.on("failed", (job, err) =>
+    console.error(`generation job ${job?.id} failed:`, err),
+  )
+  workers.push(generationWorker)
+
+  // ── Follow-up worker (Agent 6): day-10 draft if still submitted ────────────
+  const followUpWorker = new Worker(
+    "follow-up",
+    async (job) => {
+      const result = await generateFollowUpDraft(job.data as GenerateFollowUpJob)
+      console.log(
+        `Follow-up for ${(job.data as GenerateFollowUpJob).applicationId}: ${result.generated ? "draft generated" : "skipped (status moved on or draft exists)"}`,
+      )
+      return result
+    },
+    { connection: getConnection(), concurrency: 2 },
+  )
+  followUpWorker.on("failed", (job, err) => console.error(`follow-up job ${job?.id} failed:`, err))
+  workers.push(followUpWorker)
+
   // ── Nightly repeat: 02:00 Europe/Berlin (tz CRITICAL — UTC breaks on DST) ───
   await getScraperQueue().add(
     "nightly-scrape",
@@ -96,7 +141,8 @@ async function main() {
   )
 
   console.log(
-    "Workers ready (scraper + embedding + profile-extract). Nightly scrape scheduled 02:00 Europe/Berlin.",
+    "Workers ready (scraper + embedding + profile-extract + generation + follow-up). " +
+      "Nightly scrape scheduled 02:00 Europe/Berlin.",
   )
 }
 

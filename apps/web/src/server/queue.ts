@@ -20,3 +20,22 @@ export function getProfileQueue(): Queue {
   if (!_profileQueue) _profileQueue = new Queue("profile-extract", { connection: getConnection() })
   return _profileQueue
 }
+
+// Agent 6 — generation + follow-up producers (consumed by apps/workers)
+let _generationQueue: Queue | undefined
+export function getGenerationQueue(): Queue {
+  if (!_generationQueue)
+    _generationQueue = new Queue("ai-generation", { connection: getConnection() })
+  return _generationQueue
+}
+
+let _followUpQueue: Queue | undefined
+export function getFollowUpQueue(): Queue {
+  if (!_followUpQueue) _followUpQueue = new Queue("follow-up", { connection: getConnection() })
+  return _followUpQueue
+}
+
+/** Shared Redis for small caches (role questions). Same lazy connection. */
+export function getQueueRedis(): Redis {
+  return getConnection()
+}

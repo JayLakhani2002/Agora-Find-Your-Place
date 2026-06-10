@@ -1,10 +1,10 @@
 import { createTRPCRouter } from "../trpc"
+import { applicationsRouter } from "./applications"
 import { deckRouter } from "./deck"
 import { gdprRouter } from "./gdpr"
 import { jobsRouter } from "./jobs"
 import { onboardingRouter } from "./onboarding"
 import { profileRouter } from "./profile"
-// Agent 6: import { applicationsRouter } from "./applications"
 // Agent 8: import { billingRouter } from "./billing"
 
 export const appRouter = createTRPCRouter({
@@ -13,7 +13,7 @@ export const appRouter = createTRPCRouter({
   profile: profileRouter,
   gdpr: gdprRouter,
   deck: deckRouter,
-  // Agent 6: applications: applicationsRouter,
+  applications: applicationsRouter,
   // Agent 8: billing: billingRouter,
 })
 

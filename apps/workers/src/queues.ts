@@ -36,5 +36,16 @@ export function getProfileQueue(): Queue {
   return _profileQueue
 }
 
-// Agent 6: export const generationQueue = new Queue("ai-generation", { connection: getConnection() })
-// Agent 6: export const followUpQueue = new Queue("follow-up", { connection: getConnection() })
+// Agent 6 — document generation + day-10 follow-up
+let _generationQueue: Queue | undefined
+export function getGenerationQueue(): Queue {
+  if (!_generationQueue)
+    _generationQueue = new Queue("ai-generation", { connection: getConnection() })
+  return _generationQueue
+}
+
+let _followUpQueue: Queue | undefined
+export function getFollowUpQueue(): Queue {
+  if (!_followUpQueue) _followUpQueue = new Queue("follow-up", { connection: getConnection() })
+  return _followUpQueue
+}

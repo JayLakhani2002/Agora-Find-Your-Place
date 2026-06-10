@@ -1,3 +1,4 @@
+import "./env" // MUST be first — loads .env.local before any client reads process.env
 import { Worker } from "bullmq"
 import { embedPendingJobs } from "./jobs/embed-jobs"
 import { scrapeBerlinStartupJobs } from "./jobs/scrape-berlin-startup-jobs"

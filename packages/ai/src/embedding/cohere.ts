@@ -6,7 +6,8 @@ let _client: BedrockRuntimeClient | undefined
 function getBedrockClient(): BedrockRuntimeClient {
   if (_client) return _client
   // EU residency is mandatory — Cohere embed-multilingual-v3 lives in eu-central-1.
-  const region = process.env.AWS_REGION ?? "eu-central-1"
+  // Matches Agent 1's .env.example var name (AWS_BEDROCK_REGION), with safe fallbacks.
+  const region = process.env.AWS_BEDROCK_REGION ?? process.env.AWS_REGION ?? "eu-central-1"
   _client = new BedrockRuntimeClient({ region })
   return _client
 }

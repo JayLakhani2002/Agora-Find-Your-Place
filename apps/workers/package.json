@@ -14,6 +14,7 @@
     "@aws-sdk/client-bedrock-runtime": "3.758.0",
     "bullmq": "5.34.8",
     "crawlee": "3.13.10",
+    "dotenv": "17.4.2",
     "drizzle-orm": "0.38.4",
     "ioredis": "5.4.2",
     "p-limit": "6.2.0",

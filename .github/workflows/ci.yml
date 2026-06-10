@@ -46,7 +46,10 @@ jobs:
     needs: ci
     if: github.ref == 'refs/heads/main'
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # drizzle-kit check only validates local migration files (no DB connection),
+      # but drizzle.config.ts requires the var to be set. Fall back to a placeholder
+      # so the job passes even when the DATABASE_URL secret isn't configured.
+      DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://placeholder:placeholder@localhost:5432/placeholder' }}
     steps:
       - uses: actions/checkout@v4
 

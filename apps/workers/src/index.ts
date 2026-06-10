@@ -1,9 +1,9 @@
-import { connection } from "./queues"
+import { getConnection } from "./queues"
 
 async function main() {
   console.log("Agora workers starting…")
 
-  await connection.ping()
+  await getConnection().ping()
   console.log("Redis connected")
 
   // Agent 3: register scraper worker here
@@ -16,7 +16,11 @@ async function main() {
 
 async function shutdown() {
   console.log("Shutting down workers…")
-  await connection.quit()
+  try {
+    await getConnection().quit()
+  } catch {
+    // connection may already be closed
+  }
   process.exit(0)
 }
 

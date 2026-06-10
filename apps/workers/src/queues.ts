@@ -1,17 +1,28 @@
 import { Queue } from "bullmq"
 import { Redis } from "ioredis"
 
-const redisUrl = process.env.REDIS_URL
-if (!redisUrl) throw new Error("REDIS_URL is not set")
+// Lazy singleton — not created at import time (Agent 1 safety rule)
+let _connection: Redis | undefined
 
-// maxRetriesPerRequest: null is REQUIRED by BullMQ — without it the client throws on queue ops
-// tls: {} is required when using rediss:// (TLS) — ioredis does not auto-inject it when an options object is provided
-export const connection = new Redis(redisUrl, {
-  maxRetriesPerRequest: null,
-  ...(redisUrl.startsWith("rediss://") ? { tls: {} } : {}),
+export function getConnection(): Redis {
+  if (_connection) return _connection
+  const url = process.env.REDIS_URL
+  if (!url) throw new Error("REDIS_URL is not set")
+  _connection = new Redis(url, {
+    maxRetriesPerRequest: null,
+    ...(url.startsWith("rediss://") ? { tls: {} } : {}),
+  })
+  return _connection
+}
+
+// Convenience export used by workers — resolves lazily on first access
+export const connection = new Proxy({} as Redis, {
+  get(_, prop) {
+    return (getConnection() as any)[prop]
+  },
 })
 
-// Agent 3: export const scraperQueue = new Queue("job-scraper", { connection })
-// Agent 4: export const profileQueue = new Queue("profile-extract", { connection })
-// Agent 6: export const generationQueue = new Queue("ai-generation", { connection })
-// Agent 6: export const followUpQueue = new Queue("follow-up", { connection })
+// Agent 3: export const scraperQueue = new Queue("job-scraper", { connection: getConnection() })
+// Agent 4: export const profileQueue = new Queue("profile-extract", { connection: getConnection() })
+// Agent 6: export const generationQueue = new Queue("ai-generation", { connection: getConnection() })
+// Agent 6: export const followUpQueue = new Queue("follow-up", { connection: getConnection() })

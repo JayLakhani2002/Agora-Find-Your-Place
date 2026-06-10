@@ -95,7 +95,9 @@ async function main() {
     },
   )
 
-  console.log("Workers ready (scraper + embedding). Nightly scrape scheduled 02:00 Europe/Berlin.")
+  console.log(
+    "Workers ready (scraper + embedding + profile-extract). Nightly scrape scheduled 02:00 Europe/Berlin.",
+  )
 }
 
 async function shutdown() {

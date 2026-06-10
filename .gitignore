@@ -11,6 +11,14 @@ node_modules/
 dist/
 .turbo/
 *.tsbuildinfo
+next-env.d.ts
+
+# next-pwa generated service worker (build artifact)
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/workbox-*.js
+apps/web/public/workbox-*.js.map
+apps/web/public/swe-worker-*.js
 
 # OS
 .DS_Store

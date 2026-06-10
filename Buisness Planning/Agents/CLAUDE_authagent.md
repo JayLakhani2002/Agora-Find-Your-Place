@@ -131,6 +131,46 @@ Erasure is a Phase-1 task, not a finale — having real data without a delete pa
 - NEVER ship without the erasure path — it's a Phase-1 GDPR requirement
 - NEVER trust a client-supplied userId — use the protectedProcedure user only
 
+## UI/UX Design System — Mandatory for onboarding screens (ui-ux-pro-max skill)
+
+You own the 3-step onboarding wizard screens. Before building any of those screens,
+run the design system skill. The master design system is at `design-system/agora-jobs/MASTER.md`.
+
+### Step 1 — Load the design system
+```bash
+cat "design-system/agora-jobs/MASTER.md"
+```
+
+### Step 2 — Generate onboarding-specific overrides
+```bash
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "onboarding wizard steps visa form mobile" --design-system --persist -p "Agora Jobs" --page "onboarding"
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "cv upload file drag drop progress" --design-system --persist -p "Agora Jobs" --page "cv-upload"
+```
+
+### Step 3 — Query UX rules for forms and multi-step flows
+```bash
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "form validation error mobile" --domain ux
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "wizard steps progress" --stack shadcn
+```
+
+### Agora Jobs Design Tokens (apply to all onboarding screens)
+| Token | Value |
+|---|---|
+| Primary | `#0369A1` |
+| CTA / Next button | `#22C55E` |
+| Background | `#F0F9FF` |
+| Text | `#0C4A6E` |
+| Card style | `backdrop-blur-md bg-white/80 border border-white/20 shadow-lg` |
+| Font | IBM Plex Sans |
+
+### Hard UI rules for onboarding
+- Step progress indicator at top — user must always know which of 3 steps they're on
+- Each step fits on iPhone SE (375px) without scrolling if possible
+- Form inputs: 44px+ height, visible labels, inline error messages near the field
+- "Next" / "Continue" CTA: full-width on mobile, `#22C55E` green, `cursor-pointer`
+- Loading state on async operations (CV upload): disable button + spinner
+- Coordinate visual style with Agent 7 — use the same design tokens
+
 ## Safety Rules — Mandatory (learned from Agent 1 code review)
 
 These rules apply to every agent. Violating them caused real bugs in Agent 1 that only appeared at runtime.

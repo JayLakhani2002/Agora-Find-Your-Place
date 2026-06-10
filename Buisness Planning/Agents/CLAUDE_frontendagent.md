@@ -102,6 +102,68 @@ Gestures: right = apply, left = pass, tap = detail, swipe-up = save. Card shows 
 - NEVER desktop-first — iPhone SE width first
 - NEVER treat eligibility ticks as decoration — they're the core trust + legal signal
 
+## UI/UX Design System — Mandatory (ui-ux-pro-max skill)
+
+Before writing any component, screen, or CSS, you MUST run the design system skill.
+The persisted design system for this project lives at `design-system/agora-jobs/MASTER.md`.
+Page-specific overrides live at `design-system/agora-jobs/pages/<page>.md` — check those first.
+
+### Step 1 — Load the design system (run once per session)
+```bash
+cat "design-system/agora-jobs/MASTER.md"
+```
+
+### Step 2 — Generate a page-specific override before building any new screen
+```bash
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "<screen keywords>" --design-system --persist -p "Agora Jobs" --page "<page-name>"
+```
+Examples:
+```bash
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "job swipe card deck mobile tinder" --design-system --persist -p "Agora Jobs" --page "swipe-deck"
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "application tracker status badges list" --design-system --persist -p "Agora Jobs" --page "tracker"
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "review cv cover letter score tabs" --design-system --persist -p "Agora Jobs" --page "review"
+```
+
+### Step 3 — Query UX rules before adding any animation, form, or interactive element
+```bash
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --domain ux
+python3 ~/.claude/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack shadcn
+```
+
+### Agora Jobs Design Tokens (from generated design system)
+| Token | Value | Usage |
+|---|---|---|
+| Primary | `#0369A1` | Nav, active states, links |
+| Secondary | `#0EA5E9` | Highlights, badges |
+| CTA | `#22C55E` | Apply button, success states |
+| Background | `#F0F9FF` | Page backgrounds |
+| Text | `#0C4A6E` | Body text |
+| Style | Glassmorphism | `backdrop-blur-md bg-white/80 border border-white/20` |
+| Font | IBM Plex Sans | Import from Google Fonts |
+| Blur | `backdrop-blur(10-20px)` | Cards, modals, nav |
+
+### Hard UI rules
+- IBM Plex Sans must be loaded — add to `globals.css` via Google Fonts import
+- Glassmorphism cards: `backdrop-blur-md bg-white/80 border border-white/20 shadow-lg`
+- ALL clickable elements: `cursor-pointer`
+- Transitions: `transition-colors duration-200` (150–300ms max)
+- No emojis as icons — Lucide SVG only
+- Framer Motion swipe: respect `prefers-reduced-motion`
+- Mobile-first: 375px → 768px → 1024px → 1440px
+- Touch targets: minimum 44×44px
+- Text contrast: 4.5:1 minimum (use `#0C4A6E` not lighter grays on white)
+
+### Pre-delivery checklist (run before every commit)
+- [ ] Design system loaded and tokens applied
+- [ ] No emojis as icons
+- [ ] `cursor-pointer` on all interactive elements
+- [ ] Hover states: smooth 150–300ms transitions
+- [ ] Light mode contrast ≥ 4.5:1
+- [ ] Focus states visible for keyboard navigation
+- [ ] `prefers-reduced-motion` respected in Framer Motion
+- [ ] Responsive tested at 375px, 768px, 1024px, 1440px
+- [ ] No horizontal scroll on mobile
+
 ## Safety Rules — Mandatory (learned from Agent 1 code review)
 
 These rules apply to every agent. Violating them caused real bugs in Agent 1 that only appeared at runtime.

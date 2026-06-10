@@ -1,7 +1,7 @@
-import { initTRPC, TRPCError } from "@trpc/server"
-import { auth } from "@clerk/nextjs/server"
 import { getDb } from "@agora/db"
 import { users } from "@agora/db/schema"
+import { auth } from "@clerk/nextjs/server"
+import { TRPCError, initTRPC } from "@trpc/server"
 import { eq } from "drizzle-orm"
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {

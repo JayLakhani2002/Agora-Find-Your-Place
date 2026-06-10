@@ -2,26 +2,32 @@
    (they originate from the Claude.ai artifact theme). Defined here so the UI renders correctly
    in a standalone Vite app. Palette: Catppuccin Mocha (matches the harness's button colors). */
 :root {
-  --color-text-primary: #cdd6f4;       /* text */
-  --color-text-secondary: #a6adc8;     /* subtext0 */
-  --color-text-tertiary: #7f849c;      /* overlay1 */
-  --color-border-tertiary: #313244;    /* surface0 */
-  --color-background-secondary: #1e1e2e;/* base */
+  --color-text-primary: #cdd6f4; /* text */
+  --color-text-secondary: #a6adc8; /* subtext0 */
+  --color-text-tertiary: #7f849c; /* overlay1 */
+  --color-border-tertiary: #313244; /* surface0 */
+  --color-background-secondary: #1e1e2e; /* base */
   --color-background-tertiary: #181825; /* mantle */
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: #11111b;                  /* crust */
+  background: #11111b; /* crust */
   color: var(--color-text-primary);
   font-family: "IBM Plex Mono", "Courier New", monospace;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Make the password (API key) input legible against the dark theme. */
-input { color-scheme: dark; }
+input {
+  color-scheme: dark;
+}
 
-a { color: #89b4fa; }
+a {
+  color: #89b4fa;
+}

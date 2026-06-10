@@ -45,11 +45,7 @@ export const generationStatusEnum = pgEnum("generation_status", [
   "failed",
 ])
 
-export const swipeActionEnum = pgEnum("swipe_action", [
-  "right",
-  "left",
-  "save",
-])
+export const swipeActionEnum = pgEnum("swipe_action", ["right", "left", "save"])
 
 export const documentTypeEnum = pgEnum("document_type", [
   "cv_upload",

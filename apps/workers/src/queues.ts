@@ -15,14 +15,20 @@ export function getConnection(): Redis {
   return _connection
 }
 
-// Convenience export used by workers — resolves lazily on first access
-export const connection = new Proxy({} as Redis, {
-  get(_, prop) {
-    return (getConnection() as any)[prop]
-  },
-})
+// Agent 3 — scrape + embed pipeline
+let _scraperQueue: Queue | undefined
+export function getScraperQueue(): Queue {
+  if (!_scraperQueue) _scraperQueue = new Queue("job-scraper", { connection: getConnection() })
+  return _scraperQueue
+}
 
-// Agent 3: export const scraperQueue = new Queue("job-scraper", { connection: getConnection() })
+let _embeddingQueue: Queue | undefined
+export function getEmbeddingQueue(): Queue {
+  if (!_embeddingQueue)
+    _embeddingQueue = new Queue("job-embedding", { connection: getConnection() })
+  return _embeddingQueue
+}
+
 // Agent 4: export const profileQueue = new Queue("profile-extract", { connection: getConnection() })
 // Agent 6: export const generationQueue = new Queue("ai-generation", { connection: getConnection() })
 // Agent 6: export const followUpQueue = new Queue("follow-up", { connection: getConnection() })

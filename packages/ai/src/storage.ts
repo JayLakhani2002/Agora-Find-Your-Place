@@ -1,4 +1,9 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 function getS3Client() {
@@ -7,9 +12,16 @@ function getS3Client() {
   const accessKeyId = process.env.S3_ACCESS_KEY
   const secretAccessKey = process.env.S3_SECRET_KEY
   if (!region || !endpoint || !accessKeyId || !secretAccessKey) {
-    throw new Error("S3 environment variables (S3_REGION, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY) are not set")
+    throw new Error(
+      "S3 environment variables (S3_REGION, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY) are not set",
+    )
   }
-  return new S3Client({ region, endpoint, credentials: { accessKeyId, secretAccessKey }, forcePathStyle: true })
+  return new S3Client({
+    region,
+    endpoint,
+    credentials: { accessKeyId, secretAccessKey },
+    forcePathStyle: true,
+  })
 }
 
 function getBucket() {
@@ -33,5 +45,7 @@ export async function deleteObject(key: string) {
 }
 
 export async function uploadBuffer(key: string, body: Buffer, contentType: string) {
-  await getS3Client().send(new PutObjectCommand({ Bucket: getBucket(), Key: key, Body: body, ContentType: contentType }))
+  await getS3Client().send(
+    new PutObjectCommand({ Bucket: getBucket(), Key: key, Body: body, ContentType: contentType }),
+  )
 }

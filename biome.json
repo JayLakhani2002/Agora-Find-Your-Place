@@ -23,6 +23,6 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", ".next", "dist", ".turbo", "*.tsbuildinfo"]
+    "ignore": ["node_modules", ".next", "dist", ".turbo", "*.tsbuildinfo", "packages/db/drizzle/**"]
   }
 }

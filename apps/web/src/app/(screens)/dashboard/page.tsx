@@ -18,6 +18,7 @@ export default function DashboardPage() {
     retry: (count, error) => error.data?.code !== "PRECONDITION_FAILED" && count < 2,
   })
   const swipe = trpc.deck.swipe.useMutation()
+  const createApplication = trpc.applications.create.useMutation()
 
   function handleSwipe(card: DeckCard, action: SwipeAction) {
     // Optimistic: the card has already left the deck. Server side is
@@ -83,8 +84,9 @@ export default function DashboardPage() {
             <p className="mb-4 text-sm text-muted">
               New jobs arrive with the nightly scrape. Saved jobs and drafts live in your tracker.
             </p>
-            <Button variant="outline" onClick={() => deck.refetch()}>
-              <RefreshCw size={16} aria-hidden /> Check again
+            <Button variant="outline" onClick={() => deck.refetch()} disabled={deck.isFetching}>
+              <RefreshCw size={16} aria-hidden className={deck.isFetching ? "animate-spin" : ""} />
+              {deck.isFetching ? "Checking…" : "Check again"}
             </Button>
           </Card>
         }
@@ -94,7 +96,12 @@ export default function DashboardPage() {
         <RoleQuestionsSheet
           jobId={asking.jobId}
           jobTitle={asking.title}
-          onClose={() => setAsking(null)}
+          onClose={() => {
+            // Closing without answering = skip: enqueue generation with no answers
+            // so the application doesn't stay stuck in "pending" forever.
+            createApplication.mutate({ jobId: asking.jobId, roleAnswers: {} })
+            setAsking(null)
+          }}
           onSubmitted={(applicationId) => {
             setAsking(null)
             router.push(`/applications/${applicationId}/review`)

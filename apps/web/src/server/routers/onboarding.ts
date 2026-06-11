@@ -1,5 +1,3 @@
-import { randomUUID } from "node:crypto"
-import { presignUpload } from "@agora/ai"
 import type { DB } from "@agora/db"
 import { germanLevelEnum, userDocuments, userProfiles, visaTypeEnum } from "@agora/db/schema"
 import { TRPCError } from "@trpc/server"
@@ -87,16 +85,8 @@ export const onboardingRouter = createTRPCRouter({
       return { ok: true }
     }),
 
-  // Step 3a — presigned upload URL for the CV (PDF). Key is scoped to the user.
-  createUploadUrl: protectedProcedure
-    .input(z.object({ filename: z.string().min(1), contentType: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      const key = `cv/${ctx.user.id}/${randomUUID()}-${input.filename}`
-      const url = await presignUpload(key, input.contentType)
-      return { url, key }
-    }),
-
-  // Step 3b — record the uploaded doc and enqueue PII-free extraction.
+  // Step 3 — record the uploaded doc and enqueue PII-free extraction.
+  // Upload itself goes through /api/upload/cv (server-side S3 proxy, no CORS).
   confirmUpload: protectedProcedure
     .input(
       z.object({

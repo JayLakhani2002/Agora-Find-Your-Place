@@ -1,8 +1,8 @@
 "use client"
 
+import { trpc } from "@/lib/trpc/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { trpc } from "./trpcClient"
 
 // ── Design tokens (Agora design system; Tailwind not yet wired by Agent 7) ──
 const C = {
@@ -46,12 +46,17 @@ export function OnboardingWizard() {
   const [file, setFile] = useState<File | null>(null)
   const [extracting, setExtracting] = useState(false)
 
+  const saveVisaStep = trpc.onboarding.saveVisaStep.useMutation()
+  const savePreferences = trpc.onboarding.savePreferences.useMutation()
+  const confirmUploadMutation = trpc.onboarding.confirmUpload.useMutation()
+  const completeMutation = trpc.onboarding.complete.useMutation()
+
   async function submitVisa() {
     if (!visaType) return setError("Please select your visa status.")
     setError(null)
     setBusy(true)
     try {
-      await trpc.onboarding.saveVisaStep.mutate({
+      await saveVisaStep.mutateAsync({
         visaType,
         daysRemainingThisYear: daysRemaining ? Number(daysRemaining) : undefined,
         semesterEnd: semesterEnd ? new Date(semesterEnd) : undefined,
@@ -68,7 +73,7 @@ export function OnboardingWizard() {
     setError(null)
     setBusy(true)
     try {
-      await trpc.onboarding.savePreferences.mutate({
+      await savePreferences.mutateAsync({
         germanLevel,
         preferredFields: fields
           .split(",")
@@ -86,39 +91,28 @@ export function OnboardingWizard() {
     }
   }
 
-  async function pollExtraction(): Promise<void> {
-    for (let i = 0; i < 40; i++) {
-      const { complete } = await trpc.onboarding.extractionStatus.query()
-      if (complete) return
-      await new Promise((r) => setTimeout(r, 3000))
-    }
-    // Don't block the user forever — proceed even if embedding is still running.
-  }
-
   async function submitCv() {
     if (!file) return setError("Please choose your CV (PDF).")
     setError(null)
     setBusy(true)
     setExtracting(true)
     try {
-      const { url, key } = await trpc.onboarding.createUploadUrl.mutate({
-        filename: file.name,
-        contentType: file.type || "application/pdf",
-      })
-      const put = await fetch(url, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type || "application/pdf" },
-      })
-      if (!put.ok) throw new Error("Upload failed. Please try again.")
+      const body = new FormData()
+      body.append("file", file)
+      const res = await fetch("/api/upload/cv", { method: "POST", body })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw new Error((json as { error?: string }).error ?? "Upload failed. Please try again.")
+      }
+      const { key } = (await res.json()) as { key: string }
 
-      await trpc.onboarding.confirmUpload.mutate({
+      await confirmUploadMutation.mutateAsync({
         storageKey: key,
         filename: file.name,
         sizeBytes: file.size,
       })
-      await pollExtraction()
-      await trpc.onboarding.complete.mutate()
+      // Extraction runs in the background worker — no need to block the user.
+      await completeMutation.mutateAsync()
       router.push("/dashboard")
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.")

@@ -10,7 +10,7 @@
 //   2. `submitted` is reachable ONLY from `approved` via explicit user action.
 //   3. Every transition appends to the append-only audit_log.
 
-import { generateRoleQuestions, presignDownload } from "@agora/ai"
+import { generateRoleQuestions } from "@agora/ai"
 import { type AuditEntry, applications, followUpDrafts, jobs } from "@agora/db/schema"
 import { TRPCError } from "@trpc/server"
 import { and, desc, eq } from "drizzle-orm"
@@ -83,8 +83,20 @@ export const applicationsRouter = createTRPCRouter({
       const job = await ctx.db.query.jobs.findFirst({ where: eq(jobs.id, input.jobId) })
       if (!job) throw new TRPCError({ code: "NOT_FOUND", message: "Job not found" })
 
-      const questions = await generateRoleQuestions(job.title, job.description)
-      await redis.set(cacheKey, JSON.stringify(questions), "EX", QUESTIONS_CACHE_TTL_SECONDS)
+      let questions: string[]
+      try {
+        questions = await generateRoleQuestions(job.title, job.description)
+        await redis.set(cacheKey, JSON.stringify(questions), "EX", QUESTIONS_CACHE_TTL_SECONDS)
+      } catch {
+        // Bedrock unavailable or returned bad output — serve generic questions so the
+        // user can always continue. These are not cached (next attempt retries Haiku).
+        questions = [
+          "Describe a relevant project you've worked on recently.",
+          "What's your experience with the main technical skills listed?",
+          "When are you available, and how many hours per week?",
+          "Why are you interested in this role?",
+        ]
+      }
       return { questions }
     }),
 
@@ -163,10 +175,14 @@ export const applicationsRouter = createTRPCRouter({
       })
       if (!app) throw new TRPCError({ code: "NOT_FOUND" })
 
-      const [cvUrl, coverLetterUrl] = await Promise.all([
-        app.cvStorageKey ? presignDownload(app.cvStorageKey, 600) : null,
-        app.coverLetterStorageKey ? presignDownload(app.coverLetterStorageKey, 600) : null,
-      ])
+      // Return storage keys, not presigned URLs — the browser fetches through
+      // /api/download/document to avoid cross-origin S3 CORS issues.
+      const cvUrl = app.cvStorageKey
+        ? `/api/download/document?applicationId=${app.id}&key=${encodeURIComponent(app.cvStorageKey)}`
+        : null
+      const coverLetterUrl = app.coverLetterStorageKey
+        ? `/api/download/document?applicationId=${app.id}&key=${encodeURIComponent(app.coverLetterStorageKey)}`
+        : null
 
       return {
         id: app.id,
@@ -181,8 +197,6 @@ export const applicationsRouter = createTRPCRouter({
           language: app.evalScoreLanguage,
           overall: app.evalScoreOverall,
         },
-        // Submission helper payload: download links + the employer page the
-        // USER opens and submits on. We never POST anything to an employer.
         cvUrl,
         coverLetterUrl,
         employerUrl: app.job?.sourceUrl ?? null,

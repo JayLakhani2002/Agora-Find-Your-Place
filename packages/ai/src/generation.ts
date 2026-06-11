@@ -127,10 +127,10 @@ export async function generateRoleQuestions(
     prompt: roleQuestionsPrompt(jobTitle, jobDescription),
   })
   const questions = Array.isArray(parsed?.questions)
-    ? parsed.questions.filter((q): q is string => typeof q === "string" && q.length > 0)
+    ? parsed.questions.filter((q): q is string => typeof q === "string" && q.length > 0).slice(0, 4)
     : []
-  if (questions.length !== 4) {
-    throw new Error(`generateRoleQuestions: expected 4 questions, got ${questions.length}`)
+  if (questions.length === 0) {
+    throw new Error("generateRoleQuestions: model returned no usable questions")
   }
   return questions
 }

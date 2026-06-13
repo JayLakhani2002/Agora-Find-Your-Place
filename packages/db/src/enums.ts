@@ -59,3 +59,19 @@ export const enrollmentStatusEnum = pgEnum("enrollment_status", [
   "graduated",
   "leave_of_absence",
 ])
+
+// ── Billing (Agent 8 — dark until BSS funding; BILLING_ENABLED gates all paid paths) ──
+
+export const planTierEnum = pgEnum("plan_tier", ["free", "pro"])
+
+// Mirrors Stripe subscription statuses we act on; synced by the Stripe webhook.
+export const subscriptionStatusEnum = pgEnum("subscription_status", [
+  "active",
+  "trialing",
+  "past_due",
+  "canceled",
+  "incomplete",
+  "incomplete_expired",
+  "unpaid",
+  "paused",
+])

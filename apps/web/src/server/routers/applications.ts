@@ -11,6 +11,7 @@
 //   3. Every transition appends to the append-only audit_log.
 
 import { generateRoleQuestions } from "@agora/ai"
+import { checkApplicationQuota } from "@agora/billing"
 import { type AuditEntry, applications, followUpDrafts, jobs } from "@agora/db/schema"
 import { TRPCError } from "@trpc/server"
 import { and, desc, eq } from "drizzle-orm"
@@ -137,6 +138,16 @@ export const applicationsRouter = createTRPCRouter({
           })
           .where(eq(applications.id, applicationId))
       } else {
+        // Agent 8 entitlement gate — server-side, before any new application is
+        // created. Pre-BSS (BILLING_ENABLED=false) this always allows and makes
+        // no Stripe call; post-launch it enforces free = 3/month, pro = unlimited.
+        const quota = await checkApplicationQuota(ctx.user.id)
+        if (!quota.allowed) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: quota.reason ?? "Application quota exceeded.",
+          })
+        }
         const inserted = await ctx.db
           .insert(applications)
           .values({

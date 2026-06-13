@@ -19,6 +19,8 @@ import {
   enrollmentStatusEnum,
   generationStatusEnum,
   germanLevelEnum,
+  planTierEnum,
+  subscriptionStatusEnum,
   swipeActionEnum,
   visaTypeEnum,
 } from "./enums"
@@ -33,6 +35,9 @@ export const users = pgTable("users", {
     .$defaultFn(() => createId()),
   clerkId: text("clerk_id").notNull().unique(),
   email: text("email").notNull(),
+  // Billing (Agent 8) — only Stripe IDs + tier live here; Stripe holds card data.
+  stripeCustomerId: text("stripe_customer_id").unique(),
+  planTier: planTierEnum("plan_tier").default("free").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 })
@@ -42,6 +47,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   documents: many(userDocuments),
   jobActions: many(userJobActions),
   applications: many(applications),
+  subscriptions: many(subscriptions),
 }))
 
 // ── User Profiles ─────────────────────────────────────────────────────────────
@@ -282,4 +288,31 @@ export const followUpDraftsRelations = relations(followUpDrafts, ({ one }) => ({
     references: [applications.id],
   }),
   user: one(users, { fields: [followUpDrafts.userId], references: [users.id] }),
+}))
+
+// ── Subscriptions (Agent 8 — billing, dark until BSS funding) ─────────────────
+// Synced exclusively by the Stripe webhook. Stripe is the source of truth;
+// this table is a local mirror so entitlement checks never need a Stripe call.
+
+export const subscriptions = pgTable(
+  "subscriptions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+    status: subscriptionStatusEnum("status").notNull(),
+    currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+    cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index("subscriptions_user_id_idx").on(t.userId)],
+)
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, { fields: [subscriptions.userId], references: [users.id] }),
 }))

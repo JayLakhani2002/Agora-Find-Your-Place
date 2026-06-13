@@ -15,6 +15,13 @@
       "when": 1781048783765,
       "tag": "0001_chubby_ego",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781138853543,
+      "tag": "0002_abandoned_maximus",
+      "breakpoints": true
     }
   ]
 }

@@ -24,6 +24,9 @@ importers:
       '@agora/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@agora/billing':
+        specifier: workspace:*
+        version: link:../../packages/billing
       '@agora/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -78,6 +81,9 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      stripe:
+        specifier: 22.2.0
+        version: 22.2.0(@types/node@22.10.10)
       svix:
         specifier: 1.45.1
         version: 1.45.1
@@ -121,6 +127,55 @@ importers:
       vitest:
         specifier: 2.1.8
         version: 2.1.8(@types/node@22.10.10)(jsdom@26.1.0)(terser@5.48.0)
+
+  apps/website:
+    dependencies:
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
+      framer-motion:
+        specifier: 12.4.10
+        version: 12.4.10(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      gsap:
+        specifier: 3.12.7
+        version: 3.12.7
+      next:
+        specifier: 15.2.4
+        version: 15.2.4(@babel/core@7.29.7)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      tailwind-merge:
+        specifier: 2.6.0
+        version: 2.6.0
+    devDependencies:
+      '@agora/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: 22.10.10
+        version: 22.10.10
+      '@types/react':
+        specifier: 19.1.0
+        version: 19.1.0
+      '@types/react-dom':
+        specifier: 19.1.0
+        version: 19.1.0(@types/react@19.1.0)
+      autoprefixer:
+        specifier: 10.4.20
+        version: 10.4.20(postcss@8.4.49)
+      postcss:
+        specifier: 8.4.49
+        version: 8.4.49
+      tailwindcss:
+        specifier: 3.4.17
+        version: 3.4.17
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
 
   apps/workers:
     dependencies:
@@ -188,6 +243,25 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: 3.758.0
         version: 3.758.0
+    devDependencies:
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: 2.1.8
+        version: 2.1.8(@types/node@22.10.10)(jsdom@26.1.0)(terser@5.48.0)
+
+  packages/billing:
+    dependencies:
+      '@agora/db':
+        specifier: workspace:*
+        version: link:../db
+      drizzle-orm:
+        specifier: 0.38.4
+        version: 0.38.4(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)(@types/react@19.1.0)(react@19.1.0)
+      stripe:
+        specifier: 22.2.0
+        version: 22.2.0(@types/node@22.10.10)
     devDependencies:
       typescript:
         specifier: 5.7.3
@@ -3553,6 +3627,9 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
+  gsap@3.12.7:
+    resolution: {integrity: sha512-V4GsyVamhmKefvcAKaoy0h6si0xX7ogwBoBSs2CTJwt7luW0oZzC0LhdkyuKV8PJAXr7Yaj8pMjCKD4GJ+eEMg==}
+
   has-ansi@2.0.0:
     resolution: {integrity: sha512-C8vBJ8DwUCx19vhm7urhTuUsr4/IyP6l4VzNQDv+ryHQObW3TTTp9yB68WpYgRe2bbaGuZ/se74IqFeVnMnLZg==}
     engines: {node: '>=0.10.0'}
@@ -4781,6 +4858,15 @@ packages:
   strip-comments@2.0.1:
     resolution: {integrity: sha512-ZprKx+bBLXv067WTCALv8SSz5l2+XhpYCsVtSqlMnkAXMWDq+/ekVbl1ghqP9rUHTzv6sm/DwCOiYutU/yp1fw==}
     engines: {node: '>=10'}
+
+  stripe@22.2.0:
+    resolution: {integrity: sha512-WFGpMOom9QZqso1kcnSwJsCdC1QHDlMoCOxBZRf3JraMzhkfw7dgSdD2a1CFZrqC+mzAfqeEtYILrZhWKIDruA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/node': '>=18'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   strnum@1.1.2:
     resolution: {integrity: sha512-vrN+B7DBIoTTZjnPNewwhx6cBA/H+IS7rfW68n7XxC1y7uoiGQBxaKzqucGUgavX15dJgiGztLJ8vxuEzwqBdA==}
@@ -9220,6 +9306,8 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
+  gsap@3.12.7: {}
+
   has-ansi@2.0.0:
     dependencies:
       ansi-regex: 2.1.1
@@ -10549,6 +10637,10 @@ snapshots:
       ansi-regex: 5.0.1
 
   strip-comments@2.0.1: {}
+
+  stripe@22.2.0(@types/node@22.10.10):
+    optionalDependencies:
+      '@types/node': 22.10.10
 
   strnum@1.1.2: {}
 

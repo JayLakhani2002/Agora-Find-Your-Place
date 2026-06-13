@@ -5,7 +5,6 @@ export function Footer() {
   return (
     <footer id="footer" className="band band-dark">
       <div className="band-inner py-20 sm:py-28">
-        {/* The Thread arrives and ties into a bow beside this line (Thread system, §6.4) */}
         <div className="flex flex-col items-start gap-6 border-b border-white/10 pb-16">
           <p className="font-display text-h2 leading-tight">{footer.threadLine}</p>
           <a href="#waitlist" className="btn-primary">

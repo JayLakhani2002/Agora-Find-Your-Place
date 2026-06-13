@@ -160,6 +160,20 @@
     margin-inline: auto;
     padding-inline: clamp(1.25rem, 5vw, 4rem);
   }
+
+  /* FAQ accordion — grid-rows 0fr→1fr so height animates without JS measurement.
+     The global reduced-motion rule kills the transition automatically. */
+  .accordion-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-base) var(--ease-out);
+  }
+  .accordion-panel[data-open="true"] {
+    grid-template-rows: 1fr;
+  }
+  .accordion-panel > div {
+    overflow: hidden;
+  }
 }
 
 /* Ari idle float — gentle bob so the figure feels alive (it's a flat image) */

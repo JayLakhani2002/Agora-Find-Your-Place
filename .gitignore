@@ -13,6 +13,9 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
+# Crawlee runtime storage (request queues, datasets — scratch state)
+apps/workers/storage/
+
 # next-pwa generated service worker (build artifact)
 apps/web/public/sw.js
 apps/web/public/sw.js.map

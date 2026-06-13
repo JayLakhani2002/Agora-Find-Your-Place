@@ -1,0 +1,19 @@
+/* Agora Jobs — landing concept shared tokens */
+:root{
+  --ink:#16243D; --ink-2:#1E3A5F; --paper:#F7F9FB; --surface:#FFFFFF;
+  --green:#2E9E5C; --green-deep:#23814A; --muted:#5B6B82; --hair:#E3E9F0;
+  --r:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1600px;overflow:hidden}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+.display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.03em}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:17px;border-radius:999px;padding:18px 36px;text-decoration:none}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 24px rgba(46,158,92,.28)}
+.btn-ghost{border:1.5px solid var(--hair);color:var(--ink);background:var(--surface)}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);box-shadow:0 12px 40px rgba(22,36,61,.07)}
+.dotgrid{background-image:radial-gradient(circle,#CBD6E2 1px,transparent 1px);background-size:28px 28px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;border-radius:999px;padding:6px 12px}
+.badge-green{background:#E7F5EC;color:var(--green-deep)}
+.badge-blue{background:#E9F0F8;color:var(--ink-2)}

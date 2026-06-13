@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Color — §5 */
+  --marble: #faf8f3;
+  --marble-deep: #f0ece3;
+  --ink: #14161b;
+  --ink-soft: #1e2128;
+  --laurel: #1f7a53;
+  --laurel-bright: #2ea06c;
+  --laurel-text: #176647; /* darkened laurel for small text on marble, a11y ≥4.5:1 */
+  --amber: #e8a33d;
+  --text: #1a1c21;
+  --text-mute: #5c6066;
+  --text-on-ink: #f2f0ea;
+  --skin: #e7c9a9;
+
+  /* Motion — §5 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 200ms;
+  --dur-base: 450ms;
+  --dur-slow: 900ms;
+
+  /* Shape */
+  --radius: 16px;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--marble);
+    color: var(--text);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  ::selection {
+    background: var(--laurel);
+    color: var(--marble);
+  }
+
+  /* Visible keyboard focus — laurel ring (§10) */
+  :focus-visible {
+    outline: 2px solid var(--laurel);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* Eyebrow — §5 */
+  .eyebrow {
+    font-family: var(--font-data), monospace;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--laurel-text);
+    font-weight: 500;
+  }
+
+  .eyebrow-on-ink {
+    color: var(--laurel-bright);
+  }
+
+  /* Eligibility chip — core product motif (§5) */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-data), monospace;
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--laurel) 28%, transparent);
+    color: var(--laurel-text);
+    background: color-mix(in srgb, var(--laurel) 7%, transparent);
+    white-space: nowrap;
+  }
+
+  .chip-on-ink {
+    color: var(--laurel-bright);
+    border-color: color-mix(in srgb, var(--laurel-bright) 35%, transparent);
+    background: color-mix(in srgb, var(--laurel-bright) 10%, transparent);
+  }
+
+  /* Primary action — laurel pill */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    padding: 0.85rem 1.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--laurel);
+    color: var(--marble);
+    transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast)
+      var(--ease-out);
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    background: var(--laurel-bright);
+  }
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+
+  /* Secondary / ghost action */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-weight: 500;
+    padding: 0.85rem 1.4rem;
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    transition: color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+  }
+  .btn-ghost:hover {
+    color: var(--laurel-text);
+  }
+  .btn-ghost.on-ink {
+    color: var(--text-on-ink);
+  }
+  .btn-ghost.on-ink:hover {
+    color: var(--laurel-bright);
+  }
+
+  /* Section band shells */
+  .band {
+    position: relative;
+    width: 100%;
+    overflow: clip;
+  }
+  .band-light {
+    background: var(--marble);
+    color: var(--text);
+  }
+  .band-dark {
+    background: var(--ink);
+    color: var(--text-on-ink);
+  }
+  .band-inner {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+  }
+}
+
+/* Ari idle float — gentle bob so the figure feels alive (it's a flat image) */
+@keyframes ari-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3.5%);
+  }
+}
+.ari-float {
+  animation: ari-float 4.5s ease-in-out infinite;
+}
+
+/* Reduced motion — hard requirement §10 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

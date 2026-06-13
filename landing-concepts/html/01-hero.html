@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="_shared.css" rel="stylesheet">
+<style>
+  body{height:900px;position:relative}
+  .grid-layer{position:absolute;inset:0;opacity:.5;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 42%,#000 30%,transparent 75%)}
+  nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:34px 80px}
+  .wordmark{font-family:'Space Grotesk';font-weight:700;font-size:24px;letter-spacing:-0.02em}
+  .wordmark span{color:var(--green)}
+  .navlinks{display:flex;gap:38px;font-size:15px;font-weight:500;color:var(--muted)}
+  .nav-cta{font-size:15px;font-weight:600;border:1.5px solid var(--hair);border-radius:999px;padding:11px 24px;background:var(--surface)}
+  .hero{position:relative;text-align:center;margin-top:54px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--hair);border-radius:999px;padding:9px 18px;font-size:14px;font-weight:500;color:var(--muted);box-shadow:0 4px 14px rgba(22,36,61,.05)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  h1{font-family:'Space Grotesk';font-weight:600;font-size:86px;line-height:1.04;letter-spacing:-0.035em;margin:30px 0 26px}
+  h1 em{font-style:normal;color:var(--green)}
+  .sub{font-size:20px;line-height:1.55;color:var(--muted);max-width:680px;margin:0 auto 40px}
+  .ctas{display:flex;gap:16px;justify-content:center;align-items:center}
+  .proof{display:flex;align-items:center;gap:14px;justify-content:center;margin-top:44px}
+  .avatars{display:flex}
+  .av{width:38px;height:38px;border-radius:50%;border:2.5px solid var(--paper);margin-left:-9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff}
+  .av:first-child{margin-left:0}
+  .proof-text{font-size:14.5px;color:var(--muted)}
+  .proof-text b{color:var(--ink)}
+  .float{position:absolute;text-align:left}
+  .float-job{left:96px;bottom:96px;width:300px;padding:22px;transform:rotate(-3deg)}
+  .float-job .co{font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .float-job .role{font-family:'Space Grotesk';font-weight:600;font-size:18px;letter-spacing:-0.01em;margin-bottom:12px}
+  .float-job .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .float-toast{right:96px;bottom:128px;width:280px;padding:18px 20px;transform:rotate(2.5deg);display:flex;gap:13px;align-items:center}
+  .tick{width:40px;height:40px;border-radius:12px;background:#E7F5EC;color:var(--green-deep);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .float-toast .t1{font-weight:600;font-size:15px}
+  .float-toast .t2{font-size:13px;color:var(--muted);margin-top:2px}
+</style></head>
+<body>
+<div class="grid-layer dotgrid"></div>
+<nav>
+  <div class="wordmark">agora<span>.</span>jobs</div>
+  <div class="navlinks"><span>How it works</span><span>Features</span><span>Stories</span><span>Pricing</span></div>
+  <div class="nav-cta">Sign in</div>
+</nav>
+<div class="hero">
+  <div class="pill"><span class="dot"></span>Built for international students in Germany</div>
+  <h1 class="display">Stop scrolling job boards.<br>Start <em>interviewing</em>.</h1>
+  <p class="sub">Agora finds Werkstudent jobs your visa actually allows, then drafts your German CV and cover letter. You review everything — and you click Apply.</p>
+  <div class="ctas">
+    <a class="btn btn-primary">Start swiping — it's free</a>
+    <a class="btn btn-ghost">See how it works</a>
+  </div>
+  <div class="proof">
+    <div class="avatars">
+      <div class="av" style="background:#5B7BA8">PK</div>
+      <div class="av" style="background:#2E9E5C">LM</div>
+      <div class="av" style="background:#C2703E">AS</div>
+      <div class="av" style="background:#7A5BA8">YW</div>
+      <div class="av" style="background:#3E8FC2">RD</div>
+    </div>
+    <div class="proof-text"><b>★ 4.9</b> — loved by 2,000+ students in Berlin &amp; Munich</div>
+  </div>
+</div>
+<div class="card float float-job">
+  <div class="co">Zalando SE · Berlin</div>
+  <div class="role">Werkstudent Frontend Development</div>
+  <div class="badges">
+    <span class="badge badge-green">✓ Visa-checked</span>
+    <span class="badge badge-blue">20 h/week</span>
+    <span class="badge badge-blue">€17/h</span>
+  </div>
+</div>
+<div class="card float float-toast">
+  <div class="tick">✓</div>
+  <div><div class="t1">Draft ready</div><div class="t2">German CV + cover letter · score 92/100</div></div>
+</div>
+</body></html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="_shared.css" rel="stylesheet">
+<style>
+  body{height:820px;padding:90px 110px}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:64px}
+  h2{font-family:'Space Grotesk';font-weight:600;font-size:58px;letter-spacing:-0.03em;line-height:1.05}
+  h2 em{font-style:normal;color:var(--green)}
+  .head p{font-size:17px;line-height:1.6;color:var(--muted);max-width:380px;text-align:left}
+  .stages{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+  .stage{padding:34px 32px;position:relative}
+  .num{font-family:'Space Grotesk';font-size:15px;font-weight:600;color:var(--green);letter-spacing:.1em;margin-bottom:14px}
+  .stage h3{font-family:'Space Grotesk';font-weight:600;font-size:26px;letter-spacing:-0.02em;margin-bottom:10px}
+  .stage>p{font-size:15.5px;line-height:1.6;color:var(--muted);margin-bottom:26px;min-height:74px}
+  .mini{border:1px solid var(--hair);border-radius:12px;background:var(--paper);padding:18px}
+  .mini .co{font-size:11.5px;color:var(--muted)}
+  .mini .role{font-weight:600;font-size:15px;margin:3px 0 10px}
+  .mrow{display:flex;gap:7px;flex-wrap:wrap}
+  .swipe-hint{display:flex;justify-content:space-between;margin-top:14px;font-size:12.5px;color:var(--muted)}
+  .swipe-hint b{color:var(--green-deep)}
+  .docline{height:8px;border-radius:4px;background:#DCE4ED;margin-bottom:8px}
+  .docline.w70{width:70%}.docline.w90{width:90%}.docline.w50{width:50%}
+  .score{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+  .score .lbl{font-size:12.5px;color:var(--muted)}
+  .score .val{font-family:'Space Grotesk';font-weight:700;font-size:22px;color:var(--green-deep)}
+  .bar{height:7px;border-radius:4px;background:#DCE4ED;margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;width:92%;background:var(--green);border-radius:4px}
+  .applybtn{display:block;text-align:center;background:var(--green);color:#fff;font-weight:600;font-size:15px;border-radius:10px;padding:13px;margin-top:6px;box-shadow:0 6px 18px rgba(46,158,92,.25)}
+  .you{font-size:12.5px;color:var(--muted);text-align:center;margin-top:12px}
+  .you b{color:var(--ink)}
+</style></head>
+<body>
+  <div class="head">
+    <h2 class="display">Swipe. Draft.<br><em>You</em> apply.</h2>
+    <p>Three steps from "I need a job" to a sent application — without a single illegal listing or generic cover letter in between.</p>
+  </div>
+  <div class="stages">
+    <div class="card stage">
+      <div class="num">01 — SWIPE</div>
+      <h3>A deck that knows your visa</h3>
+      <p>Every job is pre-checked against your work-hour limits and permit type before it ever reaches your thumb.</p>
+      <div class="mini">
+        <div class="co">HelloFresh · Berlin</div>
+        <div class="role">Werkstudent DevOps / Cloud</div>
+        <div class="mrow"><span class="badge badge-green">✓ 20 h/week OK</span><span class="badge badge-blue">German B1</span></div>
+        <div class="swipe-hint"><span>← Skip</span><b>Save →</b></div>
+      </div>
+    </div>
+    <div class="card stage">
+      <div class="num">02 — DRAFT</div>
+      <h3>German documents, scored</h3>
+      <p>CV and cover letter written for that exact role — in German — and graded on six dimensions before you see them.</p>
+      <div class="mini">
+        <div class="docline w90"></div><div class="docline w70"></div><div class="docline w50"></div>
+        <div class="score"><span class="lbl">Quality score</span><span class="val">92<span style="font-size:13px;color:#9AA8BC">/100</span></span></div>
+        <div class="bar"><i></i></div>
+      </div>
+    </div>
+    <div class="card stage">
+      <div class="num">03 — APPLY</div>
+      <h3>Your finger on the button</h3>
+      <p>We never auto-submit. You review, you edit if you want, and you send it — full control, every time.</p>
+      <div class="mini">
+        <div class="co">Ready to send</div>
+        <div class="role">Werkstudent Product Marketing · Personio</div>
+        <div class="applybtn">Apply on company site ↗</div>
+        <div class="you">Submitted by <b>you</b>, never by a bot.</div>
+      </div>
+    </div>
+  </div>
+</body></html>

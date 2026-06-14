@@ -161,6 +161,18 @@
     padding-inline: clamp(1.25rem, 5vw, 4rem);
   }
 
+  /* Amber chip variant — accessible dark-amber text on marble */
+  .chip-amber {
+    color: #a05c0a;
+    border-color: color-mix(in srgb, var(--amber) 38%, transparent);
+    background: color-mix(in srgb, var(--amber) 12%, transparent);
+  }
+  .chip-amber-on-ink {
+    color: var(--amber);
+    border-color: color-mix(in srgb, var(--amber) 38%, transparent);
+    background: color-mix(in srgb, var(--amber) 12%, transparent);
+  }
+
   /* FAQ accordion — grid-rows 0fr→1fr so height animates without JS measurement.
      The global reduced-motion rule kills the transition automatically. */
   .accordion-panel {
@@ -174,6 +186,19 @@
   .accordion-panel > div {
     overflow: hidden;
   }
+}
+
+/* Scroll reveal — IntersectionObserver in useReveal.ts adds .is-revealed.
+   Elements start hidden so the entry transition can play. The reduced-motion
+   block below ensures content is always visible when motion is off. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 /* Ari idle float — gentle bob so the figure feels alive (it's a flat image) */

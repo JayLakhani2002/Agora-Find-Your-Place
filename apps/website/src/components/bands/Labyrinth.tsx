@@ -68,15 +68,15 @@ export function Labyrinth() {
         viewBox="0 0 1200 600"
         preserveAspectRatio="none"
         aria-hidden="true"
-        className="absolute inset-0 z-0 h-full w-full opacity-50"
+        className="absolute inset-0 z-0 h-full w-full opacity-[0.22]"
       >
         {MAZE_PATHS.map((d) => (
           <path
             key={d}
             d={d}
             fill="none"
-            stroke="var(--ink-soft)"
-            strokeWidth="2"
+            stroke="var(--laurel-bright)"
+            strokeWidth="1.5"
             vectorEffect="non-scaling-stroke"
           />
         ))}
@@ -96,8 +96,8 @@ export function Labyrinth() {
           {t.body}
         </p>
         <div data-reveal className="mt-10 flex flex-wrap justify-center gap-3">
-          {t.chips.map((chip) => (
-            <span key={chip} className="chip chip-on-ink">
+          {t.chips.map((chip, i) => (
+            <span key={chip} className={i % 2 === 1 ? "chip chip-amber-on-ink" : "chip chip-on-ink"}>
               {chip}
             </span>
           ))}

@@ -31,7 +31,16 @@ export function Waitlist() {
   const t = en.waitlist
   return (
     <section id="waitlist" ref={rootRef} className="band band-dark">
-      <div className="band-inner flex flex-col items-center py-28 text-center sm:py-36">
+      {/* Laurel radial bloom — decorative glow behind the CTA */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 65% at 50% 55%, color-mix(in srgb, var(--laurel) 28%, transparent), transparent)",
+        }}
+      />
+      <div className="band-inner relative z-10 flex flex-col items-center py-28 text-center sm:py-36">
         <p data-reveal className="eyebrow eyebrow-on-ink">
           {t.eyebrow}
         </p>

@@ -3,41 +3,44 @@
 import { type RefObject, useEffect } from "react"
 
 /**
- * Shared scroll-reveal: elements marked `[data-reveal]` inside `ref` rise in
- * (y: 24 → 0, opacity 0 → 1, 60ms stagger) when the section enters the viewport.
+ * Scroll-reveal using IntersectionObserver + CSS transitions.
+ * Elements marked [data-reveal] start hidden (via globals.css) and gain
+ * .is-revealed when they enter the viewport, with a stagger delay.
  *
- * Follows the Hero pattern: content is visible by default (GSAP only animates
- * `from` states), GSAP + ScrollTrigger load lazily after hydration, and
- * prefers-reduced-motion skips the whole effect.
+ * This approach is immune to GSAP pin-spacer coordinate drift — it observes
+ * real DOM positions regardless of what ScrollTrigger does to scroll heights.
  */
 export function useReveal(ref: RefObject<HTMLElement | null>, selector = "[data-reveal]") {
   useEffect(() => {
+    if (!ref.current) return
+    const root = ref.current
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (reduce) return
-    let ctx: { revert: () => void } | undefined
-    let cancelled = false
-    ;(async () => {
-      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ])
-      if (cancelled || !ref.current) return
-      gsap.registerPlugin(ScrollTrigger)
-      const root = ref.current
-      ctx = gsap.context(() => {
-        gsap.from(root.querySelectorAll(selector), {
-          y: 24,
-          opacity: 0,
-          stagger: 0.06,
-          duration: 0.6,
-          ease: "power3.out",
-          scrollTrigger: { trigger: root, start: "top 75%", once: true },
-        })
-      }, root)
-    })()
-    return () => {
-      cancelled = true
-      ctx?.revert()
+
+    const elements = Array.from(root.querySelectorAll<HTMLElement>(selector))
+    if (!elements.length) return
+
+    if (reduce) {
+      elements.forEach((el) => el.classList.add("is-revealed"))
+      return
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement
+            const idx = elements.indexOf(el)
+            el.style.transitionDelay = `${idx * 0.07}s`
+            el.classList.add("is-revealed")
+            observer.unobserve(el)
+          }
+        })
+      },
+      { threshold: 0.1 },
+    )
+
+    elements.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
   }, [ref, selector])
 }

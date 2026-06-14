@@ -30,6 +30,10 @@ export function HowItWorks() {
       setActiveStep(-1)
       return
     }
+    // Set pinned layout NOW so React re-renders with h-svh before GSAP's
+    // async import resolves — otherwise GSAP measures the stacked height and
+    // creates an oversized pin spacer, leaving a blank gap after the section.
+    setPinned(true)
     let ctx: { revert: () => void } | undefined
     let cancelled = false
     ;(async () => {
@@ -39,7 +43,6 @@ export function HowItWorks() {
       ])
       if (cancelled || !rootRef.current || !trackRef.current) return
       gsap.registerPlugin(ScrollTrigger)
-      setPinned(true)
       const root = rootRef.current
       ctx = gsap.context(() => {
         gsap.to(trackRef.current, {

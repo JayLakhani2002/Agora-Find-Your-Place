@@ -63,12 +63,24 @@ export function Employers() {
 
         <div data-reveal className="mt-16 border-t border-text/10 pt-10">
           <h3 className="font-display text-xl">{t.domainsTitle}</h3>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {t.domains.map((d) => (
-              <span key={d.label} className="chip">
-                {d.label} · <span className="font-semibold">{d.count}</span>
-              </span>
-            ))}
+          {/* Horizontal scroll row — tap/drag to explore all categories */}
+          <div className="-mx-4 mt-6 overflow-x-auto px-4 sm:-mx-8 sm:px-8">
+            <div className="flex gap-3 pb-3" style={{ width: "max-content" }}>
+              {t.domains.map((d, i) => (
+                <span
+                  key={d.label}
+                  className={cn(
+                    "flex-shrink-0 cursor-default whitespace-nowrap chip",
+                    i % 2 === 1 ? "chip-amber" : "",
+                  )}
+                >
+                  {d.label}
+                  <span className="ml-1.5 font-data font-semibold">
+                    {d.count}
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -23,8 +23,14 @@ export function WhyItWins({ showStats = false }: { showStats?: boolean }) {
         </h2>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-8">
-          {t.columns.map((col) => (
+          {t.columns.map((col, i) => (
             <div data-reveal key={col.title}>
+              <span
+                aria-hidden
+                className="mb-4 flex h-9 w-9 items-center justify-center rounded-full border-2 border-laurel-bright/50 font-data text-sm font-semibold text-laurel-bright"
+              >
+                {i + 1}
+              </span>
               <h3 className="font-display text-xl text-laurel-bright">{col.title}</h3>
               <p className="mt-3 text-text-on-ink/70">{col.body}</p>
             </div>

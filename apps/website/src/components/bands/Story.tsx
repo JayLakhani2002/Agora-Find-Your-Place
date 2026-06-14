@@ -112,10 +112,13 @@ export function Story() {
         </div>
 
         {/* Morphing phone mock */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:flex lg:flex-col lg:items-center lg:gap-4">
           <DeviceFrame tone="dark">
             <StoryMock />
           </DeviceFrame>
+          <p className="max-w-[220px] text-center font-data text-xs text-text-on-ink/45">
+            Hundreds of listings → the handful you can actually take.
+          </p>
         </div>
       </div>
 
@@ -135,6 +138,15 @@ export function Story() {
 function StoryMock() {
   return (
     <div className="relative h-full px-3 py-2">
+      {/* Mini screen header — audience immediately understands this is a job list */}
+      <div className="mb-2.5 flex items-center justify-between border-b border-text-on-ink/10 pb-2">
+        <span className="font-data text-[0.6rem] uppercase tracking-wider text-text-on-ink/50">
+          Berlin · Werkstudent
+        </span>
+        <span data-mock-q className="font-data text-[0.6rem] text-amber">
+          142 open
+        </span>
+      </div>
       <div className="grid grid-cols-2 gap-2">
         {Array.from({ length: 6 }, (_, i) => `card-${i}`).map((key) => (
           <div

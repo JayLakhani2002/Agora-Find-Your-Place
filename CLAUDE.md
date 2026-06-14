@@ -38,8 +38,9 @@ Never rely on training-data knowledge for library APIs — versions change and p
 - **8-agent decomposition** — see `Business Planning/Agents/` for each agent's spec
 - **Mode 3 permanently prohibited** — no server-side automated job submission on behalf of users (GDPR constraint)
 - **EU-only data residency** — all infra must stay in EU regions
-- **No Opus model** — use Claude Sonnet 4.x for hot path, Haiku for volume tasks
+- **Model routing** — Opus 4.8 for CV + cover-letter generation; Sonnet 4.6 for Ari's advanced tasks (interview prep, profile analysis); Haiku 4.5 for Ari's normal chat and high-volume eval/classification. Model IDs from env, never hardcoded. (Opus 4.8 is $5/$25 per Mtok input/output — affordable for generation; the earlier "no Opus" rule assumed the old ~$75/Mtok Opus output price.)
 - **Submission model**: users always click "Apply" themselves; agents draft, never submit
+- **Pricing model**: credit-based is the **primary, chosen model** (per-action credits — CV, cover letter, and Ari tasks each consume credits). **Pay-as-you-go: you only pay for what you use, and credits don't expire** — no subscription, no billing clock; top up via one-time packs. Credit price (€/credit), pack sizes, and the Free allowance are **TBD — not finalized**. Live model: `Business Planning/Investor Package/Agora-Credit-Calculator.xlsx`.
 
 ## Key Constraints
 - GDPR cascade delete must be implemented on all user-linked tables

@@ -36,13 +36,17 @@ You NEVER touch:
 If asked to build the pricing page UI: "The screen belongs to Agent 7 — I provide the `billing.*` procedures it calls."
 If asked to gate a feature: you provide the `checkQuota` helper; the domain agent calls it.
 
-## Plan tiers (from business docs — monetization Year 2)
-| Tier | Price | Entitlements |
-|------|-------|--------------|
-| **Free** | €0 | 3 AI applications / month |
-| **Pro** | ~€9/month | Unlimited applications + browser extension (Mode 2) + follow-up automation |
+## Pricing model — credit-based (from business docs)
+Users buy **credits**; each AI action consumes a fixed number (CV, cover letter, Ari advanced task, Ari chat message). **Pay-as-you-go: credits don't expire and there is no subscription clock** — sold as one-time **credit packs** via Stripe Checkout (`mode: "payment"`), with an optional auto-top-up later. This is the primary model.
 
-Pricing is provisional — confirm against the Financial Model before launch.
+| Plan | Price | Entitlements |
+|------|-------|--------------|
+| **Free** | €0 | Mode 1 Smart Review always free + a starter credit grant |
+| **Credit packs** | **TBD — €/credit not finalized** | Spend credits on CV / cover letter / Ari tasks; browser extension (Mode 2) |
+
+Credit price, pack sizes, and the Free grant are **not yet decided** — confirm against the Financial Model and `../Investor Package/Agora-Credit-Calculator.xlsx` before launch.
+
+> ⚠️ **Implementation impact (open):** the billing mechanics below still describe the **legacy subscription model** (`mode: "subscription"`, `plan_tier` enum free|pro, `STRIPE_PRO_PRICE_ID`, `checkApplicationQuota`). Moving to credits requires reworking these — a credit-balance ledger, per-action debit on generation, and pack purchase via `mode: "payment"`. Treat the subscription code below as superseded reference until that rework lands.
 
 ## Stripe — verified current Node SDK API
 **Client** (pin `apiVersion`):

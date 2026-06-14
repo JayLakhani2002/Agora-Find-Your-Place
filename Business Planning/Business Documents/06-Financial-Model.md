@@ -59,7 +59,7 @@
 ### 1.4 Cost Assumptions
 
 - All infrastructure costs in USD; EUR conversion at 0.93 (June 2026)
-- LLM costs assume model routing optimized: Haiku 4.5 for eval/classification (~80% of calls), **Sonnet 4.x** for final generation (~20%). Opus 4.8 is NOT used in the hot path (F-H1).
+- LLM costs assume model routing: Haiku 4.5 for eval/classification and Ari's normal chat (~80% of calls), **Opus 4.8** for CV + cover-letter generation, **Sonnet 4.6** for Ari's advanced tasks (interview prep, profile analysis). Opus 4.8 output is **$25/Mtok** (not the old ~$75/Mtok assumption) — see F-H1.
 - Prompt caching reduces repeat-context costs by ~40% at steady state
 - All EU regions; +5–10% vs. US pricing
 
@@ -67,15 +67,27 @@
 
 ## 2. Revenue Model
 
-### 2.1 Tiered Subscription
+### 2.1 Pricing Model — Credit-Based (PRIMARY model; prices TBD)
 
-| Tier | Price | What's Included |
-|------|-------|-----------------|
-| **Free** | €0/month | Smart Review (Mode 1, always available); core generation (generous — possible anti-abuse soft cap TBD, see PRD FR-22a); basic matching |
-| **Pro** | Set by experiment; **modeled at €5.99/month** | Unlimited applications; Magic Pre-fill (Mode 2); priority matching; interview prep; follow-up drafts |
-| **Pro Annual** | ~€47.99/year (~€4.00/mo) | Same as Pro monthly; ~33% discount |
+**This is Agora's chosen pricing model.** Users buy **credits** and each AI action consumes a fixed number. It is the primary, first-to-launch model — not subscription. (An optional auto-top-up may be offered later as a convenience, never as a requirement.)
 
-> **Pricing note (F-M8):** Final price is determined by the month-3-of-BSS three-cohort experiment at **€4.99 / €6.99 / €9.99** (decided on conversion × retention, not headline conversion). The founder roadmap's "€5.99" is used as the planning midpoint in the projections below. Earlier drafts hard-coded €4.99; treat all figures as midpoint estimates pending the live experiment.
+**How it works — pay-as-you-go, no expiry:**
+- **You only pay for what you use.** No monthly fee; a user who runs nothing pays nothing.
+- **Credits don't expire.** Buy once and spend them whenever — there is no billing clock, renewal, or time-based commitment.
+- **No subscription required.** Top up via one-time credit packs when you run low.
+
+| Action | Model | Credits (illustrative) |
+|--------|-------|------------------------|
+| Ari chat message | Haiku 4.5 | 1 |
+| Ari advanced task (interview prep, profile analysis) | Sonnet 4.6 | ~12 |
+| Cover letter | Opus 4.8 | ~13 |
+| CV generation | Opus 4.8 | ~16 |
+
+A Free allowance remains (Mode 1 Smart Review always free + a starter credit grant); paid users top up via credit packs.
+
+> **Pricing note (F-M8):** Credit price (€/credit), pack sizes, and the Free allowance are **NOT yet decided**. The credit counts above are illustrative cost-ratio anchors (1 Ari chat message = 1 credit), not final prices. The earlier subscription figures (€4.99 / €5.99 / €6.99 / €9.99) are **superseded** — treat them as historical. Model the live numbers in `../Investor Package/Agora-Credit-Calculator.xlsx`.
+
+> **Legacy-projection flag (F-M9):** The MRR / LTV / ARPU figures in §3–§4 below were built on the prior €5.99 subscription model. They are retained for reference only and **must be re-derived once credit prices are set** — do not cite them as credit-model forecasts.
 
 > **Mode 3 (fully automated submission) is permanently excluded** from all tiers. This is a legal, ethical, and product quality decision, not a pricing decision. It is not offered at any price point.
 
@@ -146,22 +158,22 @@ Employer features are out of scope for V1 financial planning. Included as future
 | Stage 2 (Growth, 500–10k) | $1,200–4,300 | 500–10,000 | $0.43–2.40 |
 | Stage 3 (Scale, 10k–100k+) | $6,000–55,000 | 10,000–100,000 | $0.55–0.60 |
 
-At Stage 2 expected midpoint: CPAU ~$1.00/month vs. €4.99 Pro price = **~5× gross margin on variable costs**.
+At Stage 2 expected midpoint: CPAU ~$1.00/month. COGS is only cents per AI action, so variable-cost gross margin stays high under any credible credit price (final €/credit TBD — see `Agora-Credit-Calculator.xlsx`).
 
 ### 4.2 Cost per Application Generated
 
 | Component | Cost (estimated) |
 |-----------|-----------------|
-| **Sonnet 4.x** generation (CV + cover letter + pre-fills, profile context cached) | ~$0.05–0.09 |
+| **Opus 4.8** generation (CV + cover letter, profile context cached) | ~$0.09–0.10 |
 | Haiku eval run (6 dimensions) | ~$0.003 |
 | Embedding (Cohere v3, per profile/job — amortized) | ~$0.0001 |
 | Worker compute per job | ~$0.001 |
-| **Total per application (happy path)** | **~$0.055–0.095** |
-| With one auto-regeneration (worst case) | **~$0.11–0.19** |
+| **Total per application (happy path)** | **~$0.10–0.11** |
+| With one auto-regeneration (worst case) | **~$0.20–0.22** |
 
-> **Correction (F-H1):** A prior draft listed "Opus generation ~$0.04–0.08". That was wrong twice over: generation now uses **Sonnet**, and Opus output pricing (~$75/Mtok) would actually put a single CV+letter generation at **~$0.25–0.35** — over 3× the entire €0.10 budget. Using Opus in the hot path would break the unit economics. Sonnet keeps the happy path inside budget; the regeneration path is the figure to watch.
+> **Update (F-H1):** Generation now uses **Opus 4.8** for CV + cover letter — a product-quality decision. The earlier objection (Opus would cost ~$0.25–0.35 per generation) was based on the old Opus price of **~$75/Mtok output**. **Opus 4.8 is $5 / $25 per Mtok (input/output)**, putting a CV+cover-letter generation at **~$0.09–0.10** — comfortably inside budget. Haiku 4.5 handles Ari's normal chat; Sonnet 4.6 handles Ari's advanced tasks. The auto-regeneration path remains the figure to watch.
 
-At **€5.99/month** Pro pricing with ~15 applications/user/month: variable cost per Pro user ≈ **$0.83–1.43/month** (happy path). Gross margin per Pro user ≈ **€4.50–5.00** after variable LLM costs — provided generation stays on Sonnet and prompt caching is enabled.
+At illustrative credit pricing with ~15 applications/user/month: variable cost per active paid user ≈ **$1.50–1.80/month** (happy path, Opus generation). Because COGS is cents per action, gross margin per paid user stays high under any credible credit price (final €/credit TBD) — keep prompt caching enabled to hold input costs down.
 
 ### 4.3 LTV / CAC Target Ratio
 
@@ -195,7 +207,7 @@ Community-led growth (WhatsApp groups, campus ambassador program) is the primary
 | Analytics | PostHog (EU) | Free tier | $0 |
 | Payments | Stripe | Pay-per-transaction | % only |
 | **Fixed subtotal** | | | **~$150–265** |
-| LLM (Claude **Sonnet** generation + Haiku eval via Bedrock EU) | usage | low volume | ~$20–100 |
+| LLM (Claude **Opus 4.8** generation + Sonnet/Haiku for Ari + Haiku eval via Bedrock EU) | usage | low volume | ~$20–100 |
 | Embeddings (Cohere v3 via Bedrock EU) | usage | low | ~$2–10 |
 | Scraping (Playwright/Apify) | usage | low volume | ~$20–80 |
 | **Realistic total** | | | **~$195–455/mo** |
@@ -246,7 +258,7 @@ Community-led growth (WhatsApp groups, campus ambassador program) is the primary
 | Observability (Sentry + PostHog + Axiom) | $400–1,500 |
 | Other (email, secrets, CI) | $200–600 |
 | **Fixed subtotal** | **~$3,000–14,000** |
-| LLM (Claude Sonnet generation + Haiku volume, high traffic) | $2,000–30,000+ |
+| LLM (Claude Opus 4.8 generation + Sonnet/Haiku for Ari + Haiku volume, high traffic) | $2,000–30,000+ |
 | Scraping | $1,000–10,000+ |
 | **Realistic total** | **~$6,000–55,000+/mo** |
 
@@ -260,7 +272,7 @@ LLM inference is the largest variable cost. It scales directly with application 
 
 | Lever | Savings Impact | Implementation Phase |
 |-------|---------------|---------------------|
-| Model routing: Haiku for eval/classification (~80% of calls), **Sonnet** for final generation (Opus reserved for offline benchmarking only — F-H1) | **High** | Phase 3 |
+| Model routing: Haiku for eval/classification + Ari chat (~80% of calls), **Opus 4.8** for CV + cover-letter generation, **Sonnet 4.6** for Ari advanced tasks (F-H1) | **High** | Phase 3 |
 | Prompt caching for repeated profile + JD context | **High** | Phase 3 |
 | Generation deduplication (cache CV draft if job/profile unchanged) | **High** | Phase 3 |
 | Batch non-urgent generation jobs (off-peak scheduling) | **Medium** | Phase 3 |

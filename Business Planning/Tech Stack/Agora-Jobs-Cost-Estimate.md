@@ -81,7 +81,7 @@ Goal: cost efficiency, EU-region containers at scale, possible move to AWS ECS.
 ## Where the money actually goes at scale
 
 1. **LLM inference** — by far the biggest variable. Mitigations:
-   - Route cheap/high-volume tasks (parsing, classification) to **Claude Haiku**; reserve **Opus** for final-quality generation.
+   - Route cheap/high-volume tasks (parsing, classification, Ari's normal chat) to **Claude Haiku 4.5**; use **Opus 4.8** for CV + cover-letter generation and **Sonnet 4.6** for Ari's advanced tasks (interview prep, profile analysis).
    - **Prompt caching** for repeated context (job descriptions, user profile).
    - Cache/deduplicate generations; don't regenerate unchanged content.
    - Batch non-urgent jobs.
@@ -94,7 +94,7 @@ Goal: cost efficiency, EU-region containers at scale, possible move to AWS ECS.
 
 | Lever | Savings impact |
 |---|---|
-| Model routing (Haiku vs Opus) | High |
+| Model routing (Haiku chat / Sonnet Ari tasks / Opus generation) | High |
 | Prompt caching | High |
 | Generation deduplication/caching | High |
 | Prefer official job APIs over scraping | Medium–High |

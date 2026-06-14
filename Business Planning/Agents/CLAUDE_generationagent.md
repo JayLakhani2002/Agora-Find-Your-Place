@@ -29,9 +29,10 @@ You NEVER touch:
 If asked to build the review/tracker SCREEN: "That belongs to Agent 7 — I provide the API."
 
 ## LLM routing (verified against business docs)
-- **Generation (hot path) = Claude Sonnet 4.x** via Bedrock eu-central-1 (CV, cover letter, follow-up)
-- **Eval + questions = Claude Haiku 4.5** (high-volume, cheap)
-- **Opus is ruled out.** Model IDs from env (`CLAUDE_SONNET_MODEL_ID`, `CLAUDE_HAIKU_MODEL_ID`) — never hardcode.
+- **CV + cover-letter generation = Claude Opus 4.8** via Bedrock eu-central-1 (highest-quality output; $5/$25 per Mtok keeps it affordable — see Financial Model F-H1)
+- **Follow-up drafts + Ari advanced tasks (interview prep, profile analysis) = Claude Sonnet 4.6**
+- **Eval + role questions + Ari normal chat = Claude Haiku 4.5** (high-volume, cheap)
+- Model IDs from env (`CLAUDE_OPUS_MODEL_ID`, `CLAUDE_SONNET_MODEL_ID`, `CLAUDE_HAIKU_MODEL_ID`) — never hardcode.
 
 ## CV generation — Tabellarischer Lebenslauf (full prompt in Prototype doc 05 §4)
 German ATS conventions are the differentiator. The prompt MUST enforce:
@@ -82,7 +83,7 @@ we never send email on their behalf in v1.
   + eval sub-scores for the review screen + follow-up drafts for the tracker.
 
 ## Definition of done
-[ ] Right-swipe → 4 role questions (Haiku) → CV + CL generated (Sonnet) in parallel
+[ ] Right-swipe → 4 role questions (Haiku) → CV + CL generated (Opus 4.8) in parallel
 [ ] No PII in any generated document — placeholders only (verify output)
 [ ] 6 eval dimensions score in parallel; overall weighted; total generation < ~15s
 [ ] Auto-regenerate triggers on overall < 8.0 (test with a deliberately weak prompt), max 2 retries
@@ -96,7 +97,7 @@ we never send email on their behalf in v1.
 - NEVER build a server-side submitter / auto-apply bot — Mode 3 is permanently banned (EU legal + account bans)
 - NEVER allow submitted from any state but approved, or without an explicit user action
 - NEVER put real name/address/contact in generated docs — placeholders; PII stays out of LLM + DB
-- NEVER use Sonnet for eval/questions (use Haiku) or Haiku for generation (use Sonnet); never Opus
+- NEVER use Haiku/Sonnet for CV+cover-letter generation (use Opus 4.8); NEVER use Sonnet/Opus for eval or role questions (use Haiku)
 - NEVER skip the audit_log append on a transition — it's the trust + legal record
 - NEVER use a non-idempotent jobId — gen_${appId}, followup_${appId}
 - NEVER build the review/tracker screen — that's Agent 7; you ship the API

@@ -9,10 +9,12 @@ import { FREE_APPLICATIONS_PER_MONTH, PLANS, billingEnabled, getStripe } from ".
 const ORIGINAL_ENV = process.env.BILLING_ENABLED
 
 beforeEach(() => {
+  // biome-ignore lint/performance/noDelete: env vars must be deleted; assigning undefined coerces to the string "undefined"
   delete process.env.BILLING_ENABLED
 })
 
 afterEach(() => {
+  // biome-ignore lint/performance/noDelete: env vars must be deleted; assigning undefined coerces to the string "undefined"
   if (ORIGINAL_ENV === undefined) delete process.env.BILLING_ENABLED
   else process.env.BILLING_ENABLED = ORIGINAL_ENV
 })

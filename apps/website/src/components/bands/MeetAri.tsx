@@ -54,7 +54,10 @@ export function MeetAri() {
 
         {/* Chat slot — Stage 2 mounts <AriChat inline /> here. Until then the starter
             chips are inert and the line below is honest about it. */}
-        <div data-reveal className="mt-16 rounded-2xl border border-text-on-ink/10 bg-ink-soft p-6 sm:p-8">
+        <div
+          data-reveal
+          className="mt-16 rounded-2xl border border-text-on-ink/10 bg-ink-soft p-6 sm:p-8"
+        >
           <div className="flex flex-wrap gap-3">
             {t.chat.starters.map((s) => (
               <span key={s} className="chip-on-ink chip cursor-default opacity-70">

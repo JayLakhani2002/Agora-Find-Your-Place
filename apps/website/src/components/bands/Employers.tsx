@@ -75,9 +75,7 @@ export function Employers() {
                   )}
                 >
                   {d.label}
-                  <span className="ml-1.5 font-data font-semibold">
-                    {d.count}
-                  </span>
+                  <span className="ml-1.5 font-data font-semibold">{d.count}</span>
                 </span>
               ))}
             </div>

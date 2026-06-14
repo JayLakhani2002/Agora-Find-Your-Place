@@ -86,12 +86,7 @@ export function HowItWorks() {
 
         <div
           ref={trackRef}
-          className={cn(
-            "mt-12",
-            pinned
-              ? "flex w-[400%]"
-              : "flex flex-col gap-20 pb-24 lg:gap-24",
-          )}
+          className={cn("mt-12", pinned ? "flex w-[400%]" : "flex flex-col gap-20 pb-24 lg:gap-24")}
         >
           {t.steps.map((step, i) => (
             <div
@@ -113,10 +108,7 @@ export function HowItWorks() {
                 {/* Step 3 is the document-optimization showcase — biggest frame,
                     marble-deep backdrop card for prominence */}
                 <div
-                  className={cn(
-                    step.id === "apply" &&
-                      "rounded-3xl bg-marble-deep p-6 sm:p-10",
-                  )}
+                  className={cn(step.id === "apply" && "rounded-3xl bg-marble-deep p-6 sm:p-10")}
                 >
                   <DeviceFrame
                     tone="light"

@@ -48,9 +48,8 @@ export function Faq() {
                       />
                     </button>
                   </h3>
-                  <div
+                  <section
                     id={`faq-panel-${i}`}
-                    role="region"
                     aria-label={item.q}
                     data-open={isOpen}
                     className="accordion-panel"
@@ -58,7 +57,7 @@ export function Faq() {
                     <div>
                       <p className="pb-6 pr-8 text-text-mute">{item.a}</p>
                     </div>
-                  </div>
+                  </section>
                 </div>
               )
             })}

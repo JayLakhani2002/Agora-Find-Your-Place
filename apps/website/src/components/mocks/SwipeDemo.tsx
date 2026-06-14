@@ -37,7 +37,12 @@ export function SwipeDemo({ active = true }: { active?: boolean }) {
           if (!job) return null
           if (pos === 0 && motionOk) {
             return (
-              <SwipeCard key={`${jobIdx}-${order[0]}`} job={job} onSwiped={advance} active={active} />
+              <SwipeCard
+                key={`${jobIdx}-${order[0]}`}
+                job={job}
+                onSwiped={advance}
+                active={active}
+              />
             )
           }
           return (

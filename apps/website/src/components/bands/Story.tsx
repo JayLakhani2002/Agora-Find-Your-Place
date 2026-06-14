@@ -49,12 +49,22 @@ export function Story() {
         })
         // Beat 1 → 2: quotes crossfade; mock cards strike through
         tl.to('[data-beat="0"]', { opacity: 0, y: -20, duration: 0.18 }, 0.16)
-        tl.fromTo('[data-beat="1"]', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.18 }, 0.3)
+        tl.fromTo(
+          '[data-beat="1"]',
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.18 },
+          0.3,
+        )
         tl.to("[data-mock-q]", { opacity: 0.25, duration: 0.2 }, 0.3)
         tl.to("[data-mock-strike]", { scaleX: 1, duration: 0.2, stagger: 0.02 }, 0.34)
         // Beat 2 → 3: collapse to the one matching card
         tl.to('[data-beat="1"]', { opacity: 0, y: -20, duration: 0.18 }, 0.6)
-        tl.fromTo('[data-beat="2"]', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.18 }, 0.74)
+        tl.fromTo(
+          '[data-beat="2"]',
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.18 },
+          0.74,
+        )
         tl.to("[data-mock-card]", { opacity: 0, scale: 0.92, duration: 0.16, stagger: 0.015 }, 0.72)
         tl.fromTo(
           "[data-mock-match]",
@@ -156,10 +166,7 @@ function StoryMock() {
           >
             <div className="h-2 w-3/4 rounded bg-text-on-ink/20" />
             <div className="mt-1.5 h-2 w-1/2 rounded bg-text-on-ink/10" />
-            <span
-              data-mock-q
-              className="absolute right-1.5 top-1.5 font-data text-xs text-amber"
-            >
+            <span data-mock-q className="absolute right-1.5 top-1.5 font-data text-xs text-amber">
               ?
             </span>
             <span

@@ -20,13 +20,13 @@ export function useReveal(ref: RefObject<HTMLElement | null>, selector = "[data-
     if (!elements.length) return
 
     if (reduce) {
-      elements.forEach((el) => el.classList.add("is-revealed"))
+      for (const el of elements) el.classList.add("is-revealed")
       return
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement
             const idx = elements.indexOf(el)
@@ -34,12 +34,12 @@ export function useReveal(ref: RefObject<HTMLElement | null>, selector = "[data-
             el.classList.add("is-revealed")
             observer.unobserve(el)
           }
-        })
+        }
       },
       { threshold: 0.1 },
     )
 
-    elements.forEach((el) => observer.observe(el))
+    for (const el of elements) observer.observe(el)
 
     return () => observer.disconnect()
   }, [ref, selector])

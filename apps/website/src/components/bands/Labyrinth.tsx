@@ -33,7 +33,7 @@ export function Labyrinth() {
       gsap.registerPlugin(ScrollTrigger)
       const paths = svgRef.current.querySelectorAll("path")
       ctx = gsap.context(() => {
-        paths.forEach((p) => {
+        for (const p of paths) {
           const len = p.getTotalLength()
           gsap.fromTo(
             p,
@@ -49,7 +49,7 @@ export function Labyrinth() {
               },
             },
           )
-        })
+        }
       }, rootRef.current)
     })()
     return () => {
@@ -97,7 +97,10 @@ export function Labyrinth() {
         </p>
         <div data-reveal className="mt-10 flex flex-wrap justify-center gap-3">
           {t.chips.map((chip, i) => (
-            <span key={chip} className={i % 2 === 1 ? "chip chip-amber-on-ink" : "chip chip-on-ink"}>
+            <span
+              key={chip}
+              className={i % 2 === 1 ? "chip chip-amber-on-ink" : "chip chip-on-ink"}
+            >
               {chip}
             </span>
           ))}

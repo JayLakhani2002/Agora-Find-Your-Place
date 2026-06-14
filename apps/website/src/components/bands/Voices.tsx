@@ -1,7 +1,7 @@
 "use client"
 
-import { testimonials } from "@/content/testimonials"
 import { en } from "@/content/en"
+import { testimonials } from "@/content/testimonials"
 import { useReveal } from "@/lib/useReveal"
 import { motion } from "framer-motion"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"

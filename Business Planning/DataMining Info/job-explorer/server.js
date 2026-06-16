@@ -9,7 +9,28 @@ const PORT = 3333;
 const BA_BASE = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs';
 const BA_KEY  = 'jobboerse-jobsuche';
 
-const ARBEITNOW_BASE = 'https://www.arbeitnow.com/api/job-board-api';
+const ARBEITNOW_BASE  = 'https://www.arbeitnow.com/api/job-board-api';
+const HOTELCAREER_URL = 'https://www.hotelcareer.com/jobs/temporary-job-berlin';
+
+// Odd-job keyword groups — each runs as a separate BA search, results merged + deduped
+const BA_ODD_JOB_KEYWORDS = [
+  { kw: 'Küchenhilfe',    domain: 'kitchen'   },
+  { kw: 'Küchenhelfer',   domain: 'kitchen'   },
+  { kw: 'Hilfskoch',      domain: 'kitchen'   },
+  { kw: 'Spüler',         domain: 'kitchen'   },
+  { kw: 'Spülkraft',      domain: 'kitchen'   },
+  { kw: 'Servicekraft',   domain: 'service'   },
+  { kw: 'Kellner',        domain: 'service'   },
+  { kw: 'Barkeeper',      domain: 'bar'       },
+  { kw: 'Housekeeping',   domain: 'hotel'     },
+  { kw: 'Reinigungskraft',domain: 'cleaning'  },
+  { kw: 'Zimmermädchen',  domain: 'hotel'     },
+  { kw: 'Lagerhelfer',    domain: 'warehouse' },
+  { kw: 'Kommissionierer',domain: 'warehouse' },
+  { kw: 'Paketzusteller', domain: 'delivery'  },
+  { kw: 'Zusteller',      domain: 'delivery'  },
+  { kw: 'Aushilfe',       domain: 'general'   },
+];
 
 // Confirmed 200 Greenhouse slugs (Berlin-headquartered or Berlin-heavy companies)
 const GREENHOUSE_COMPANIES = [
@@ -170,6 +191,129 @@ async function fetchArbeitnow({ keyword, jobTypes, pages = 3 }) {
   }));
 }
 
+// ─── BA Odd Jobs (keyword-based parallel searches) ───────────────────────────
+
+async function fetchBAOddJobKeyword({ kw, domain, location, radius }) {
+  const url = `${BA_BASE}?wo=${encodeURIComponent(location || 'Berlin')}&umkreis=${radius || 25}&angebotsart=1&arbeitszeit=mj;tz&page=1&size=25&was=${encodeURIComponent(kw)}`;
+  const res = await fetch(url, { headers: { 'X-API-Key': BA_KEY } });
+  if (!res.ok) return [];
+  const data = await res.json();
+
+  return (data.ergebnisliste || []).map(j => {
+    const loc   = j.stellenlokationen?.[0]?.adresse;
+    const types = [];
+    if (j.istGeringfuegigeBeschaeftigung) types.push('Minijob');
+    if (j.arbeitszeitTeilzeitVormittag || j.arbeitszeitTeilzeitNachmittag ||
+        j.arbeitszeitTeilzeitAbend    || j.arbeitszeitTeilzeitFlexibel)   types.push('Teilzeit');
+    if (j.arbeitszeitVollzeit && !types.length) types.push('Vollzeit');
+    return {
+      id:          `ba_oddjob_${j.referenznummer}`,
+      source:      'ba_oddjobs',
+      sourceLabel: 'Bundesagentur',
+      title:       j.stellenangebotsTitel || 'Untitled',
+      company:     j.firma || '—',
+      location:    loc ? [loc.ort, loc.plz].filter(Boolean).join(' ') : (location || 'Berlin'),
+      jobType:     types,
+      domain,
+      postedAt:    j.datumErsteVeroeffentlichung || null,
+      applyUrl:    j.externeURL || `https://www.arbeitsagentur.de/jobsuche/suche?id=${encodeURIComponent(j.referenznummer || '')}`,
+      tags:        [kw.toLowerCase()],
+      salary:      null,
+      remote:      j.homeofficemoeglich || false,
+    };
+  });
+}
+
+async function fetchBAOddJobs({ keyword, location, radius }) {
+  // Filter keywords if user typed a keyword — only search relevant domains
+  let keywords = BA_ODD_JOB_KEYWORDS;
+  if (keyword) {
+    const kw = keyword.toLowerCase();
+    const filtered = keywords.filter(k => k.kw.toLowerCase().includes(kw) || k.domain.includes(kw));
+    if (filtered.length) keywords = filtered;
+  }
+
+  console.log(`[BA OddJobs] Searching ${keywords.length} keyword groups in parallel`);
+  const results = await Promise.allSettled(
+    keywords.map(k => fetchBAOddJobKeyword({ ...k, location, radius }))
+  );
+
+  const all  = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+  // Deduplicate within this source by referenznummer
+  const seen = new Set();
+  const deduped = all.filter(j => {
+    const key = j.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  console.log(`[BA OddJobs] ${all.length} raw → ${deduped.length} after dedup`);
+  return deduped;
+}
+
+// ─── Hotelcareer ─────────────────────────────────────────────────────────────
+
+async function fetchHotelcareer({ keyword }) {
+  console.log('[Hotelcareer] Fetching Berlin hospitality jobs');
+  const res = await fetch(HOTELCAREER_URL, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/125 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    },
+  });
+  if (!res.ok) throw new Error(`Hotelcareer ${res.status}`);
+  const html = await res.text();
+
+  // Extract job blocks: <a href="/jobs/..."><h2 class="font-size-l">TITLE</h2></a><em>COMPANY</em><div class="ycg-job-metadata ...">...location...type...date...</div>
+  const blockRe = /<a\s+href="(\/jobs\/[^"]+)"[^>]*>\s*<h2[^>]*>([^<]+)<\/h2>\s*<\/a>\s*<em>([^<]*)<\/em>[\s\S]*?<div class="ycg-job-metadata[^>]*>([\s\S]*?)<\/div>/gi;
+
+  const jobs = [];
+  let m;
+  while ((m = blockRe.exec(html)) !== null) {
+    const [, href, title, company, metaBlock] = m;
+
+    const locMatch  = metaBlock.match(/ycg-i-location[^>]*><\/i>([^<]+)/);
+    const typeMatch = metaBlock.match(/ycg-i-info[^>]*><\/i>([^<]+)/);
+    const dateMatch = metaBlock.match(/ycg-i-calendar[^>]*><\/i>([^<]+)/);
+
+    const location = locMatch?.[1]?.trim() || 'Berlin';
+    const jobType  = typeMatch?.[1]?.trim() || '';
+    const dateRaw  = dateMatch?.[1]?.trim() || null;
+
+    // Parse MM/DD/YYYY → YYYY-MM-DD
+    let postedAt = null;
+    if (dateRaw) {
+      const parts = dateRaw.split('/');
+      if (parts.length === 3) postedAt = `${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+    }
+
+    // Keyword filter
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      if (!title.toLowerCase().includes(kw) && !company.toLowerCase().includes(kw)) continue;
+    }
+
+    jobs.push({
+      id:          `hc_${href.replace(/\W+/g, '_')}`,
+      source:      'hotelcareer',
+      sourceLabel: 'Hotelcareer',
+      title:       title.trim(),
+      company:     company.trim() || '—',
+      location,
+      jobType:     jobType ? [jobType] : [],
+      domain:      'hospitality',
+      postedAt,
+      applyUrl:    `https://www.hotelcareer.com${href}`,
+      tags:        ['hospitality', 'berlin'],
+      salary:      null,
+      remote:      false,
+    });
+  }
+
+  console.log(`[Hotelcareer] ${jobs.length} jobs parsed`);
+  return jobs;
+}
+
 // ─── Greenhouse ──────────────────────────────────────────────────────────────
 
 async function fetchGreenhouseCompany(company, { keyword, location }) {
@@ -328,6 +472,8 @@ async function fetchRecruitee(params) {
 const SOURCE_FNS = {
   arbeitsagentur: fetchBA,
   arbeitnow:      fetchArbeitnow,
+  ba_oddjobs:     fetchBAOddJobs,
+  hotelcareer:    fetchHotelcareer,
   greenhouse:     fetchGreenhouse,
   ashby:          fetchAshby,
   recruitee:      fetchRecruitee,
@@ -416,17 +562,21 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log('');
-  console.log('  ╔══════════════════════════════════════════════╗');
-  console.log('  ║   Agora Jobs Explorer — Running              ║');
-  console.log(`  ║   http://localhost:${PORT}                     ║`);
-  console.log('  ╠══════════════════════════════════════════════╣');
-  console.log('  ║  Sources:                                    ║');
-  console.log('  ║   • Bundesagentur für Arbeit (13,000+ jobs)  ║');
-  console.log('  ║   • Arbeitnow (10,000+ jobs)                 ║');
-  console.log(`  ║   • Greenhouse ATS (${GREENHOUSE_COMPANIES.length} Berlin companies)    ║`);
-  console.log(`  ║   • Ashby ATS (${ASHBY_COMPANIES.length} companies)              ║`);
-  console.log(`  ║   • Recruitee ATS (${RECRUITEE_COMPANIES.length} companies)            ║`);
-  console.log('  ╚══════════════════════════════════════════════╝');
+  console.log('  ╔══════════════════════════════════════════════════╗');
+  console.log('  ║   Agora Jobs Explorer — Running                  ║');
+  console.log(`  ║   http://localhost:${PORT}                         ║`);
+  console.log('  ╠══════════════════════════════════════════════════╣');
+  console.log('  ║  Werkstudent / Teilzeit sources:                 ║');
+  console.log('  ║   • Bundesagentur für Arbeit (13,000+ jobs)      ║');
+  console.log('  ║   • Arbeitnow (10,000+ jobs)                     ║');
+  console.log(`  ║   • Greenhouse ATS (${GREENHOUSE_COMPANIES.length} Berlin companies)        ║`);
+  console.log(`  ║   • Ashby ATS (${ASHBY_COMPANIES.length} companies)                  ║`);
+  console.log(`  ║   • Recruitee ATS (${RECRUITEE_COMPANIES.length} companies)                ║`);
+  console.log('  ║  Odd Jobs / Hospitality sources:                 ║');
+  console.log(`  ║   • BA Odd Jobs (${BA_ODD_JOB_KEYWORDS.length} keyword categories)         ║`);
+  console.log('  ║   • Hotelcareer.com (Berlin hospitality)         ║');
+  console.log('  ║  Gig Platforms: Wolt · Lieferando · Amazon Flex  ║');
+  console.log('  ╚══════════════════════════════════════════════════╝');
   console.log('');
   console.log('  Press Ctrl+C to stop\n');
 });

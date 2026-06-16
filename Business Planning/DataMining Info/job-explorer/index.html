@@ -14,6 +14,11 @@
     .badge-greenhouse     { background:#fce7f3; color:#9d174d; }
     .badge-ashby          { background:#ede9fe; color:#5b21b6; }
     .badge-recruitee      { background:#fef3c7; color:#92400e; }
+    .badge-ba_oddjobs     { background:#ffedd5; color:#9a3412; }
+    .badge-hotelcareer    { background:#fdf2f8; color:#be185d; }
+    .gig-card { background:white; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem; }
+    .gig-card:hover { border-color:#93c5fd; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+    .gig-badge { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:9999px; }
 
     .tag-pill { background:#f3f4f6; color:#374151; font-size:.7rem; padding:2px 8px; border-radius:9999px; }
 
@@ -156,6 +161,22 @@
           </div>
           <p class="text-xs text-gray-400 mt-2">Direct from: N26, HelloFresh, Trade Republic, GetYourGuide, Enpal, Billie + more</p>
         </div>
+
+        <!-- Odd Jobs / Hospitality -->
+        <div class="source-group">
+          <div class="source-group-label">Odd Jobs &amp; Hospitality</div>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" class="source-check w-3.5 h-3.5 accent-orange-600 rounded" value="ba_oddjobs" checked />
+              <span class="text-xs text-gray-700">BA Odd Jobs <span class="text-gray-400">(16 keywords)</span></span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" class="source-check w-3.5 h-3.5 accent-pink-700 rounded" value="hotelcareer" checked />
+              <span class="text-xs text-gray-700">Hotelcareer.com <span class="text-gray-400">(hospitality)</span></span>
+            </label>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Kitchen · Bar · Service · Warehouse · Delivery · Hotel</p>
+        </div>
       </div>
 
       <!-- Search button -->
@@ -183,6 +204,8 @@
         <span class="badge-greenhouse     px-2 py-0.5 rounded-full font-medium">Greenhouse</span>
         <span class="badge-ashby          px-2 py-0.5 rounded-full font-medium">Ashby</span>
         <span class="badge-recruitee      px-2 py-0.5 rounded-full font-medium">Recruitee</span>
+        <span class="badge-ba_oddjobs     px-2 py-0.5 rounded-full font-medium">BA Odd Jobs</span>
+        <span class="badge-hotelcareer    px-2 py-0.5 rounded-full font-medium">Hotelcareer</span>
       </div>
     </div>
 
@@ -212,6 +235,187 @@
 
     <!-- Cards -->
     <div id="resultsGrid" class="grid grid-cols-1 xl:grid-cols-2 gap-3"></div>
+
+    <!-- ── Gig Platforms section (always visible) ── -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <div class="flex items-center gap-2 mb-4">
+        <h2 class="text-sm font-semibold text-gray-800">Gig Platforms</h2>
+        <span class="text-xs text-gray-400">— always open signups, no individual application</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+
+        <!-- Wolt -->
+        <div class="gig-card flex flex-col gap-2.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm">Wolt Courier</h3>
+              <p class="text-xs text-gray-500">Food delivery · Berlin</p>
+            </div>
+            <span class="gig-badge bg-blue-100 text-blue-700">Delivery</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Pay</p>
+              <p class="font-medium text-gray-800">€12–15/hr + tips</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Vehicle</p>
+              <p class="font-medium text-gray-800">Bike (eBike free)</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">German needed</p>
+              <p class="font-medium text-green-700">None — English app</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Approval time</p>
+              <p class="font-medium text-orange-600">1–4 weeks (waitlist)</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">Very popular with international students. No German required. Wolt explicitly targets internationals.</p>
+          <a href="https://explore.wolt.com/en/deu/couriers" target="_blank" rel="noopener"
+            class="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+            Sign Up → <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+
+        <!-- Lieferando -->
+        <div class="gig-card flex flex-col gap-2.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm">Lieferando (Scoober)</h3>
+              <p class="text-xs text-gray-500">Food delivery · Minijob option</p>
+            </div>
+            <span class="gig-badge bg-orange-100 text-orange-700">Delivery</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Pay</p>
+              <p class="font-medium text-gray-800">€13.90+/hr + bonuses</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Vehicle</p>
+              <p class="font-medium text-gray-800">Bike (provided at hubs)</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">German needed</p>
+              <p class="font-medium text-yellow-700">A2 — app is German</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Type</p>
+              <p class="font-medium text-gray-800">Minijob eligible</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">Fixed hourly rate — not per-delivery. Marketed explicitly as a Minijob option for students.</p>
+          <a href="https://www.lieferando.de/en/courier/berlin" target="_blank" rel="noopener"
+            class="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+            Sign Up → <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+
+        <!-- Amazon Flex -->
+        <div class="gig-card flex flex-col gap-2.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm">Amazon Flex</h3>
+              <p class="text-xs text-gray-500">Package delivery · Self-employed</p>
+            </div>
+            <span class="gig-badge bg-yellow-100 text-yellow-800">Delivery</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Pay</p>
+              <p class="font-medium text-gray-800">~€25/hr (block rate)</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Vehicle</p>
+              <p class="font-medium text-red-600">Own car (4-door)</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">German needed</p>
+              <p class="font-medium text-green-700">A1–A2 sufficient</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Legal status</p>
+              <p class="font-medium text-red-600">Self-employed ⚠</p>
+            </div>
+          </div>
+          <p class="text-xs text-orange-600 font-medium">⚠ Self-employment (Gewerbe required). Not a Minijob or student contract. Declare income separately.</p>
+          <a href="https://flex.amazon.de" target="_blank" rel="noopener"
+            class="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+            Sign Up → <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+
+        <!-- Uber Eats -->
+        <div class="gig-card flex flex-col gap-2.5">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm">Uber Eats (Fleet)</h3>
+              <p class="text-xs text-gray-500">Food delivery · Via fleet partner</p>
+            </div>
+            <span class="gig-badge bg-gray-100 text-gray-700">Delivery</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Pay</p>
+              <p class="font-medium text-gray-800">Variable + surge</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Vehicle</p>
+              <p class="font-medium text-gray-800">Bike or scooter</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">German needed</p>
+              <p class="font-medium text-green-700">Minimal</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Process</p>
+              <p class="font-medium text-gray-800">Apply via fleet co.</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">In Germany, drivers apply through a local fleet partner — not directly through Uber. Find Berlin fleet partners on the link below.</p>
+          <a href="https://www.uber.com/de/en/e/deliver/berlin-be-de/" target="_blank" rel="noopener"
+            class="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+            Find Berlin Fleet Partners → <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+
+        <!-- Zenjob -->
+        <div class="gig-card flex flex-col gap-2.5 border-blue-200 bg-blue-50/30">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-900 text-sm">Zenjob</h3>
+              <p class="text-xs text-gray-500">Shifts across retail, hotel, events, logistics</p>
+            </div>
+            <span class="gig-badge bg-blue-100 text-blue-800">All sectors</span>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 text-xs">
+            <div class="bg-white rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Partners</p>
+              <p class="font-medium text-gray-800">Amazon, REWE, Lidl, Marriott + 1000 more</p>
+            </div>
+            <div class="bg-white rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Vehicle</p>
+              <p class="font-medium text-green-700">None required</p>
+            </div>
+            <div class="bg-white rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">German needed</p>
+              <p class="font-medium text-yellow-700">A2–B1 (sector varies)</p>
+            </div>
+            <div class="bg-white rounded-lg px-2.5 py-1.5">
+              <p class="text-gray-400 text-xs">Booking</p>
+              <p class="font-medium text-green-700">Same-day shifts in app</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-600">40,000+ students on platform. Zenjob is the employer — no CV needed, just tap to book a shift. Must be enrolled student.</p>
+          <a href="https://www.zenjob.com/en/talent/" target="_blank" rel="noopener"
+            class="mt-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+            Download Zenjob App → <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </div>
 
   </main>
 </div>
@@ -281,6 +485,8 @@
     greenhouse:     'Greenhouse',
     ashby:          'Ashby',
     recruitee:      'Recruitee',
+    ba_oddjobs:     'BA Odd Jobs',
+    hotelcareer:    'Hotelcareer',
   };
 
   function buildCard(job, index) {

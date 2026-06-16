@@ -37,7 +37,8 @@
       "apps/web/public/workbox-*.js",
       "apps/web/public/swe-worker-*.js",
       "graphify-out/**",
-      "apps/workers/storage/**"
+      "apps/workers/storage/**",
+      "Business Planning/**"
     ]
   }
 }

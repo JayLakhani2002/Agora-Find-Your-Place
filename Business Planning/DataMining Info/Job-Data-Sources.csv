@@ -1,0 +1,229 @@
+Section,Source,Field,Value,Priority,Notes
+OVERVIEW,,,,,
+OVERVIEW,Bundesagentur für Arbeit,What it is,Germany's federal employment agency — largest job database in Germany with 1.5M+ live listings,P1 — Start Day 1,Covers Minijob / Teilzeit / Werkstudent / all categories
+OVERVIEW,Arbeitnow,What it is,English-first job board built for international talent in Germany. Founder is Indian expat in Berlin — exact demographic match,P1 — Start Day 1,Manually vetted listings; visa-sponsorship and Werkstudent tagged
+OVERVIEW,JSearch (Google for Jobs),What it is,Aggregates LinkedIn + Indeed + StepStone + company career pages via Google's job index in one API call,P2 — Week 1,Free tier: 500 req/month. Produces duplicates — deduplication required
+OVERVIEW,Greenhouse,What it is,ATS used by N26 / HelloFresh / Delivery Hero / Auto1 / Wunderkind and hundreds of Berlin tech companies,P1 — Week 2,Public JSON endpoint per company. No auth. No scraping.
+OVERVIEW,Lever,What it is,ATS used by Personio and many Berlin scaleups and agencies,P1 — Week 2,Supports part-time filter at source level
+OVERVIEW,Ashby,What it is,ATS used by newer Berlin tech startups. Best compensation data of any public ATS feed.,P1 — Week 2,Clean structured salary ranges
+OVERVIEW,Personio,What it is,Dominant HR software for mid-size German companies. 1000+ customers. Mittelstand Werkstudent roles.,P1 — Week 2,XML + JSON feed per company. Building full Personio company list = significant data moat
+OVERVIEW,Recruitee,What it is,ATS used by many German SMEs,P2 — Week 2,Public API endpoint per company
+OVERVIEW,Workable,What it is,ATS used across European companies,P2 — Week 2,Public API endpoint per account
+OVERVIEW,Stellenticket,What it is,Official student job board for ALL major Berlin universities — TU / HU / FU / HWR / HTW,P1 — Week 3 (partnership),Employers who post here explicitly want students. Pre-qualified listings.
+OVERVIEW,jobicco Berlin,What it is,Companion to Stellenticket for casual/odd jobs — warehouse / events / retail / gastronomy,P2 — Phase 2,Same operator as Stellenticket. One contact covers both.
+OVERVIEW,Berlin Startup Jobs,What it is,Curated board of Berlin-specific startup roles. Already identified as direct partnership target in business plan.,P2 — Month 1,Propose data feed exchange: Agora distribution for their listing data
+OVERVIEW,StepStone,What it is,Germany's largest traditional job board. High-quality listings because employers pay to post.,P2 — Week 3 (crawl),No public API. Crawlee scraper required. 1 req/10 sec.
+OVERVIEW,Absolventa / Workwise / academics.de,What it is,Niche German student and graduate job boards. Public search pages.,P3 — Month 2,Crawl with Crawlee as secondary sources
+OVERVIEW,Zenjob / Jobber,What it is,Gig-work platforms for student shift work. No public data — commercial arrangement needed.,P3 — Phase 2,Contact Zenjob BD team for listing data sharing deal
+,,,,,
+ENDPOINTS & AUTH,,,,,
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Base URL,https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs,—,Search endpoint
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Detail URL,https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobdetails/{base64(refnr)},—,Two-step fetch: search first → get refnr → fetch detail
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,GitHub Repo,https://github.com/bundesAPI/jobsuche-api,—,Community-documented reverse-engineered API
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Official Docs,https://jobsuche.api.bund.dev,—,Semi-official documentation mirror
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Auth Method,Header: X-API-Key: jobboerse-jobsuche,—,Static public key — no signup needed
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Auth Cost,Free — no registration required,—,Key is hardcoded and public
+ENDPOINTS & AUTH,Bundesagentur für Arbeit,Env Var,ARBEITSAGENTUR_API_KEY=jobboerse-jobsuche,—,Store in .env even though it's public
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,wo,Berlin,—,Location filter
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,umkreis,25,—,Radius in km around Berlin
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,arbeitszeit,tz;mj,—,tz = part-time / mj = Minijob (semicolon-separated)
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,angebotsart,1,—,1 = jobs / 2 = apprenticeship / 4 = internship
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,page / size,1 / 100,—,Paginate. Max 100 per page.
+ENDPOINTS & AUTH,Arbeitsagentur — Filter Params,was,Werkstudent OR blank,—,Keyword filter — leave blank to get all part-time types
+,,,,,
+ENDPOINTS & AUTH,Arbeitnow,Public JSON API,https://www.arbeitnow.com/api/job-board-api,—,No auth. No key. Just GET.
+ENDPOINTS & AUTH,Arbeitnow,RSS Feed,https://www.arbeitnow.com/feed,—,Alternative to JSON API
+ENDPOINTS & AUTH,Arbeitnow,Partnership Contact,contact@arbeitnow.com,—,Founder: Adithya Srinivasan. Offers custom private API endpoint for monthly fee.
+ENDPOINTS & AUTH,Arbeitnow,Auth Method,None — fully public,—,No signup required
+ENDPOINTS & AUTH,Arbeitnow,Filter Logic,Filter response where tags array contains: werkstudent / student / minijob / teilzeit,—,Server-side filter after fetch — no source-level filter param
+ENDPOINTS & AUTH,Arbeitnow,Pagination,?page=2 / ?page=3,—,Increment until empty data array returned
+,,,,,
+ENDPOINTS & AUTH,JSearch (Google for Jobs),RapidAPI Listing,https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch,—,Sign up at RapidAPI
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Provider Site,https://www.openwebninja.com,—,API publisher
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Base URL,https://jsearch.p.rapidapi.com/search,—,
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Auth Method,Header: X-RapidAPI-Key + X-RapidAPI-Host: jsearch.p.rapidapi.com,—,RapidAPI key from account
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Env Var,JSEARCH_RAPIDAPI_KEY=your_key_here,—,
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Query Params,query=Werkstudent+Berlin&country=DE&employment_types=PARTTIME,—,
+ENDPOINTS & AUTH,JSearch (Google for Jobs),Auth Cost,Free tier: 500 req/month. Paid: ~€20/month,—,Start free. Upgrade if volume needed.
+,,,,,
+ENDPOINTS & AUTH,Greenhouse,URL Pattern,https://boards-api.greenhouse.io/v1/boards/{company_slug}/jobs?content=true,—,Replace {company_slug} with company identifier
+ENDPOINTS & AUTH,Greenhouse,Example — HelloFresh,https://boards-api.greenhouse.io/v1/boards/hellofresh/jobs?content=true,—,Test this in browser or curl right now
+ENDPOINTS & AUTH,Greenhouse,Auth Method,None,—,Fully public. No key. No login.
+ENDPOINTS & AUTH,Greenhouse,Auth Cost,Free,—,
+ENDPOINTS & AUTH,Greenhouse,Known Berlin Companies,Delivery Hero / N26 / HelloFresh / Auto1 / Wunderkind,—,Hundreds more — detect from career page URL pattern boards.greenhouse.io
+,,,,,
+ENDPOINTS & AUTH,Lever,URL Pattern,https://api.lever.co/v0/postings/{company_slug}?mode=json&commitment=Part-time,—,commitment=Part-time filters at source
+ENDPOINTS & AUTH,Lever,Auth Method,None,—,Public endpoint
+ENDPOINTS & AUTH,Lever,Auth Cost,Free,—,
+ENDPOINTS & AUTH,Lever,Known Berlin Companies,Personio (ironic) + many Berlin scaleups and agencies,—,Detect from career page URL: jobs.lever.co
+,,,,,
+ENDPOINTS & AUTH,Ashby,URL Pattern,https://api.ashbyhq.com/posting-api/job-board/{company_slug}?includeCompensation=true,—,includeCompensation=true gives salary ranges
+ENDPOINTS & AUTH,Ashby,Auth Method,None,—,Public endpoint
+ENDPOINTS & AUTH,Ashby,Auth Cost,Free,—,
+ENDPOINTS & AUTH,Ashby,Detect From,Career page URL contains: app.ashbyhq.com or jobs.ashbyhq.com,—,
+,,,,,
+ENDPOINTS & AUTH,Personio,URL Pattern (XML),https://{company}.jobs.personio.de/xml?language=en,—,language=en returns English job descriptions where available
+ENDPOINTS & AUTH,Personio,Auth Method,None,—,Public feed per company subdomain
+ENDPOINTS & AUTH,Personio,Auth Cost,Free,—,
+ENDPOINTS & AUTH,Personio,Detect From,Career page URL contains: .personio.de/jobs,—,Dominant German HR platform — thousands of German companies
+,,,,,
+ENDPOINTS & AUTH,Recruitee,URL Pattern,https://{company}.recruitee.com/api/offers/,—,
+ENDPOINTS & AUTH,Recruitee,Auth Method,None,—,Public
+ENDPOINTS & AUTH,Recruitee,Auth Cost,Free,—,
+,,,,,
+ENDPOINTS & AUTH,Workable,URL Pattern,https://www.workable.com/api/accounts/{account_subdomain}?details=true,—,
+ENDPOINTS & AUTH,Workable,Auth Method,None,—,Public
+ENDPOINTS & AUTH,Workable,Auth Cost,Free,—,
+,,,,,
+ENDPOINTS & AUTH,Stellenticket — University Portals,TU Berlin,https://tu-berlin.stellenticket.de,—,Crawl with Crawlee (partnership preferred)
+ENDPOINTS & AUTH,Stellenticket — University Portals,HU Berlin,https://hu-berlin.stellenticket.de,—,
+ENDPOINTS & AUTH,Stellenticket — University Portals,FU Berlin,https://fu-berlin.stellenticket.de,—,
+ENDPOINTS & AUTH,Stellenticket — University Portals,HWR Berlin,https://hwrberlin.stellenticket.de,—,
+ENDPOINTS & AUTH,Stellenticket — University Portals,HTW Berlin,https://htw-berlin.stellenticket.de,—,
+ENDPOINTS & AUTH,Stellenticket — University Portals,Partnership Contact,info@jobicco.berlin,—,Stellenticket and jobicco Berlin are both operated by jobicco
+ENDPOINTS & AUTH,Stellenticket — University Portals,Crawl Rate (fallback),1 request per 5 seconds per domain,—,Only if partnership fails
+,,,,,
+SETUP STEPS,,,,,
+SETUP STEPS,Bundesagentur für Arbeit,Step 1,Test the API with curl: curl -H "X-API-Key: jobboerse-jobsuche" "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs?wo=Berlin&umkreis=25&arbeitszeit=tz;mj&angebotsart=1&page=1&size=25",Day 1,2 minutes. Verify Berlin job JSON comes back.
+SETUP STEPS,Bundesagentur für Arbeit,Step 2,Add ARBEITSAGENTUR_API_KEY and ARBEITSAGENTUR_BASE_URL to .env,Day 1,
+SETUP STEPS,Bundesagentur für Arbeit,Step 3,Build a Crawlee-free HTTP fetcher (it is a JSON API — no browser/Puppeteer needed),Day 1–2,Use standard fetch() or axios
+SETUP STEPS,Bundesagentur für Arbeit,Step 4,Implement two-step fetch: search → extract refnr → base64 encode → fetch detail URL,Day 1–2,Detail URL has full description + apply URL
+SETUP STEPS,Bundesagentur für Arbeit,Step 5,Map BA response fields to your Drizzle jobs schema,Day 2,See DB Schema section for target schema
+SETUP STEPS,Bundesagentur für Arbeit,Step 6,Run first bulk fetch — Berlin / all part-time + Minijob types — paginate until empty,Day 2,Target: 5000+ jobs ingested on Day 1
+SETUP STEPS,Bundesagentur für Arbeit,Step 7,Schedule recurring fetch every 4 hours via cron/queue,Day 3,New jobs appear on BA side within minutes
+,,,,,
+SETUP STEPS,Arbeitnow,Step 1,Test the API: curl https://www.arbeitnow.com/api/job-board-api,Day 3,2 minutes. Read the tags array in the response.
+SETUP STEPS,Arbeitnow,Step 2,Build fetcher — paginate ?page=1 through ?page=N until data array is empty,Day 3,
+SETUP STEPS,Arbeitnow,Step 3,Filter where tags contains werkstudent / student / minijob / teilzeit,Day 3,Client-side filter — no server filter param available
+SETUP STEPS,Arbeitnow,Step 4,Implement deduplication against BA data using SHA-256(company+title+location+apply_url),Day 3–4,Critical — same job will appear on both sources
+SETUP STEPS,Arbeitnow,Step 5,Schedule recurring fetch every 6 hours,Day 4,
+SETUP STEPS,Arbeitnow,Step 6 (Outreach),Draft email to contact@arbeitnow.com — introduce Agora / ask about custom private API endpoint,Week 1,One paragraph. Mention audience overlap with international Berlin students.
+,,,,,
+SETUP STEPS,JSearch (Google for Jobs),Step 1,Sign up at rapidapi.com — subscribe to JSearch (free tier),Day 5,
+SETUP STEPS,JSearch (Google for Jobs),Step 2,Add JSEARCH_RAPIDAPI_KEY to .env,Day 5,
+SETUP STEPS,JSearch (Google for Jobs),Step 3,Query: GET /search?query=Werkstudent+Berlin&country=DE&employment_types=PARTTIME,Day 5,
+SETUP STEPS,JSearch (Google for Jobs),Step 4,Deduplicate against existing DB before inserting — this source aggregates from many platforms,Day 5,Hash: SHA-256(company+title+location+apply_url)
+SETUP STEPS,JSearch (Google for Jobs),Step 5,Schedule once daily (limited by free tier quota),Day 5,
+,,,,,
+SETUP STEPS,ATS Feeds (All),Step 1,Export Berlin tech companies from Crunchbase free tier,Week 2 Day 1–2,Target: 200 companies catalogued
+SETUP STEPS,ATS Feeds (All),Step 2,"For each company career page URL, detect ATS by URL pattern (see Detection Patterns section)",Week 2 Day 1–2,Auto-detectable from career page URL
+SETUP STEPS,ATS Feeds (All),Step 3,"Build company_ats_registry DB table: company_name / ats_platform / ats_slug / career_page_url / last_fetched_at",Week 2 Day 2,This table drives all ATS fetchers
+SETUP STEPS,ATS Feeds (All),Step 4,Build one Crawlee HTTP fetcher per ATS platform (Greenhouse / Lever / Ashby / Personio / Recruitee),Week 2 Day 3–4,Each reads from company_ats_registry and hits the correct public endpoint
+SETUP STEPS,ATS Feeds (All),Step 5,Normalize all ATS responses to your Drizzle jobs schema,Week 2 Day 4,Field mapping differs per ATS
+SETUP STEPS,ATS Feeds (All),Step 6,Schedule each fetcher every 6 hours,Week 2 Day 5,
+SETUP STEPS,ATS Feeds (All),Step 7,Test Greenhouse immediately: curl https://boards-api.greenhouse.io/v1/boards/hellofresh/jobs?content=true,Day 1 (quick test),Takes 30 seconds to verify it works
+,,,,,
+SETUP STEPS,Stellenticket,Step 1,Email info@jobicco.berlin — introduce Agora / propose listing integration with attribution,Week 3 Day 1,Value to them: traffic + brand exposure to their exact target demographic
+SETUP STEPS,Stellenticket,Step 2 (if partnership agreed),Integrate their data feed per partnership terms,Week 3–4,
+SETUP STEPS,Stellenticket,Step 2 (if no response in 2 weeks),Build Crawlee scraper for all 5 university portals,Week 4,Rate: 1 req/5 sec per domain. Listings are publicly accessible without login.
+,,,,,
+ATS DETECTION PATTERNS,,,,,
+ATS DETECTION PATTERNS,Greenhouse,Career Page URL Contains,boards.greenhouse.io,—,
+ATS DETECTION PATTERNS,Lever,Career Page URL Contains,jobs.lever.co,—,
+ATS DETECTION PATTERNS,Ashby,Career Page URL Contains,app.ashbyhq.com OR jobs.ashbyhq.com,—,
+ATS DETECTION PATTERNS,Personio,Career Page URL Contains,.personio.de/jobs,—,
+ATS DETECTION PATTERNS,Recruitee,Career Page URL Contains,.recruitee.com,—,
+ATS DETECTION PATTERNS,Workable,Career Page URL Contains,apply.workable.com,—,
+,,,,,
+ENRICHMENT PIPELINE,,,,,
+ENRICHMENT PIPELINE,Pipeline Overview,Flow,Raw Job → Field Normalization → LLM Classification → Eligibility Tagging → Vector Embedding → DB Insert,—,Runs on every ingested job before it enters the swipe deck
+ENRICHMENT PIPELINE,Step 1 — Field Normalization,What it does,Normalize location to coordinates + district / Parse salary strings to min-max floats / Parse employment type to enum / Detect output language (DE or EN),—,Deterministic — no LLM needed
+ENRICHMENT PIPELINE,Step 1 — Field Normalization,Employment Type Enum,WERKSTUDENT / MINIJOB / TEILZEIT / VOLLZEIT / ODD_JOB,—,
+ENRICHMENT PIPELINE,Step 1 — Field Normalization,Language Detection,langdetect library — detect DE vs EN from description text,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Model,Claude Haiku 4.5,—,~€0.001 per job. Affordable at any volume.
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Input,Job title + description excerpt (first 500 characters),—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — employment_type,werkstudent / minijob / teilzeit / vollzeit / odd_job / unknown,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — estimated_weekly_hours,Number or null,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — minimum_german_level,none / A1 / A2 / B1 / B2 / C1 / C2,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — is_field_related,true / false — requires degree-level knowledge?,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — contract_type,permanent / fixed_term / project / unknown,—,
+ENRICHMENT PIPELINE,Step 2 — LLM Classification,Output — visa_eligible,true / false / null (null = cannot determine),—,
+ENRICHMENT PIPELINE,Step 3 — Eligibility Tagging,What it does,Tag for each visa type that can legally take this job / Flag Minijob salary ceiling breach / Flag 20hr/week cap risk,—,Deterministic — uses LLM output + raw fields
+ENRICHMENT PIPELINE,Step 4 — Vector Embedding,Model,Cohere embed-multilingual-v3,—,Already in Agora tech stack
+ENRICHMENT PIPELINE,Step 4 — Vector Embedding,Input,title + company + description[:800],—,
+ENRICHMENT PIPELINE,Step 4 — Vector Embedding,Storage,pgvector column — VECTOR(1024) — HNSW index,—,
+ENRICHMENT PIPELINE,Step 5 — Deduplication,Method,SHA-256 hash of: company_name + title + location + apply_url,—,Skip insert if hash already exists. Update if updated_at is newer.
+,,,,,
+DB SCHEMA,,,,,
+DB SCHEMA,jobs table,id,UUID PRIMARY KEY DEFAULT gen_random_uuid(),—,
+DB SCHEMA,jobs table,source,TEXT NOT NULL — arbeitsagentur / arbeitnow / greenhouse / lever / ashby / personio / stellenticket,—,Source tracking
+DB SCHEMA,jobs table,source_id,TEXT NOT NULL — original ID from source,—,
+DB SCHEMA,jobs table,apply_url,TEXT NOT NULL,—,Always required — users apply on company page
+DB SCHEMA,jobs table,title,TEXT NOT NULL,—,
+DB SCHEMA,jobs table,company,TEXT NOT NULL,—,
+DB SCHEMA,jobs table,description,TEXT NOT NULL,—,
+DB SCHEMA,jobs table,location_raw,TEXT,—,Original location string
+DB SCHEMA,jobs table,city,TEXT,—,Normalized
+DB SCHEMA,jobs table,district,TEXT,—,Berlin district (Mitte / Prenzlauer Berg / etc.)
+DB SCHEMA,jobs table,latitude,FLOAT,—,
+DB SCHEMA,jobs table,longitude,FLOAT,—,
+DB SCHEMA,jobs table,employment_type,job_type_enum — werkstudent / minijob / teilzeit / vollzeit / odd_job,—,Set by enrichment pipeline
+DB SCHEMA,jobs table,weekly_hours_min,SMALLINT,—,
+DB SCHEMA,jobs table,weekly_hours_max,SMALLINT,—,
+DB SCHEMA,jobs table,salary_min,NUMERIC,—,
+DB SCHEMA,jobs table,salary_max,NUMERIC,—,
+DB SCHEMA,jobs table,salary_currency,TEXT DEFAULT EUR,—,
+DB SCHEMA,jobs table,eligible_student_visa,BOOLEAN,—,Set by eligibility tagging
+DB SCHEMA,jobs table,eligible_eu_citizen,BOOLEAN,—,
+DB SCHEMA,jobs table,eligible_chancenkarte,BOOLEAN,—,
+DB SCHEMA,jobs table,min_german_level,german_level_enum — none / a1 / a2 / b1 / b2 / c1 / c2,—,
+DB SCHEMA,jobs table,posted_at,TIMESTAMPTZ,—,
+DB SCHEMA,jobs table,scraped_at,TIMESTAMPTZ DEFAULT NOW(),—,
+DB SCHEMA,jobs table,expires_at,TIMESTAMPTZ,—,posted_at + 60 days if no explicit expiry
+DB SCHEMA,jobs table,is_active,BOOLEAN DEFAULT TRUE,—,
+DB SCHEMA,jobs table,embedding,VECTOR(1024),—,Cohere embed-multilingual-v3
+DB SCHEMA,jobs table,dedup_hash,TEXT UNIQUE,—,SHA-256(company+title+location+apply_url)
+DB SCHEMA,jobs table,INDEX 1,HNSW on embedding (vector_cosine_ops),—,For semantic search / matching
+DB SCHEMA,jobs table,INDEX 2,city + is_active + employment_type,—,For filtered browse
+DB SCHEMA,jobs table,INDEX 3,eligible_student_visa + is_active,—,For visa-filtered swipe deck
+DB SCHEMA,company_ats_registry,company_name,TEXT NOT NULL,—,
+DB SCHEMA,company_ats_registry,ats_platform,TEXT NOT NULL — greenhouse / lever / ashby / personio / recruitee / workable,—,
+DB SCHEMA,company_ats_registry,ats_slug,TEXT NOT NULL,—,The {company_slug} for the API URL
+DB SCHEMA,company_ats_registry,career_page_url,TEXT,—,Source used to detect ATS type
+DB SCHEMA,company_ats_registry,last_fetched_at,TIMESTAMPTZ,—,
+,,,,,
+COST ESTIMATES,,,,,
+COST ESTIMATES,Bundesagentur für Arbeit,Monthly Cost,€0,—,Public API. No registration. No key purchase.
+COST ESTIMATES,Arbeitnow (public API),Monthly Cost,€0,—,Completely free
+COST ESTIMATES,Arbeitnow (private API partnership),Monthly Cost,Small monthly fee (TBD via negotiation),—,Custom endpoint from founder — pursue in month 1–2
+COST ESTIMATES,ATS Feeds (Greenhouse / Lever / Ashby / Personio / Recruitee),Monthly Cost,€0,—,All public endpoints. No auth.
+COST ESTIMATES,JSearch RapidAPI,Monthly Cost — Free Tier,€0 (500 req/month),—,Sufficient for daily queries in early stage
+COST ESTIMATES,JSearch RapidAPI,Monthly Cost — Paid,~€20/month,—,If volume exceeds free tier
+COST ESTIMATES,Haiku 4.5 Enrichment,Monthly Cost,~€0.25/month for 10000 jobs,—,500 tokens per job classification
+COST ESTIMATES,Cohere Embeddings,Monthly Cost,~€0.10/month for 10000 jobs,—,embed-multilingual-v3
+COST ESTIMATES,Crawlee Hosting (Railway),Monthly Cost,Included in backend hosting cost,—,No additional line item
+COST ESTIMATES,Stellenticket Partnership,Monthly Cost,Likely €0 in exchange for attribution,—,Traffic value to them exceeds any fee
+COST ESTIMATES,TOTAL — Month 1,Monthly Cost,< €5/month,—,Almost entirely free. Scale cost only emerges at 100k+ jobs/month.
+,,,,,
+VOLUME ESTIMATES,,,,,
+VOLUME ESTIMATES,Bundesagentur für Arbeit,Berlin-area jobs (all types),50000–100000,—,
+VOLUME ESTIMATES,Bundesagentur für Arbeit,After part-time + Minijob filter,5000–15000,—,This is your primary pipeline volume
+VOLUME ESTIMATES,Arbeitnow,Total indexed jobs,10000–20000,—,
+VOLUME ESTIMATES,Arbeitnow,After student tag filter,~2000–5000,—,High quality — manually vetted
+VOLUME ESTIMATES,Stellenticket (all 5 Berlin portals combined),Active student listings,5000–8000,—,Pre-qualified — employers explicitly want students
+VOLUME ESTIMATES,ATS Feeds (200 companies),Estimated active jobs,1000–4000,—,Scales with company registry size
+VOLUME ESTIMATES,TOTAL — Week 1 realistic target,Jobs in DB,10000+,—,
+VOLUME ESTIMATES,TOTAL — Week 3 realistic target,Jobs in DB,30000+,—,
+,,,,,
+REFRESH CADENCE,,,,,
+REFRESH CADENCE,Bundesagentur für Arbeit,Frequency,Every 4 hours,—,New jobs appear on BA side within minutes of posting
+REFRESH CADENCE,Arbeitnow,Frequency,Every 6 hours,—,
+REFRESH CADENCE,ATS Feeds (all),Frequency,Every 6 hours,—,
+REFRESH CADENCE,JSearch (Google for Jobs),Frequency,Once daily,—,Limited by free tier quota
+REFRESH CADENCE,Stellenticket,Frequency,Every 12 hours,—,University job boards refresh slower
+REFRESH CADENCE,StepStone,Frequency,Every 12 hours,—,Listings don't change fast enough to warrant more
+REFRESH CADENCE,Expiry Rule,Automatic deactivation,Mark is_active=false if job not returned by source for 60 days,—,Run as a nightly cleanup job
+,,,,,
+OUTREACH ACTION ITEMS,,,,,
+OUTREACH ACTION ITEMS,Arbeitnow,Contact,contact@arbeitnow.com,P1 — Week 1,Founder: Adithya Srinivasan (Indian / Berlin-based). One paragraph. Introduce Agora. Ask about custom private API arrangement. Mention audience overlap.
+OUTREACH ACTION ITEMS,Stellenticket / jobicco,Contact,info@jobicco.berlin,P1 — Week 3,Propose: Agora displays Stellenticket listings with attribution and drives apply-clicks back to Stellenticket. Value: traffic + brand exposure to their exact demographic.
+OUTREACH ACTION ITEMS,Berlin Startup Jobs,Contact,Via website contact form (berlinstartupjobs.com),P2 — Month 1,Propose data feed exchange: Agora gives distribution / they give curated listing data.
+OUTREACH ACTION ITEMS,StepStone,Contact,Partner/publisher program,P3 — Month 2,Explore publisher partnership. Crawl in the meantime.
+OUTREACH ACTION ITEMS,Zenjob,Contact,Zenjob BD team,P3 — Phase 2,Frame as distribution partnership — Agora sends students / they share listing data or pay per placement.
+,,,,,
+DO NOT DO,,,,,
+DO NOT DO,LinkedIn,Risk,Scrape at scale — LinkedIn blocks scrapers / sends legal threats / ToS prohibits it,—,Occasional single-item crawl is low risk. Systematic scale scraping is not.
+DO NOT DO,Employer Direct Postings,Risk,Build employer posting feature in v1 — no employer posts to a zero-user platform,—,Classic cold-start mistake. Solve supply with scraping first.
+DO NOT DO,Commercial Data Feed on Day 1,Risk,Not needed — free sources give 10000+ Berlin jobs in Week 1,—,Buy commercial data only when free sources prove insufficient.
+DO NOT DO,LinkedIn Job Descriptions in DB,Risk,LinkedIn jobs redirect to LinkedIn to apply — you cannot provide a usable apply URL without LinkedIn login,—,Skip them entirely.
+DO NOT DO,Bundesagentur Formal Agreement,Risk,Not necessary — the API is public and widely used. No formal agreement needed.,—,

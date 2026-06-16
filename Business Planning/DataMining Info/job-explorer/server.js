@@ -3,138 +3,342 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 3333;
+
+// ─── Source configs ──────────────────────────────────────────────────────────
+
 const BA_BASE = 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs';
-const BA_KEY = 'jobboerse-jobsuche';
+const BA_KEY  = 'jobboerse-jobsuche';
+
 const ARBEITNOW_BASE = 'https://www.arbeitnow.com/api/job-board-api';
 
-// BA arbeitszeit codes
+// Confirmed 200 Greenhouse slugs (Berlin-headquartered or Berlin-heavy companies)
+const GREENHOUSE_COMPANIES = [
+  { slug: 'hellofresh',     name: 'HelloFresh' },
+  { slug: 'wooga',          name: 'Wooga' },
+  { slug: 'contentful',     name: 'Contentful' },
+  { slug: 'commercetools',  name: 'Commercetools' },
+  { slug: 'traderepublic',  name: 'Trade Republic' },
+  { slug: 'wunderkind',     name: 'Wunderkind' },
+  { slug: 'n26',            name: 'N26' },
+  { slug: 'solarisbank',    name: 'Solarisbank' },
+  { slug: 'raisin',         name: 'Raisin' },
+  { slug: 'staffbase',      name: 'Staffbase' },
+  { slug: 'scout24',        name: 'Scout24' },
+  { slug: 'flaconi',        name: 'Flaconi' },
+  { slug: 'grover',         name: 'Grover' },
+  { slug: 'heycar',         name: 'HeyCAR' },
+  { slug: 'getyourguide',   name: 'GetYourGuide' },
+];
+
+// Confirmed 200 Ashby slugs
+const ASHBY_COMPANIES = [
+  { slug: 'lemon-markets', name: 'Lemon Markets' },
+  { slug: 'preply',        name: 'Preply' },
+  { slug: 'choco',         name: 'Choco' },
+  { slug: 'enpal',         name: 'Enpal' },
+  { slug: 'billie',        name: 'Billie' },
+];
+
+// Confirmed 200 Recruitee slugs
+const RECRUITEE_COMPANIES = [
+  { slug: 'rebuy',       name: 'Rebuy' },
+  { slug: 'kfzteile24', name: 'KFZ-Teile24' },
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 const JOB_TYPE_TO_BA = {
   werkstudent: 'tz',
-  teilzeit: 'tz',
-  minijob: 'mj',
-  vollzeit: 'vz',
+  teilzeit:    'tz',
+  minijob:     'mj',
+  vollzeit:    'vz',
 };
 
-// Arbeitnow job_types values that indicate student / part-time work
 const AN_STUDENT_TYPES = ['working student', 'student', 'hilfstätigkeit', 'side', 'part', 'intern'];
 
-async function fetchBA({ keyword, location, radius, jobTypes }) {
-  const baCodes = [...new Set((jobTypes || []).map(t => JOB_TYPE_TO_BA[t]).filter(Boolean))];
+// Location match: accept if job location contains search location, Germany, or Remote
+function matchesLocation(jobLocationStr, searchLocation) {
+  const jl  = (jobLocationStr || '').toLowerCase();
+  const sl  = (searchLocation || 'berlin').toLowerCase();
+  if (!jl) return true; // no location = assume global/remote = accept
+  return jl.includes(sl) || jl.includes('germany') || jl.includes('deutschland') ||
+         jl.includes('remote') || jl.includes('hybrid');
+}
 
-  // Build URL manually to avoid semicolon encoding
+function matchesKeyword(str, kw) {
+  if (!kw) return true;
+  return (str || '').toLowerCase().includes(kw.toLowerCase());
+}
+
+// ─── Bundesagentur für Arbeit ────────────────────────────────────────────────
+
+async function fetchBA({ keyword, location, radius, jobTypes }) {
+  const codes = [...new Set((jobTypes || []).map(t => JOB_TYPE_TO_BA[t]).filter(Boolean))];
   let url = `${BA_BASE}?wo=${encodeURIComponent(location || 'Berlin')}&umkreis=${radius || 25}&angebotsart=1&page=1&size=50`;
-  if (baCodes.length > 0) url += `&arbeitszeit=${baCodes.join(';')}`;
-  if (keyword) url += `&was=${encodeURIComponent(keyword)}`;
+  if (codes.length) url += `&arbeitszeit=${codes.join(';')}`;
+  if (keyword)      url += `&was=${encodeURIComponent(keyword)}`;
 
   console.log('[BA] GET', url);
   const res = await fetch(url, { headers: { 'X-API-Key': BA_KEY } });
-  if (!res.ok) throw new Error(`BA API ${res.status}: ${await res.text().then(t => t.slice(0, 200))}`);
+  if (!res.ok) throw new Error(`BA ${res.status}`);
 
   const data = await res.json();
   const items = data.ergebnisliste || [];
-  console.log(`[BA] ${items.length} jobs returned (${data.maxErgebnisse} total available)`);
+  console.log(`[BA] ${items.length} / ${data.maxErgebnisse} total`);
 
-  return items.map(job => {
-    const loc = job.stellenlokationen?.[0]?.adresse;
-    const jobTypeLabels = [];
-    if (job.arbeitszeitVollzeit) jobTypeLabels.push('Vollzeit');
-    if (job.istGeringfuegigeBeschaeftigung) jobTypeLabels.push('Minijob');
-    if (job.arbeitszeitTeilzeitVormittag || job.arbeitszeitTeilzeitNachmittag ||
-        job.arbeitszeitTeilzeitAbend || job.arbeitszeitTeilzeitFlexibel) jobTypeLabels.push('Teilzeit');
+  return items.map(j => {
+    const loc  = j.stellenlokationen?.[0]?.adresse;
+    const types = [];
+    if (j.arbeitszeitVollzeit) types.push('Vollzeit');
+    if (j.istGeringfuegigeBeschaeftigung) types.push('Minijob');
+    if (j.arbeitszeitTeilzeitVormittag || j.arbeitszeitTeilzeitNachmittag ||
+        j.arbeitszeitTeilzeitAbend    || j.arbeitszeitTeilzeitFlexibel)   types.push('Teilzeit');
 
     return {
-      id: `ba_${job.referenznummer}`,
-      source: 'arbeitsagentur',
+      id:          `ba_${j.referenznummer}`,
+      source:      'arbeitsagentur',
       sourceLabel: 'Bundesagentur',
-      title: job.stellenangebotsTitel || 'Untitled',
-      company: job.firma || '—',
-      location: loc ? [loc.ort, loc.plz].filter(Boolean).join(' ') : (location || 'Berlin'),
-      jobType: jobTypeLabels,
-      postedAt: job.datumErsteVeroeffentlichung || null,
-      applyUrl: job.externeURL || `https://www.arbeitsagentur.de/jobsuche/suche?id=${encodeURIComponent(job.referenznummer || '')}`,
-      tags: [],
-      salary: null,
-      remote: job.homeofficemoeglich || false,
+      title:       j.stellenangebotsTitel || 'Untitled',
+      company:     j.firma || '—',
+      location:    loc ? [loc.ort, loc.plz].filter(Boolean).join(' ') : (location || 'Berlin'),
+      jobType:     types,
+      postedAt:    j.datumErsteVeroeffentlichung || null,
+      applyUrl:    j.externeURL || `https://www.arbeitsagentur.de/jobsuche/suche?id=${encodeURIComponent(j.referenznummer || '')}`,
+      tags:        [],
+      salary:      null,
+      remote:      j.homeofficemoeglich || false,
     };
   });
 }
 
+// ─── Arbeitnow ───────────────────────────────────────────────────────────────
+
 async function fetchArbeitnow({ keyword, jobTypes, pages = 3 }) {
-  const kw = (keyword || '').toLowerCase();
-  const wantsMinijob = (jobTypes || []).includes('minijob');
+  const wantsWerk     = (jobTypes || []).includes('werkstudent');
+  const wantsMinijob  = (jobTypes || []).includes('minijob');
+  const wantsTeilzeit = (jobTypes || []).includes('teilzeit');
   const wantsVollzeit = (jobTypes || []).includes('vollzeit');
 
-  const allJobs = [];
-
-  for (let page = 1; page <= pages; page++) {
-    console.log(`[Arbeitnow] Fetching page ${page}...`);
-    const res = await fetch(`${ARBEITNOW_BASE}?page=${page}`);
-    if (!res.ok) throw new Error(`Arbeitnow API ${res.status}`);
+  const all = [];
+  for (let p = 1; p <= pages; p++) {
+    console.log(`[Arbeitnow] page ${p}`);
+    const res = await fetch(`${ARBEITNOW_BASE}?page=${p}`);
+    if (!res.ok) throw new Error(`Arbeitnow ${res.status}`);
     const data = await res.json();
     if (!data.data?.length) break;
-    allJobs.push(...data.data);
+    all.push(...data.data);
   }
 
-  console.log(`[Arbeitnow] ${allJobs.length} total jobs fetched across ${pages} pages`);
+  const kw = (keyword || '').toLowerCase();
 
-  const filtered = allJobs.filter(job => {
-    const titleLower = (job.title || '').toLowerCase();
+  const filtered = all.filter(job => {
+    const title = (job.title || '').toLowerCase();
     const types = (job.job_types || []).map(t => t.toLowerCase());
 
-    // Check if job matches student/werkstudent/minijob type
-    const isStudentType =
-      titleLower.includes('werkstudent') ||
-      titleLower.includes('studentenjob') ||
-      titleLower.includes('student job') ||
-      types.some(t => AN_STUDENT_TYPES.some(s => t.includes(s)));
+    const isStudent  = title.includes('werkstudent') || title.includes('studentenjob') ||
+                       types.some(t => AN_STUDENT_TYPES.some(s => t.includes(s)));
+    const isMinijob  = title.includes('minijob') || types.some(t => t.includes('mini'));
+    const isTeilzeit = title.includes('teilzeit') || types.some(t => t.includes('part'));
+    const isVollzeit = types.some(t => t.includes('full'));
 
-    const isMinijob = titleLower.includes('minijob') || types.some(t => t.includes('mini'));
-    const isPartTime = titleLower.includes('teilzeit') || types.some(t => t.includes('part'));
-    const isFullTime = job.arbeitszeitVollzeit || types.some(t => t.includes('full'));
+    let ok = false;
+    if (wantsWerk     && isStudent)  ok = true;
+    if (wantsMinijob  && isMinijob)  ok = true;
+    if (wantsTeilzeit && isTeilzeit) ok = true;
+    if (wantsVollzeit && isVollzeit) ok = true;
+    if (!ok) return false;
 
-    // Filter by selected job types
-    let matches = false;
-    if ((jobTypes || []).includes('werkstudent') && isStudentType) matches = true;
-    if (wantsMinijob && isMinijob) matches = true;
-    if ((jobTypes || []).includes('teilzeit') && isPartTime) matches = true;
-    if (wantsVollzeit && isFullTime) matches = true;
-
-    if (!matches) return false;
-
-    // Keyword filter
-    if (kw) {
-      return titleLower.includes(kw) ||
-        (job.description || '').toLowerCase().includes(kw) ||
-        (job.company_name || '').toLowerCase().includes(kw);
-    }
-    return true;
+    return kw ? (title.includes(kw) || (job.description || '').toLowerCase().includes(kw) ||
+                 (job.company_name || '').toLowerCase().includes(kw)) : true;
   });
 
-  console.log(`[Arbeitnow] ${filtered.length} jobs after filter`);
+  console.log(`[Arbeitnow] ${all.length} fetched → ${filtered.length} matched`);
 
-  return filtered.map(job => ({
-    id: `an_${job.slug}`,
-    source: 'arbeitnow',
+  return filtered.map(j => ({
+    id:          `an_${j.slug}`,
+    source:      'arbeitnow',
     sourceLabel: 'Arbeitnow',
-    title: job.title,
-    company: job.company_name || '—',
-    location: job.location || 'Germany',
-    jobType: job.job_types || [],
-    postedAt: job.created_at
-      ? new Date(job.created_at * 1000).toISOString().split('T')[0]
-      : null,
-    applyUrl: job.url,
-    tags: job.tags || [],
-    salary: null,
-    remote: job.remote || false,
+    title:       j.title,
+    company:     j.company_name || '—',
+    location:    j.location || 'Germany',
+    jobType:     j.job_types || [],
+    postedAt:    j.created_at ? new Date(j.created_at * 1000).toISOString().split('T')[0] : null,
+    applyUrl:    j.url,
+    tags:        j.tags || [],
+    salary:      null,
+    remote:      j.remote || false,
   }));
 }
+
+// ─── Greenhouse ──────────────────────────────────────────────────────────────
+
+async function fetchGreenhouseCompany(company, { keyword, location }) {
+  const res = await fetch(
+    `https://boards-api.greenhouse.io/v1/boards/${company.slug}/jobs?content=false`
+  );
+  if (!res.ok) {
+    console.warn(`[GH] ${company.slug} → ${res.status}`);
+    return [];
+  }
+  const data = await res.json();
+
+  return (data.jobs || [])
+    .filter(j => matchesLocation(j.location?.name, location) &&
+                 matchesKeyword(j.title, keyword))
+    .map(j => ({
+      id:          `gh_${company.slug}_${j.id}`,
+      source:      'greenhouse',
+      sourceLabel: company.name,
+      title:       j.title,
+      company:     company.name,
+      location:    j.location?.name || 'Germany',
+      jobType:     [],
+      postedAt:    j.first_published ? j.first_published.split('T')[0] : null,
+      applyUrl:    j.absolute_url,
+      tags:        [],
+      salary:      null,
+      remote:      false,
+    }));
+}
+
+async function fetchGreenhouse(params) {
+  console.log(`[GH] Fetching ${GREENHOUSE_COMPANIES.length} companies in parallel`);
+  const results = await Promise.allSettled(
+    GREENHOUSE_COMPANIES.map(c => fetchGreenhouseCompany(c, params))
+  );
+  const jobs = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+  console.log(`[GH] ${jobs.length} jobs after location+keyword filter`);
+  return jobs;
+}
+
+// ─── Ashby ───────────────────────────────────────────────────────────────────
+
+async function fetchAshbyCompany(company, { keyword, location, jobTypes }) {
+  const res = await fetch(
+    `https://api.ashbyhq.com/posting-api/job-board/${company.slug}?includeCompensation=true`
+  );
+  if (!res.ok) {
+    console.warn(`[Ashby] ${company.slug} → ${res.status}`);
+    return [];
+  }
+  const data = await res.json();
+
+  const wantsPartTime = (jobTypes || []).some(t => ['werkstudent', 'teilzeit', 'minijob'].includes(t));
+  const wantsFullTime = (jobTypes || []).includes('vollzeit');
+
+  return (data.jobs || [])
+    .filter(j => {
+      if (!matchesLocation(j.location, location) && !j.isRemote) return false;
+      if (!matchesKeyword(j.title, keyword))                      return false;
+      const et = (j.employmentType || '').toLowerCase();
+      if (wantsPartTime && (et === 'parttime' || et === 'intern' || et === 'contract')) return true;
+      if (wantsFullTime && et === 'fulltime') return true;
+      if (!wantsPartTime && !wantsFullTime)   return true; // no type filter = show all
+      // If jobTypes selected but type doesn't match, check title keywords as fallback
+      const tl = (j.title || '').toLowerCase();
+      if (wantsPartTime && (tl.includes('werkstudent') || tl.includes('teilzeit') ||
+                            tl.includes('minijob')     || tl.includes('intern'))) return true;
+      return false;
+    })
+    .map(j => ({
+      id:          `ashby_${company.slug}_${j.id}`,
+      source:      'ashby',
+      sourceLabel: company.name,
+      title:       j.title,
+      company:     company.name,
+      location:    j.isRemote ? 'Remote' : (j.location || 'Germany'),
+      jobType:     [j.employmentType || ''].filter(Boolean),
+      postedAt:    j.publishedAt ? j.publishedAt.split('T')[0] : null,
+      applyUrl:    j.jobUrl || j.applyUrl,
+      tags:        [],
+      salary:      j.compensation?.compensationTierSummary || null,
+      remote:      j.isRemote || j.workplaceType === 'Remote',
+    }));
+}
+
+async function fetchAshby(params) {
+  console.log(`[Ashby] Fetching ${ASHBY_COMPANIES.length} companies in parallel`);
+  const results = await Promise.allSettled(
+    ASHBY_COMPANIES.map(c => fetchAshbyCompany(c, params))
+  );
+  const jobs = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+  console.log(`[Ashby] ${jobs.length} jobs after filter`);
+  return jobs;
+}
+
+// ─── Recruitee ───────────────────────────────────────────────────────────────
+
+async function fetchRecruiteeCompany(company, { keyword, location, jobTypes }) {
+  const res = await fetch(`https://${company.slug}.recruitee.com/api/offers/`);
+  if (!res.ok) {
+    console.warn(`[Recruitee] ${company.slug} → ${res.status}`);
+    return [];
+  }
+  const data = await res.json();
+
+  const wantsPartTime = (jobTypes || []).some(t => ['werkstudent', 'teilzeit', 'minijob'].includes(t));
+  const kw = (keyword || '').toLowerCase();
+
+  return (data.offers || [])
+    .filter(j => {
+      if (!matchesLocation(j.location, location)) return false;
+      const tl = (j.title || '').toLowerCase();
+      if (kw && !tl.includes(kw)) return false;
+      if (wantsPartTime) {
+        const hrs = parseFloat(j.max_hours_per_week || '40');
+        const isPartTime = hrs < 36 || tl.includes('werkstudent') || tl.includes('teilzeit') ||
+                           tl.includes('minijob') || tl.includes('part');
+        return isPartTime;
+      }
+      return true;
+    })
+    .map(j => {
+      const sal = j.salary?.min || j.salary?.max
+        ? `${j.salary.min ? '€' + j.salary.min : ''}${j.salary.max ? '–€' + j.salary.max : ''} ${j.salary.period || ''}`.trim()
+        : null;
+      return {
+        id:          `rc_${company.slug}_${j.id || j.slug}`,
+        source:      'recruitee',
+        sourceLabel: company.name,
+        title:       j.title,
+        company:     company.name,
+        location:    j.location || 'Germany',
+        jobType:     j.max_hours_per_week ? [`${j.max_hours_per_week}h/week`] : [],
+        postedAt:    j.updated_at ? j.updated_at.split(' ')[0] : null,
+        applyUrl:    j.careers_apply_url,
+        tags:        [],
+        salary:      sal,
+        remote:      !j.on_site,
+      };
+    });
+}
+
+async function fetchRecruitee(params) {
+  console.log(`[Recruitee] Fetching ${RECRUITEE_COMPANIES.length} companies in parallel`);
+  const results = await Promise.allSettled(
+    RECRUITEE_COMPANIES.map(c => fetchRecruiteeCompany(c, params))
+  );
+  const jobs = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+  console.log(`[Recruitee] ${jobs.length} jobs after filter`);
+  return jobs;
+}
+
+// ─── Source router ───────────────────────────────────────────────────────────
+
+const SOURCE_FNS = {
+  arbeitsagentur: fetchBA,
+  arbeitnow:      fetchArbeitnow,
+  greenhouse:     fetchGreenhouse,
+  ashby:          fetchAshby,
+  recruitee:      fetchRecruitee,
+};
+
+// ─── HTTP server ─────────────────────────────────────────────────────────────
 
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   if (req.method === 'GET' && req.url === '/') {
@@ -142,9 +346,20 @@ const server = http.createServer(async (req, res) => {
       const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(html);
-    } catch {
-      res.writeHead(500); res.end('index.html not found');
-    }
+    } catch { res.writeHead(500); res.end('index.html not found'); }
+    return;
+  }
+
+  // Return source metadata for the UI
+  if (req.method === 'GET' && req.url === '/api/sources') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      arbeitsagentur: { label: 'Bundesagentur für Arbeit', count: '13,000+ live jobs', type: 'official' },
+      arbeitnow:      { label: 'Arbeitnow',                count: '10,000+ jobs',      type: 'official' },
+      greenhouse:     { label: 'Greenhouse ATS',           count: `${GREENHOUSE_COMPANIES.length} companies`, type: 'ats' },
+      ashby:          { label: 'Ashby ATS',                count: `${ASHBY_COMPANIES.length} companies`,     type: 'ats' },
+      recruitee:      { label: 'Recruitee ATS',            count: `${RECRUITEE_COMPANIES.length} companies`, type: 'ats' },
+    }));
     return;
   }
 
@@ -153,33 +368,42 @@ const server = http.createServer(async (req, res) => {
     req.on('data', chunk => (body += chunk));
     req.on('end', async () => {
       try {
-        const params = JSON.parse(body || '{}');
-        const sources = params.sources || ['arbeitsagentur', 'arbeitnow'];
+        const params  = JSON.parse(body || '{}');
+        const sources = params.sources || Object.keys(SOURCE_FNS);
 
-        const fetches = [];
-        if (sources.includes('arbeitsagentur')) fetches.push({ src: 'arbeitsagentur', fn: fetchBA(params) });
-        if (sources.includes('arbeitnow')) fetches.push({ src: 'arbeitnow', fn: fetchArbeitnow(params) });
+        console.log('\n── Search ──────────────────────────────');
+        console.log('Sources:', sources.join(', '));
+        console.log('Params:', JSON.stringify({ keyword: params.keyword, location: params.location, radius: params.radius, jobTypes: params.jobTypes }));
 
-        const results = await Promise.allSettled(fetches.map(f => f.fn));
+        const entries = sources.map(s => ({ src: s, fn: SOURCE_FNS[s] })).filter(e => e.fn);
+        const results = await Promise.allSettled(entries.map(e => e.fn(params)));
 
-        const jobs = [];
+        const jobs   = [];
         const errors = [];
-
         results.forEach((r, i) => {
-          if (r.status === 'fulfilled') {
-            jobs.push(...r.value);
-          } else {
-            const src = fetches[i].src;
+          if (r.status === 'fulfilled') jobs.push(...r.value);
+          else {
             const msg = r.reason?.message || 'Unknown error';
-            errors.push(`${src}: ${msg}`);
-            console.error(`[${src}] Error:`, msg);
+            errors.push(`${entries[i].src}: ${msg}`);
+            console.error(`[${entries[i].src}] Error:`, msg);
           }
         });
 
+        // Deduplicate by title+company hash
+        const seen = new Set();
+        const deduped = jobs.filter(j => {
+          const key = `${j.title}__${j.company}`.toLowerCase().replace(/\s/g, '');
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        console.log(`── Result: ${deduped.length} unique jobs (${jobs.length - deduped.length} dupes removed)`);
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ jobs, total: jobs.length, errors }));
+        res.end(JSON.stringify({ jobs: deduped, total: deduped.length, errors }));
       } catch (err) {
-        console.error('[Server] Error:', err.message);
+        console.error('[Server]', err.message);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message, jobs: [], total: 0, errors: [] }));
       }
@@ -192,12 +416,17 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log('');
-  console.log('  ╔══════════════════════════════════════╗');
-  console.log('  ║   Agora Jobs Explorer — Running      ║');
-  console.log(`  ║   http://localhost:${PORT}              ║`);
-  console.log('  ╚══════════════════════════════════════╝');
+  console.log('  ╔══════════════════════════════════════════════╗');
+  console.log('  ║   Agora Jobs Explorer — Running              ║');
+  console.log(`  ║   http://localhost:${PORT}                     ║`);
+  console.log('  ╠══════════════════════════════════════════════╣');
+  console.log('  ║  Sources:                                    ║');
+  console.log('  ║   • Bundesagentur für Arbeit (13,000+ jobs)  ║');
+  console.log('  ║   • Arbeitnow (10,000+ jobs)                 ║');
+  console.log(`  ║   • Greenhouse ATS (${GREENHOUSE_COMPANIES.length} Berlin companies)    ║`);
+  console.log(`  ║   • Ashby ATS (${ASHBY_COMPANIES.length} companies)              ║`);
+  console.log(`  ║   • Recruitee ATS (${RECRUITEE_COMPANIES.length} companies)            ║`);
+  console.log('  ╚══════════════════════════════════════════════╝');
   console.log('');
-  console.log('  Sources: Bundesagentur für Arbeit + Arbeitnow');
-  console.log('  Press Ctrl+C to stop');
-  console.log('');
+  console.log('  Press Ctrl+C to stop\n');
 });

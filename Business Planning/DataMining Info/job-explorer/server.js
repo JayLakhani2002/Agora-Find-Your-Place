@@ -49,6 +49,14 @@ const GREENHOUSE_COMPANIES = [
   { slug: 'grover',         name: 'Grover' },
   { slug: 'heycar',         name: 'HeyCAR' },
   { slug: 'getyourguide',   name: 'GetYourGuide' },
+  { slug: 'sumup',          name: 'SumUp' },
+  { slug: 'moonfare',       name: 'Moonfare' },
+  { slug: 'carbonfuture',   name: 'CarbonFuture' },
+  { slug: 'parloa',         name: 'Parloa' },
+  { slug: 'celonis',        name: 'Celonis' },
+  { slug: 'reachdesk',      name: 'Reachdesk' },
+  { slug: 'trivago',        name: 'Trivago' },
+  { slug: 'vay',            name: 'Vay' },
 ];
 
 // Confirmed 200 Ashby slugs
@@ -58,6 +66,11 @@ const ASHBY_COMPANIES = [
   { slug: 'choco',         name: 'Choco' },
   { slug: 'enpal',         name: 'Enpal' },
   { slug: 'billie',        name: 'Billie' },
+  { slug: 'forto',         name: 'Forto' },
+  { slug: 'flink',         name: 'Flink' },
+  { slug: 'snyk',          name: 'Snyk' },
+  { slug: 'weaviate',      name: 'Weaviate' },
+  { slug: 'humanitec',     name: 'Humanitec' },
 ];
 
 // Confirmed 200 Recruitee slugs
@@ -76,6 +89,13 @@ const JOB_TYPE_TO_BA = {
 };
 
 const AN_STUDENT_TYPES = ['working student', 'student', 'hilfstätigkeit', 'side', 'part', 'intern'];
+
+// Title keywords that indicate a student/intern position across all ATS sources
+const STUDENT_TITLE_KEYWORDS = [
+  'werkstudent', 'working student', 'studentenjob', 'student job',
+  'praktikum', 'praktikant', 'internship', 'intern ', '(intern)',
+  'trainee', 'werkstud', 'student (m', 'student (f',
+];
 
 // Location match: accept if job location contains search location, Germany, or Remote
 function matchesLocation(jobLocationStr, searchLocation) {
@@ -134,7 +154,7 @@ async function fetchBA({ keyword, location, radius, jobTypes }) {
 
 // ─── Arbeitnow ───────────────────────────────────────────────────────────────
 
-async function fetchArbeitnow({ keyword, jobTypes, pages = 3 }) {
+async function fetchArbeitnow({ keyword, jobTypes, pages = 8 }) {
   const wantsWerk     = (jobTypes || []).includes('werkstudent');
   const wantsMinijob  = (jobTypes || []).includes('minijob');
   const wantsTeilzeit = (jobTypes || []).includes('teilzeit');
@@ -316,7 +336,12 @@ async function fetchHotelcareer({ keyword }) {
 
 // ─── Greenhouse ──────────────────────────────────────────────────────────────
 
-async function fetchGreenhouseCompany(company, { keyword, location }) {
+function isStudentTitle(title) {
+  const tl = (title || '').toLowerCase();
+  return STUDENT_TITLE_KEYWORDS.some(k => tl.includes(k));
+}
+
+async function fetchGreenhouseCompany(company, { keyword, location, jobTypes }) {
   const res = await fetch(
     `https://boards-api.greenhouse.io/v1/boards/${company.slug}/jobs?content=false`
   );
@@ -326,9 +351,22 @@ async function fetchGreenhouseCompany(company, { keyword, location }) {
   }
   const data = await res.json();
 
+  const wantsWerk     = (jobTypes || []).includes('werkstudent');
+  const wantsVollzeit = (jobTypes || []).includes('vollzeit');
+  const wantsTeilzeit = (jobTypes || []).includes('teilzeit');
+  const hasTypeFilter = (jobTypes || []).length > 0;
+
   return (data.jobs || [])
-    .filter(j => matchesLocation(j.location?.name, location) &&
-                 matchesKeyword(j.title, keyword))
+    .filter(j => {
+      if (!matchesLocation(j.location?.name, location)) return false;
+      if (!matchesKeyword(j.title, keyword))            return false;
+      if (!hasTypeFilter) return true;
+      const tl = (j.title || '').toLowerCase();
+      if (wantsWerk     && isStudentTitle(j.title))                    return true;
+      if (wantsTeilzeit && (isStudentTitle(j.title) || tl.includes('part'))) return true;
+      if (wantsVollzeit && !isStudentTitle(j.title))                   return true;
+      return false;
+    })
     .map(j => ({
       id:          `gh_${company.slug}_${j.id}`,
       source:      'greenhouse',
@@ -374,14 +412,15 @@ async function fetchAshbyCompany(company, { keyword, location, jobTypes }) {
     .filter(j => {
       if (!matchesLocation(j.location, location) && !j.isRemote) return false;
       if (!matchesKeyword(j.title, keyword))                      return false;
+      if (!wantsPartTime && !wantsFullTime) return true; // no type filter = show all
       const et = (j.employmentType || '').toLowerCase();
-      if (wantsPartTime && (et === 'parttime' || et === 'intern' || et === 'contract')) return true;
-      if (wantsFullTime && et === 'fulltime') return true;
-      if (!wantsPartTime && !wantsFullTime)   return true; // no type filter = show all
-      // If jobTypes selected but type doesn't match, check title keywords as fallback
-      const tl = (j.title || '').toLowerCase();
-      if (wantsPartTime && (tl.includes('werkstudent') || tl.includes('teilzeit') ||
-                            tl.includes('minijob')     || tl.includes('intern'))) return true;
+      const titleIsStudent = isStudentTitle(j.title);
+      // Part-time / student: match by employmentType OR title keywords
+      if (wantsPartTime && (
+        et === 'parttime' || et === 'intern' || et === 'contract' || titleIsStudent
+      )) return true;
+      // Full-time: match by employmentType AND title is not a student role
+      if (wantsFullTime && et === 'fulltime' && !titleIsStudent) return true;
       return false;
     })
     .map(j => ({

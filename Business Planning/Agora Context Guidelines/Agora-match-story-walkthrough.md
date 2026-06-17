@@ -8,39 +8,42 @@
 
 ## 1. Product Summary
 
-Agora Jobs is a mobile-first job matching platform for international students in Germany. The core experience is swipe-to-apply: users see only jobs they are legally eligible for, AI generates tailored CVs and cover letters that pass German ATS systems, and every application is tracked through a managed pipeline.
+Agora Jobs is a cross-platform job matching app (web, Android, iOS) for international students in Germany. The core experience is swipe-to-apply: users see only jobs they are legally eligible for, AI generates tailored CVs and cover letters that pass German ATS systems, and every application is tracked through a managed pipeline.
 
-The platform is designed to support the full student career journey from a first Minijob through to full-time employment at graduation.
+The platform is designed to support the full student career journey — from odd part-time and Minijob roles, through Werkstudent positions in their field of study, all the way to full-time employment at graduation.
 
-**Target user:** International students (and Chancenkarte holders) in Berlin
-**Primary niche (v1):** Werkstudent roles
-**Expansion path:** Berlin → Germany → EU (per-country config, Year 2+)
+**Target user:** International students in Germany (Chancenkarte holders are also supported but are not the primary focus)
+**Primary niche (v1):** All student-eligible job types — Minijob, Werkstudent, odd-jobs, and field-aligned roles
+**Expansion path:** Germany-wide from launch → EU per-country config (Year 2+)
 
 ---
 
 ## 2. Market Opportunity
 
-- Berlin has 40,000+ international students; no dedicated AI-powered job platform exists for their specific legal situation
-- Indian students are the largest single cohort (49,000+ in Germany) — acute pain from blocked accounts running low, unfamiliar legal categories, and the 20-hour/week cap
+- Germany has **470,000+ international students** — none of whom have a dedicated AI-powered job platform built for their specific legal situation; Berlin alone has 40,000+ as the largest single city
+- International students of all nationalities face the same core barriers: unfamiliar legal categories, the 20-hour/week cap, and a job market that assumes German fluency and familiarity
 - Chancenkarte holders (§20a AufenthG) are a fast-growing underserved segment — thousands issued in 2024, often with no German and no familiarity with the German job market
 - Existing platforms (Stellenticket, jobicco, Berlin Startup Jobs, LinkedIn) are traditional listing boards with no legal eligibility filtering and no AI document generation
-- **The legal moat:** the 140-day rule, 20-hour limit, Minijob €556 cap, BAföG impact, and Chancenkarte-specific constraints are modeled nowhere else — this requires real German legal knowledge that generic competitors cannot replicate
+- **The legal moat:** the 140-day rule, 20-hour weekly cap, Minijob **€603/month cap** (2026 rate, tied to minimum wage of €13.90/hr — updated annually), and Chancenkarte-specific constraints are modeled nowhere else — this requires real German legal knowledge that generic competitors cannot replicate
 
 ---
 
 ## 3. Job Categories
 
-The platform covers five employment types that map to a student's real career journey in Germany. Categories are built sequentially — v1 is Werkstudent-only. Each category generates data and learnings that improve the next.
+The platform covers four employment types that map to a student's real career journey in Germany. All four categories are available from day one.
 
-| Category | Description | Key Legal Constraint |
-|---|---|---|
-| **Werkstudent** | Career-track part-time roles, 10–20 hrs/week during semester | 20 hrs/week max during semester |
-| **Minijob** | Small roles (gastronomy, retail, admin) | Max €556/month |
-| **Odd-jobs / kurzfristige Beschäftigung** | Warehouse shifts, events, gig work | 70 working days/year max |
-| **Full-time employment** | For students near graduation or switching to a work visa | Different visa class; no 20-hr cap |
-| **Chancenkarte** | §20a AufenthG job-search visa holders; not enrolled in study | 20 hrs/week max while searching |
+| Category | Description | Hours / Contract | Key Legal Constraint |
+|---|---|---|---|
+| **Werkstudent** | Field-aligned part-time roles during studies | 87 hrs/month standard contract; unused hours carry forward within the year | 140 full days OR 280 half days per year (annual pool, not a weekly cap) |
+| **Minijob** | Any employer-defined role where earnings stay under the tax-free cap | Hours and pay set by employer (e.g. 25 hrs or 40 hrs/month depending on hourly rate) | Earnings must not exceed **€603/month** (2026 rate); no income tax below this threshold |
+| **Odd-jobs / Part-time** | Non-skilled roles — warehouse, events, retail, gastronomy, delivery | Student contract: 87 hrs/month; Normal part-time: 120 hrs/month | Must stay within annual day allowance; same 140-day / 280-half-day pool as Werkstudent |
+| **Full-time employment** | For students who have graduated and changed visa status | 170 hrs/month | Requires post-graduation work permit (18-month job-seeker visa); not available on a student visa |
 
-The user selects their category at signup. Legal filters, CV format, cover letter tone, and interview prep content all adapt based on the selection.
+> **Chancenkarte holders** (§20a AufenthG) are also supported on the platform. They follow the same 20 hrs/week work rule while job-searching and are matched to Werkstudent and part-time roles.
+
+> **Note:** Kurzfristige Beschäftigung (short-term employment, 70 days/year) is not included in the platform scope.
+
+The user selects their employment category and visa type at signup. Legal filters, CV format, cover letter tone, and interview prep content all adapt based on the selection.
 
 ---
 
@@ -60,21 +63,58 @@ New users complete a tap-through onboarding that captures their legal eligibilit
 
 **Phase 2 — Discover** *(5–10 minutes per session)*
 
-The app presents a daily swipe deck of 20–30 job cards. All cards are pre-filtered to the user's legal eligibility — they never see a job they cannot take. Each card shows a match score with a per-dimension breakdown. Right-swipe to apply, left to pass, tap to see full details, swipe up to save.
+Before entering the swipe deck, the user has the option to **rewrite and improve their Master CV** — better Master CV quality directly raises match scores across all job cards.
 
-The system learns from every swipe and improves the ranking over time.
+The app then presents a swipe deck of matched job cards, all pre-filtered to the user's legal eligibility — they never see a job they cannot take. Each card shows a match score based on their current Master CV, work experience, education background, language level, certificates, and skills.
+
+- **Right-swipe** → apply flow
+- **Left-swipe** → pass (job saved to a Passed Jobs tab, retrievable later)
+- **Tap** → full job detail
+- **Swipe up** → save for later
+
+The system learns from every swipe and improves ranking over time (v1).
+
+**Swipe deck access is tier-based:**
+- New users get a **1-week free trial** with full access
+- After the trial, the deck size and app services are unlocked via **credit top-ups** (pay-as-you-go; no subscription required)
 
 ---
 
 **Phase 3 — Apply** *(~5 minutes per application)*
 
-After swiping right, the user answers 2–5 short role-specific questions. AI then generates three artifacts simultaneously: a tailored CV, a tailored cover letter, and form pre-fills. A 6-dimension quality eval runs automatically before the user sees anything. If quality is below threshold, it regenerates. The user reviews everything side-by-side with the job description, can edit any line, and submits via Mode 1 (free) or Mode 2 (paid).
+After swiping right, **Ari** (the AI assistant character) guides the user through the application one step at a time:
+
+1. **Job application questions** — Ari presents each question from the actual job application as an MCQ or short answer, one at a time. User answers all of them.
+2. **Ari's impact questions** — Ari then asks targeted follow-up questions to surface key details the user may have forgotten: specific tools used, achievements with measurable outcomes, budgets managed, timelines met. One question at a time.
+3. **AI generation** — All inputs (job description + user answers + profile) go to the model which:
+   - Rewrites the CV with ATS-optimised bullet points in the *"used X to achieve Y in Z"* format
+   - Inserts job-description keywords naturally
+   - Applies correct German CV format (fonts, structure, Tabellarischer Lebenslauf conventions)
+   - Generates a tailored cover letter if required (compulsory when the employer requests one; optional when they do not — Ari asks the user)
+4. **Review and edit** — User reviews the generated Job-CV and cover letter side-by-side with the job description. Every line is editable before downloading. User has full control.
+5. **Apply** — User downloads the tailored PDFs and applies on the company's website. For supported job portals, application forms are pre-filled automatically using the Job-CV data — user just reviews and clicks Apply.
 
 ---
 
 **Phase 4 — Track** *(1–3 minutes per check-in)*
 
-All applications appear in a status pipeline. After 10 days of no response, the AI drafts a follow-up email for the user to review and send. When an interview is confirmed, a full interview prep package is generated automatically.
+All applications appear in a status pipeline across four dashboard tabs: **Applied**, **Saved (Apply Later)**, **Passed**, and **Declined**.
+
+**Follow-up after 10 days of no response:**
+Ari drafts a follow-up message for the user to review and send. Contact is resolved in this order:
+1. Portal messaging — reply via the same platform the user applied through
+2. Email extracted from the job listing (if present)
+3. Manual entry — Ari prompts the user to add a contact email if they found one (e.g. via LinkedIn or company website)
+
+The user always reviews and sends — never auto-sent.
+
+**Interview prep** (triggered when status moves to "Interview Invited", accessible from dashboard):
+- Company brief — recent news, products, team size, funding stage
+- 8–12 role-specific likely interview questions based on the JD and company type
+- STAR-method answer skeletons mapped from the user's own profile and experience
+- Common questions asked at that specific company (where data is available)
+- Curated learning resource links for skills in the JD the user is weaker on
+- Technical brush-up checklist (technical roles only) — specific tools and topics from the JD with links
 
 ---
 
@@ -82,22 +122,22 @@ All applications appear in a status pipeline. After 10 days of no response, the 
 
 | # | Screen | Phase | Purpose | Key Actions / Features |
 |---|---|---|---|---|
-| 1 | Visa type | Setup | Capture legal eligibility basis | Select: Student visa / EU citizen / Chancenkarte / Blue Card / Near graduation |
-| 2 | University + language | Setup | Set institution and German level | Enter university name; select German level (A1–C2) |
-| 3 | Work availability | Setup | Capture remaining legal work capacity | Enter remaining days under 140-day rule (non-EU only); weekly hours available |
-| 4 | Preferences | Setup | Set job search parameters | Fields of interest; minimum hourly rate; location; start date; employment category |
-| 5 | CV upload | Setup | Start profile extraction | Upload PDF or DOCX (max 5MB); AI extracts structured data |
-| 6 | Profile editor | Setup | Review and correct AI-extracted CV | Edit education, experience, projects, skills, languages inline; auto-saves |
-| 7 | Gap-fill questions | Setup | Enrich profile beyond the CV | Answer 5–8 AI-generated questions tied to profile gaps and employment category |
-| 8 | Swipe deck *(home)* | Discover | Daily matched job cards | Right = apply; left = pass; tap = detail; swipe up = save; match score + eligibility ticks on each card |
-| 9 | Job detail sheet | Discover | Full job info before deciding | Full job description; company info; match score breakdown per dimension; "Apply now" CTA |
-| 10 | Job-specific questions | Apply | Capture context for AI generation | 2–5 short questions tailored to the specific role (~30 seconds each) |
-| 11 | Generation loading | Apply | AI generating tailored materials | Progress indicator; eval running in background; quality score revealed when ready |
-| 12 | Application review | Apply | Review and submit generated materials | CV tab; cover letter tab; pre-fills tab; edit any line inline; regenerate option; quality score card (e.g. "9.3/10"); "Open application page" (Mode 1, free); "Pre-fill" (Mode 2, paid) |
-| 13 | Pipeline / tracker | Track | Manage all active applications | Status columns: Applied / Viewed / Interview Invited / Rejected / No Response; tap any application to view generated materials |
-| 14 | Follow-up draft | Track | Re-engage employer after silence | AI-drafted 3-sentence follow-up at 10 days of no response; user reviews and sends via mailto |
-| 15 | Interview prep | Track | Prepare for confirmed interviews | Company brief; 8–12 likely questions; STAR-method answer skeletons; German interview norms; technical brush-up checklist (technical roles only) |
-| 16 | Settings / account | Account | Profile and account management | Edit profile; update visa details; notification preferences; account deletion (GDPR) |
+| 1 | Visa type | Setup | Capture legal eligibility basis | Select: Student Visa / EU Citizen or EU Resident / Chancenkarte / Post-Graduation Work Permit / EU Blue Card |
+| 2 | University + language | Setup | Set institution, field of study, and German level | University name; field of study; German level (A1–C2 + None) |
+| 3 | Work availability | Setup | Capture employment category and approximate work capacity | Employment category (Werkstudent / Minijob / Odd-jobs / Full-time); remaining annual allowance (approximate: Just started / Used about half / Nearly full); preferred hours/month; available start date |
+| 4 | Preferences | Setup | Set job search parameters | Fields of interest (multiple); minimum hourly rate (optional); preferred location; preferred job language; all editable later |
+| 5 | CV + Certificates upload | Setup | Build user profile | Upload CV (PDF or DOCX) or build from scratch with Ari; upload certificates (PDF); AI extracts structured profile data |
+| 6 | Profile editor | Setup | Review and correct AI-extracted data | Edit education, experience, skills, languages, certificates inline; auto-saves; quick and low friction |
+| 7 | Gap-fill questions | Setup | Enrich profile beyond the CV | Ari asks targeted questions one at a time (MCQ or short answer); strategy defined in separate document |
+| 8 | Swipe deck *(home)* | Discover | Browse matched job cards | Right = start Ari apply flow; left = pass (saved to Passed tab); tap = job detail; swipe up = save for later; match score (x/10) on each card; salary shown if available; filter option by job type / hours / location / salary |
+| 9 | Job detail sheet | Discover | Full job info before deciding | Full job description (collapsible); company info; salary if available; match score overall + per-dimension (Skills, Education, Experience, Language, Certificates); Similar Jobs (same-field + high-score + same-company mix); Apply Now / Save / Pass buttons |
+| 10 | Ari apply flow | Apply | Ari guides user through job-specific questions before generation | Job application questions one at a time (MCQ or short answer); Ari impact questions (tools, achievements, timelines, budgets); progress indicator (e.g. "Question 3 of 8"); go back allowed; progress auto-saved on exit |
+| 11 | Generation loading | Apply | Ari generates Job-CV and cover letter | Ari character with loading animation and rotating status messages; estimated wait time shown; auto-regeneration hidden; cancel option available |
+| 12 | Application review | Apply | Review, edit, and submit generated materials | Job-CV tab; Cover Letter tab (only if generated); collapsible job description panel; every line editable inline; Ari warns on heavy edits affecting ATS score; language switch (German / English); quality score with dimension breakdown; regenerate option; download PDF; Apply button (portal pre-fill or manual) |
+| 13 | Pipeline / tracker | Track | Manage all job activity | Tabs: Applied / Saved / Passed / Declined; statuses: Applied → Viewed → Interview Invited → Offer → Rejected / Withdrawn; No Response (10 days) moves to own section; user can manually update status; Interview Prep button appears on Interview Invited |
+| 14 | Follow-up draft | Track | Re-engage employer after 10 days of silence | Ari drafts follow-up in German (Germany jobs) or English; contact order: portal → extracted email → manual entry; options: Send / Edit / Snooze (3 days) / Not Interested (moves to Declined); one follow-up attempt |
+| 15 | Interview prep | Track | Prepare for confirmed interviews | Company brief (news, products, team size, funding, office location/map); 8–12 role-specific questions; STAR answer skeletons from user profile; common company-specific questions; curated learning resource links; technical brush-up checklist with links (technical roles only); practice mode with Ari feedback; downloadable as PDF |
+| 16 | Settings / account | Account | Profile and account management | Edit profile; visa details; certificates; Master CV rewrite; employment category change; granular notifications; job search status; preferred locations; salary expectations; privacy controls; blocked companies; help & support; referral/invite; credit balance and top-up; account deletion (GDPR) |
 
 ---
 
@@ -105,20 +145,50 @@ All applications appear in a status pipeline. After 10 days of no response, the 
 
 ### 5.1 Legal Eligibility Filtering
 
-Hard filters applied at the matching layer. Users never see jobs they cannot legally take. Filters include: visa type, German level required, weekly hours, contract type, and employment category. The 140-day rule, 20-hour weekly cap, Minijob €556 threshold, BAföG impact, and Chancenkarte restrictions are all modeled.
+Hard filters applied at the matching layer. Users never see jobs they cannot legally take.
+
+**Hard filters (jobs are hidden entirely):**
+- Visa type incompatibility (e.g. full-time role shown to student visa holder)
+- German level required explicitly by employer and user is below it
+- Employment category mismatch (e.g. Werkstudent user seeing full-time-only roles)
+- Working hours exceeding user's legal allowance (140-day / 280-half-day annual pool; Minijob €603/month cap)
+- Salary explicitly stated below user's minimum rate expectation
+- Education stream — only a hard filter when the employer explicitly states a required degree field
+
+**Soft signals (job remains visible but match score is lowered):**
+- Education stream misalignment when employer has not stated a required degree
+- Missing certificates or preferred qualifications
+- Experience level slightly above or below the role
+- Salary not listed — job shown but ranked lower since user cannot verify it meets their expectation
 
 ### 5.2 AI-Powered Job Matching
 
-Daily swipe deck generated through a four-step ranking pipeline:
+Swipe deck generated through a 6-stage ranking pipeline:
 
-1. SQL hard filter — visa type, hours, German level, contract category
-2. Vector similarity search — cosine similarity between user profile embedding and job embeddings
-3. BM25 keyword re-rank — using the user's skills and preferred fields as query terms
-4. LLM reranker — scores each of the top 50 jobs "would this student get an interview? 0–10" with brief reasoning
+**Stage 1 — Legal Hard Filter (SQL)**
+Instantly removes all legally impossible jobs based on visa type, employment category, working hours, German level, salary, and education stream (where explicitly required). Fast and cheap — runs first before any AI.
 
-Match score displayed on every job card: overall score + per-dimension ticks (skills, language, hours, visa eligibility, salary).
+**Stage 2 — Multi-dimensional Embedding Match**
+Skills, Education, and Experience are embedded separately and matched against the corresponding sections of each job description — not one blunt full-profile vs full-JD comparison. Produces a precise per-dimension similarity score for each dimension.
 
-After 50+ swipes, the reranker prompt reweights based on the user's swipe history.
+**Stage 3 — Structured Signal Matching**
+Language level and certificates are matched via structured logic rather than embeddings. Exact matching is more reliable here than vector similarity.
+
+**Stage 4 — Adaptive Weighted Score Assembly**
+All dimension scores are combined with weights that adapt to:
+- Employment category (Werkstudent weights education higher; Minijob weights availability higher; Odd-jobs weights hours and location)
+- User swipe history — after 20+ swipes, weights rebalance based on what the user engaged with
+
+**Stage 5 — BM25 Keyword Boost**
+Keyword matching applied on top of the weighted score for specific tools, technologies, and certifications mentioned in the JD (e.g. "Python", "Adobe XD", "DATEV"). Catches exact matches that embeddings sometimes blur.
+
+**Stage 6 — LLM Reranker + Diversity Injection**
+LLM scores only the top 20 candidates (not 50) with brief reasoning per dimension — 60% cheaper than scoring 50. The deck is then balanced with:
+- 2–3 jobs from different industries to prevent tunnel vision
+- 1 stretch job (slightly above current level — aspirational)
+- 1 sure-thing job (high match, easy apply — builds confidence)
+
+Match score displayed on every job card: overall rating (x/10) + per-dimension breakdown (Skills, Education, Experience, Language, Certificates). Salary shown on card if available.
 
 ### 5.3 CV and Cover Letter Generation
 

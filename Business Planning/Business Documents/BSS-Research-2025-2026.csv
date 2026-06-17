@@ -1,0 +1,80 @@
+SECTION,FIELD,VALUE,CONFIDENCE,NOTES
+OVERVIEW,Program Name,Berliner Startup-Stipendium (BSS),High,
+OVERVIEW,Administered By,Science & Startups,High,
+OVERVIEW,Processed By,Investitionsbank Berlin (IBB),High,
+OVERVIEW,Grant Type,Non-repayable personal scholarship (Vollfinanzierung),High,Not a loan — not employment
+OVERVIEW,Official Website,https://www.science-startups.berlin/programs/berliner-startup-stipendium,High,
+OVERVIEW,IBB Page,https://www.ibb.de/de/foerderprogramme/berliner-startup-stipendium.html,High,
+OVERVIEW,Sector Focus,Technology-oriented / knowledge-based startups,High,"AI, deep tech, platform — Agora Jobs qualifies"
+,,,,
+MONEY,Monthly Stipend (Gross),€2500 per founder per month,High,Increased from €2200 in prior rounds
+MONEY,Duration — Base,6 months,High,
+MONEY,Duration — Maximum,12 months (extendable),High,36-month claim was adversarially refuted
+MONEY,Max Per Founder,€30000 gross (12 × €2500),High,
+MONEY,Max For 4-Person Team,€120000 gross,High,
+MONEY,Repayable?,No — non-repayable grant,High,
+MONEY,Paid To,Individual founders directly,High,Not to the company
+,,,,
+ELIGIBILITY,Team Size,2–4 founders (no solo applications),High,
+ELIGIBILITY,Hours Required,35 hours/week on-site in Berlin,High,Full-time commitment mandatory
+ELIGIBILITY,Berlin Residency,Hauptwohnsitz (main residence) in Berlin — required at start and throughout,High,Must be registered before stipend begins
+ELIGIBILITY,Company Status,Company must NOT yet be registered (no Handelsregister entry),High,If GmbH/UG already founded you are ineligible
+ELIGIBILITY,University Affiliation,Almost certainly required — exact form unconfirmed,Medium,"Claim that it's NOT required was refuted 0-3; confirm with Science & Startups"
+ELIGIBILITY,Target Institutions,FU Berlin / HU Berlin / TU Berlin / Charité spinouts historically targeted,Medium,
+ELIGIBILITY,BSS Women Sub-track,>50% female founders required for that variant,Medium,Separate sub-track — not a requirement for standard BSS
+,,,,
+APPLICATION PROCESS,Can Founders Apply Directly?,NO — incubator-mediated only,High,
+APPLICATION PROCESS,Step 1,Find an accredited Projektträger / incubator in Berlin,High,
+APPLICATION PROCESS,Step 2,Pitch your idea and get accepted by the incubator,High,
+APPLICATION PROCESS,Step 3,Incubator submits Förderantrag (funding application) to IBB on your behalf,High,
+APPLICATION PROCESS,Step 4,IBB reviews and approves/rejects,High,
+APPLICATION PROCESS,Step 5,Stipend payments begin per founder,High,
+APPLICATION PROCESS,Example Incubators,Startup Incubator Berlin; Humboldt Innovation; HTW Berlin Entrepreneurship,High,
+APPLICATION PROCESS,Startup Incubator Berlin (EN),https://www.startup-incubator.berlin/berlin-startup-scholarship/?lang=en,High,
+APPLICATION PROCESS,Humboldt Innovation,https://humboldt-innovation.de/en/startup-service/funding-financing/berliner-startup-stipendium,High,
+APPLICATION PROCESS,Timeline (submission to first payment),Unconfirmed — ask your incubator directly,Unknown,
+APPLICATION PROCESS,Success/Acceptance Rate,No verified data found,Unknown,Contact IBB or Science & Startups
+,,,,
+DOCUMENTS REQUIRED,Business Plan / Pitch Deck,Required — must demonstrate technology/knowledge basis,High,
+DOCUMENTS REQUIRED,CVs of All Founders,Required,High,
+DOCUMENTS REQUIRED,Proof of Berlin Hauptwohnsitz (Anmeldung),Required,High,
+DOCUMENTS REQUIRED,Proof Company Not Yet Registered,Required,High,
+DOCUMENTS REQUIRED,Full-time Commitment Declaration,Required,High,
+DOCUMENTS REQUIRED,Exact Standardized List,Varies by incubator — ask your sponsor,Unknown,
+,,,,
+TAX & LEGAL,Stipend Paid Gross?,Yes — IBB does not withhold taxes,High,
+TAX & LEGAL,Income Tax Responsibility,Founder personally responsible,High,Declare in Anlage SO (sonstige Einkünfte)
+TAX & LEGAL,Estimated Income Tax,15–30% of gross depending on total income,High,
+TAX & LEGAL,Health Insurance,~€300/month if not on family/student insurance,High,Student rate ~€130/month if still enrolled under 25
+TAX & LEGAL,Pension Contributions,Voluntary for self-employed founders,High,
+TAX & LEGAL,Is Stipend Tax-Free?,No — einkommensteuerpflichtig,High,BFH ruling III B 128/11 (01.10.2012) — applies by analogy from EXIST
+TAX & LEGAL,Legal Basis,BFH III B 128/11 — startup stipends taxable; §3 Nr. 44 EStG exemption does not apply,High,No BSS-specific ruling found — inferred from EXIST analogy
+TAX & LEGAL,Approximate Net Per Month,~€1700/month (after ~€500 tax + ~€300 health insurance),High,Estimate only — consult a Steuerberater
+TAX & LEGAL,Recommendation,Consult a German Steuerberater before stipend begins,High,
+,,,,
+NET MONEY ESTIMATE,Gross Monthly,€2500,High,
+NET MONEY ESTIMATE,Income Tax (est. 20%),−€500,High,Estimate
+NET MONEY ESTIMATE,Health Insurance (standard),−€300,High,Could be ~€130 on student plan
+NET MONEY ESTIMATE,Approximate Net,~€1700,High,Estimate only
+,,,,
+AGORA JOBS FIT,Technology Fit,Strong — AI-driven matching / LLM CV generation / pgvector,High,Maps directly to BSS target profile
+AGORA JOBS FIT,Company Status Check,Must NOT be registered before stipend starts,High,Confirm your current registration status
+AGORA JOBS FIT,Team Size Check,Need 2–4 founders,High,
+AGORA JOBS FIT,Berlin Residency Check,All founders need Berlin Hauptwohnsitz,High,
+AGORA JOBS FIT,University Affiliation Check,Likely required — verify with Science & Startups FIRST,Medium,Biggest unresolved eligibility risk
+,,,,
+OPEN QUESTIONS,University Affiliation,Is current Berlin enrollment a hard prerequisite?,Unresolved,Contact Science & Startups before applying
+OPEN QUESTIONS,Timeline,How long from incubator submission to first payment?,Unresolved,Ask your target incubator
+OPEN QUESTIONS,Documents,Exact standardized document list?,Unresolved,Ask incubator directly
+OPEN QUESTIONS,Mentoring / Reporting,Are there reporting or mentoring obligations during the stipend?,Unresolved,Ask Science & Startups
+OPEN QUESTIONS,IP / Equity Conditions,Any IP assignment or equity conditions?,Unresolved,Ask before signing anything
+OPEN QUESTIONS,Project Budget,Does BSS include any non-personal supplementary project cost budget?,Unresolved,Verify with Science & Startups
+,,,,
+SOURCES,IBB Program Page,https://www.ibb.de/de/foerderprogramme/berliner-startup-stipendium.html,Primary,
+SOURCES,Science & Startups,https://www.science-startups.berlin/programs/berliner-startup-stipendium,Primary,
+SOURCES,Berlin Senate Press Release 2025,https://www.berlin.de/sen/web/presse/pressemitteilungen/2025/pressemitteilung.1587317.php,Primary,
+SOURCES,Berlin Senate Press Release 2026,https://www.berlin.de/sen/web/presse/pressemitteilungen/2026/pressemitteilung.1653813.php,Primary,
+SOURCES,Startup Incubator Berlin (EN),https://www.startup-incubator.berlin/berlin-startup-scholarship/?lang=en,Primary,
+SOURCES,Foerderdatenbank (Federal DB),https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Berlin/berliner-startup-stipendium.html,Primary,
+SOURCES,Berlin University Alliance Mar 2026,https://www.berlin-university-alliance.de/items/2026/260320-science-startups-berliner-startup-stipendium.html,Primary,
+SOURCES,BFH Tax Ruling,BFH III B 128/11 — 01.10.2012,Primary,Establishes startup stipends are income-taxable

@@ -38,7 +38,8 @@
       "apps/web/public/swe-worker-*.js",
       "graphify-out/**",
       "apps/workers/storage/**",
-      "Business Planning/**"
+      "docs/**",
+      "assets/**"
     ]
   }
 }

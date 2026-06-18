@@ -1,7 +1,7 @@
 # Agora Jobs — Project Instructions
 
 ## Project Overview
-Agora Jobs is a job-matching platform targeting the EU market, built as a TypeScript Turborepo monorepo with GDPR-first design. See `Business Planning/` for full documentation.
+Agora Jobs is a job-matching platform targeting the EU market, built as a TypeScript Turborepo monorepo with GDPR-first design. See `docs/` for full documentation.
 
 ## Tech Stack
 - **Monorepo**: Turborepo + pnpm workspaces
@@ -35,12 +35,12 @@ This applies to (non-exhaustive):
 Never rely on training-data knowledge for library APIs — versions change and patterns drift.
 
 ## Architecture Decisions
-- **8-agent decomposition** — see `Business Planning/Agents/` for each agent's spec
+- **8-agent decomposition** — see `docs/Agents/` for each agent's spec
 - **Mode 3 permanently prohibited** — no server-side automated job submission on behalf of users (GDPR constraint)
 - **EU-only data residency** — all infra must stay in EU regions
 - **Model routing** — Opus 4.8 for CV + cover-letter generation; Sonnet 4.6 for Ari's advanced tasks (interview prep, profile analysis); Haiku 4.5 for Ari's normal chat and high-volume eval/classification. Model IDs from env, never hardcoded. (Opus 4.8 is $5/$25 per Mtok input/output — affordable for generation; the earlier "no Opus" rule assumed the old ~$75/Mtok Opus output price.)
 - **Submission model**: users always click "Apply" themselves; agents draft, never submit
-- **Pricing model**: credit-based is the **primary, chosen model** (per-action credits — CV, cover letter, and Ari tasks each consume credits). **Pay-as-you-go: you only pay for what you use, and credits don't expire** — no subscription, no billing clock; top up via one-time packs. Credit price (€/credit), pack sizes, and the Free allowance are **TBD — not finalized**. Live model: `Business Planning/Investor Package/Agora-Credit-Calculator.xlsx`.
+- **Pricing model**: credit-based is the **primary, chosen model** (per-action credits — CV, cover letter, and Ari tasks each consume credits). **Pay-as-you-go: you only pay for what you use, and credits don't expire** — no subscription, no billing clock; top up via one-time packs. Credit price (€/credit), pack sizes, and the Free allowance are **TBD — not finalized**. Live model: `docs/Investor Package/Agora-Credit-Calculator.xlsx`.
 
 ## Key Constraints
 - GDPR cascade delete must be implemented on all user-linked tables
@@ -50,12 +50,39 @@ Never rely on training-data knowledge for library APIs — versions change and p
 
 ## File Layout
 ```
-Business Planning/
+apps/
+  web/              # Main Next.js app (job seeker product)
+  website/          # Marketing/landing site + CLAUDE.md for website context
+  workers/          # Background scraping workers
+packages/
+  ai/               # AI/embedding utilities
+  billing/          # Stripe integration
+  db/               # Drizzle ORM schema + migrations
+  ui/               # Shared shadcn/ui components
+  config/           # Shared TS/lint config
+  legal/            # GDPR utilities
+docs/
   Agents/           # 8 agent specs + stress-test report
   Prototype/        # MVP overview, phase plans, BSS demo strategy
   Tech Stack/       # Stack decisions and library patterns
   Eval-Suites/      # 64 adversarial tests across all 8 agents
   Business Documents/  # PRD, pitch deck, financial model, etc.
+  Investor Package/ # Business plan, financial projections, pitch deck
+  Product Design/   # Screen flow document
+  CV Optimization Research/  # ATS rules, psychology, CV structure
+  DataMining Info/  # Job API docs, data sources
+  Branding & Marketing/  # Brand playbook
+  Competitor Data/  # Competitor analysis
+  Founder Visa & Funding Guidelines/  # BSS, visa roadmap
+  Agora Context Guidelines/  # Walkthrough, scope overview
+assets/
+  brand/            # Ari mascot, logos
+  screenshots/      # App screenshots
+  landing-concepts/ # Landing page design mockups
+  design-system/    # Design tokens and specs
+infrastructure/
+  railway.toml
+  vercel.json
 ```
 
 # Skills

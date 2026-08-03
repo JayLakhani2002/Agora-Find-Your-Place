@@ -88,31 +88,35 @@ export function Nav() {
         </button>
       </nav>
 
-      {/* Mobile sheet */}
-      {menuOpen && (
-        <div className="border-t border-marble-deep bg-marble px-5 py-6 md:hidden">
-          <div className="flex flex-col gap-5">
-            {en.nav.links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-lg text-text"
-              >
-                {link.label}
-              </a>
-            ))}
-            {/* biome-ignore lint/a11y/useValidAnchor: in-page nav link that also closes the mobile sheet */}
+      {/* Mobile sheet — slide down + fade in */}
+      <div
+        className={cn(
+          "border-t border-marble-deep bg-marble px-5 py-6 md:hidden",
+          "overflow-hidden transition-all duration-200 ease-agora-out",
+          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 pointer-events-none border-t-0",
+        )}
+      >
+        <div className="flex flex-col gap-5">
+          {en.nav.links.map((link) => (
             <a
-              href="#waitlist"
+              key={link.href}
+              href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="btn-primary mt-2 w-full"
+              className="text-lg text-text"
             >
-              {en.nav.cta}
+              {link.label}
             </a>
-          </div>
+          ))}
+          {/* biome-ignore lint/a11y/useValidAnchor: in-page nav link that also closes the mobile sheet */}
+          <a
+            href="#waitlist"
+            onClick={() => setMenuOpen(false)}
+            className="btn-primary mt-2 w-full"
+          >
+            {en.nav.cta}
+          </a>
         </div>
-      )}
+      </div>
     </header>
   )
 }

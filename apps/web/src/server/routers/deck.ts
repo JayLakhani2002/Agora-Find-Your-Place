@@ -36,6 +36,15 @@ const DECK_SIZE = 25
 const VECTOR_POOL = 50
 const LLM_RERANK_POOL = 30
 
+/**
+ * Hard ceiling on step 4. Bedrock latency is bimodal — usually ~200ms for the
+ * whole pool, but under throttling it has been measured at 19.8s, which is the
+ * deck's total latency because the reranker sits on the critical path.
+ * The combined vector+keyword signal is already the designed fallback, so
+ * blowing this budget costs ranking quality, never a broken deck.
+ */
+const RERANK_BUDGET_MS = 2500
+
 type Profile = typeof userProfiles.$inferSelect
 
 // ── Pure helpers (exported for unit tests) ────────────────────────────────────
@@ -94,6 +103,31 @@ export function combineSignals(
   const vec = vectorSimilarity ?? 0
   const kw = keywordScore ?? 0
   return 0.7 * vec + 0.3 * kw
+}
+
+/**
+ * Resolve `work`, or give up and return `fallback` once `budgetMs` elapses.
+ * The loser keeps running — we simply stop waiting on it — so this bounds
+ * latency, not cost. Always clears its timer: a live timer would hold the
+ * request's event loop open after the response was sent.
+ */
+export async function withBudget<T>(
+  work: Promise<T>,
+  budgetMs: number,
+  fallback: T,
+): Promise<{ value: T; timedOut: boolean }> {
+  const TIMEOUT = Symbol("timeout")
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const raced = await Promise.race([
+    work,
+    new Promise<typeof TIMEOUT>((resolve) => {
+      timer = setTimeout(() => resolve(TIMEOUT), budgetMs)
+    }),
+  ])
+  if (timer) clearTimeout(timer)
+  return raced === TIMEOUT
+    ? { value: fallback, timedOut: true }
+    : { value: raced as T, timedOut: false }
 }
 
 // ── Step 4: Haiku reranker ─────────────────────────────────────────────────────
@@ -213,14 +247,30 @@ export const deckRouter = createTRPCRouter({
     t = performance.now()
     const rerankPool = combined.slice(0, LLM_RERANK_POOL)
     const profileStr = `Skills: ${(profile.skills ?? []).join(", ")}. ${profile.experienceSummary ?? ""}`
-    const llmScores = await Promise.all(
-      rerankPool.map(async ({ id }) => {
-        const entry = byId.get(id)
-        if (!entry) return { id, score: null }
-        return { id, score: await haikuScore(profileStr, entry.job) }
-      }),
+    // Bounded: on timeout every score is null and the combined vector+keyword
+    // signal below ranks the deck instead, so a throttled Bedrock degrades
+    // ranking quality rather than stalling the user for 20 seconds.
+    const { value: llmScores, timedOut } = await withBudget(
+      Promise.all(
+        rerankPool.map(async ({ id }) => {
+          const entry = byId.get(id)
+          if (!entry) return { id, score: null as number | null }
+          return { id, score: await haikuScore(profileStr, entry.job) }
+        }),
+      ),
+      RERANK_BUDGET_MS,
+      rerankPool.map(({ id }) => ({ id, score: null as number | null })),
     )
     mark("step4_llm_rerank_ms", t)
+    if (timedOut) {
+      console.warn(
+        JSON.stringify({
+          event: "deck_rerank_timeout",
+          budgetMs: RERANK_BUDGET_MS,
+          userId: ctx.user.id,
+        }),
+      )
+    }
 
     const llmById = new Map(llmScores.map((s) => [s.id, s.score]))
     const deck = rerankPool

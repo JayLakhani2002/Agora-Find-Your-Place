@@ -26,7 +26,9 @@ export async function embedPendingJobs(): Promise<number> {
   let embeddedCount = 0
   for (let i = 0; i < pending.length; i += COHERE_BATCH_LIMIT) {
     const batch = pending.slice(i, i + COHERE_BATCH_LIMIT)
-    const texts = batch.map((j) => `${j.title}\n${j.company}\n${j.description}`.slice(0, 4000))
+    // Cohere on Bedrock caps each text at 2048 chars — title+company+lead of the
+    // description carries the match signal; the tail rarely adds ranking value.
+    const texts = batch.map((j) => `${j.title}\n${j.company}\n${j.description}`.slice(0, 2048))
 
     const vectors = await embedJobsBatch(texts)
     if (vectors.length !== batch.length) {

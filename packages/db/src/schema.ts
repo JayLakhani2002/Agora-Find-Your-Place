@@ -5,6 +5,7 @@ import {
   index,
   integer,
   json,
+  jsonb,
   pgTable,
   real,
   text,
@@ -48,6 +49,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   jobActions: many(userJobActions),
   applications: many(applications),
   subscriptions: many(subscriptions),
+  resumes: many(resumes),
 }))
 
 // ── User Profiles ─────────────────────────────────────────────────────────────
@@ -288,6 +290,90 @@ export const followUpDraftsRelations = relations(followUpDrafts, ({ one }) => ({
     references: [applications.id],
   }),
   user: one(users, { fields: [followUpDrafts.userId], references: [users.id] }),
+}))
+
+// ── Resumes (standalone builder — not tied to one application) ────────────────
+//
+// PII NOTE: unlike userProfiles ("structured summaries only") and userDocuments
+// ("storage key only"), a resume the user is editing IS raw PII by definition —
+// their name, phone, and address are the document. It is stored inline as jsonb
+// because a resume is always read and written whole; nothing ever queries a
+// single bullet point. Erasure is covered by the userId cascade below, and no
+// object-storage key is involved, so gdpr.deleteAccount needs no change.
+
+export type ResumeEntry = {
+  id: string
+  title: string
+  organisation: string
+  /** Always present; empty string when the user leaves it blank. */
+  location: string
+  startDate: string
+  endDate: string | null
+  current: boolean
+  bullets: string[]
+}
+
+export type ResumeRatedItem = { id: string; name: string; level: string }
+
+export type ResumeSection =
+  | "summary"
+  | "experience"
+  | "education"
+  | "skills"
+  | "languages"
+  | "certificates"
+
+export type ResumeContent = {
+  contact: {
+    firstName: string
+    lastName: string
+    jobTitle: string
+    email: string
+    phone: string
+    location: string
+    linkedinUrl: string
+    portfolioUrl: string
+  }
+  summary: string
+  experience: ResumeEntry[]
+  education: ResumeEntry[]
+  skills: ResumeRatedItem[]
+  languages: ResumeRatedItem[]
+  certificates: ResumeRatedItem[]
+  /** Render order of the body sections. Unlisted sections are hidden. */
+  sectionOrder: ResumeSection[]
+  showSkillLevels: boolean
+}
+
+export const resumes = pgTable(
+  "resumes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // SET NULL, not cascade: a resume tailored to a listing must survive that
+    // listing being deprecated by the scraper.
+    jobId: text("job_id").references(() => jobs.id, { onDelete: "set null" }),
+
+    title: text("title").notNull(),
+    template: text("template").default("harvard").notNull(),
+    /** The one resume used as the starting point for new tailored versions. */
+    isBase: boolean("is_base").default(false).notNull(),
+
+    content: jsonb("content").$type<ResumeContent>().notNull(),
+
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index("resumes_user_id_idx").on(t.userId)],
+)
+
+export const resumesRelations = relations(resumes, ({ one }) => ({
+  user: one(users, { fields: [resumes.userId], references: [users.id] }),
+  job: one(jobs, { fields: [resumes.jobId], references: [jobs.id] }),
 }))
 
 // ── Subscriptions (Agent 8 — billing, dark until BSS funding) ─────────────────

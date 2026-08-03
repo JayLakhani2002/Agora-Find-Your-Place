@@ -82,6 +82,15 @@ export function HowItWorks() {
         <div className="band-inner pt-20 lg:pt-0">
           <p className="eyebrow">{t.eyebrow}</p>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl">{t.headline}</h2>
+          {/* Step count — visible on mobile where dots aren't shown */}
+          <p className="mt-3 font-data text-sm text-text-mute lg:hidden">
+            {t.steps.map((s, i) => (
+              <span key={s.id} className="mr-3 inline-flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-laurel/40 inline-block" />
+                {s.kicker.split(" · ")[1]}
+              </span>
+            ))}
+          </p>
         </div>
 
         <div

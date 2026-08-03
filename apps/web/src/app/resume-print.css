@@ -1,0 +1,76 @@
+/*
+ * Resume PDF export. There is no PDF library — export is the browser's own
+ * print dialog ("Save as PDF"), so this stylesheet IS the exporter.
+ *
+ * Imported by components/resume/ResumePreview.tsx, which puts `resume-paper`
+ * on the page root, `resume-entry` on anything that must not straddle a page
+ * break, and `resume-tint` on a template's coloured panel.
+ */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  /* Hide the app chrome, then bring the paper subtree back.
+     Gated on :has() so the rule is inert on pages with no preview — this file
+     may end up in a shared CSS chunk, and an unguarded `body *` would print a
+     blank sheet from the tracker or the deck. */
+  body:has(.resume-paper) * {
+    visibility: hidden !important;
+  }
+
+  .resume-paper,
+  .resume-paper * {
+    visibility: visible !important;
+  }
+
+  /* The paper becomes the page: no glass, no shadow, no tint, no scaling.
+     Padding is dropped because @page already supplies the 14mm margin. */
+  .resume-paper {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Tinted panels (the Modern sidebar) must survive ink-saving defaults. */
+  .resume-tint {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Never split a role, degree, or list item across a page. */
+  .resume-entry,
+  .resume-paper li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* A heading alone at the foot of a page is an orphan. */
+  .resume-paper h1,
+  .resume-paper h2,
+  .resume-paper h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

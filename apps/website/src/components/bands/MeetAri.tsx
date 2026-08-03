@@ -58,9 +58,16 @@ export function MeetAri() {
           data-reveal
           className="mt-16 rounded-2xl border border-text-on-ink/10 bg-ink-soft p-6 sm:p-8"
         >
+          <p className="mb-4 font-data text-xs uppercase tracking-[0.12em] text-text-on-ink/45">
+            Coming soon — chat with Ari
+          </p>
           <div className="flex flex-wrap gap-3">
             {t.chat.starters.map((s) => (
-              <span key={s} className="chip-on-ink chip cursor-default opacity-70">
+              <span
+                key={s}
+                title="Ari chat launches with early access"
+                className="chip-on-ink chip cursor-not-allowed opacity-50 transition-opacity hover:opacity-70"
+              >
                 {s}
               </span>
             ))}

@@ -55,6 +55,40 @@ export const TRACKER_NEXT: Partial<Record<ApplicationStatus, readonly TrackerNex
   offer_received: ["withdrawn"],
 }
 
+// ── Dashboard "Your Jobs" table ───────────────────────────────────────────────
+
+export type TableFilter = "all" | "review" | "applied" | "declined"
+
+const APPLIED: readonly ApplicationStatus[] = ["submitted", "interview_invited", "offer_received"]
+const DECLINED: readonly ApplicationStatus[] = ["rejected", "withdrawn"]
+
+/**
+ * Which tab a row belongs under. `approved` is deliberately in none of the
+ * three named tabs: it is drafted but not sent, so it only shows under All.
+ */
+export function matchesFilter(status: ApplicationStatus, filter: TableFilter): boolean {
+  switch (filter) {
+    case "all":
+      return true
+    case "review":
+      return status === "generated"
+    case "applied":
+      return APPLIED.includes(status)
+    case "declined":
+      return DECLINED.includes(status)
+  }
+}
+
+/**
+ * Where a row's primary action leads. `submitted` is reachable ONLY from
+ * `approved` via the submit screen, so no already-sent row may route there.
+ */
+export function rowHref(id: string, status: ApplicationStatus): string {
+  if (status === "generated") return `/applications/${id}/review`
+  if (status === "approved") return `/applications/${id}/submit`
+  return "/tracker"
+}
+
 // ── Misc formatting ───────────────────────────────────────────────────────────
 
 export function daysSince(date: string | Date | null | undefined, now = new Date()): number | null {
@@ -66,8 +100,18 @@ export function daysSince(date: string | Date | null | undefined, now = new Date
   return Math.floor(diff / (24 * 60 * 60 * 1000))
 }
 
+/**
+ * Scrapers write 0 when a listing omits the wage, so `€0/h` is never a real
+ * rate — it is a missing one, and showing it as a number reads like the job
+ * pays nothing.
+ */
 export function formatRate(hourlyRate: number | null): string {
-  return hourlyRate === null ? "Rate not stated" : `€${hourlyRate}/h`
+  return hourlyRate === null || hourlyRate <= 0 ? "Rate not stated" : `€${hourlyRate}/h`
+}
+
+/** Match scores are 0–10. A 0 means "no signal", not "a terrible match". */
+export function formatMatchScore(score: number | null | undefined): string | null {
+  return score === null || score === undefined || score <= 0 ? null : score.toFixed(1)
 }
 
 export function formatHours(hoursPerWeek: number | null): string {

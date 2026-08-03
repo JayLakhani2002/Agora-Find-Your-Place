@@ -27,7 +27,7 @@ export function WhyItWins({ showStats = false }: { showStats?: boolean }) {
             <div data-reveal key={col.title}>
               <span
                 aria-hidden
-                className="mb-4 flex h-9 w-9 items-center justify-center rounded-full border-2 border-laurel-bright/50 font-data text-sm font-semibold text-laurel-bright"
+                className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border-2 border-laurel-bright/60 bg-laurel-bright/10 font-data text-base font-bold text-laurel-bright"
               >
                 {i + 1}
               </span>

@@ -6,6 +6,7 @@ import { gdprRouter } from "./gdpr"
 import { jobsRouter } from "./jobs"
 import { onboardingRouter } from "./onboarding"
 import { profileRouter } from "./profile"
+import { resumesRouter } from "./resumes"
 
 export const appRouter = createTRPCRouter({
   jobs: jobsRouter,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   deck: deckRouter,
   applications: applicationsRouter,
   billing: billingRouter,
+  resumes: resumesRouter,
 })
 
 export type AppRouter = typeof appRouter

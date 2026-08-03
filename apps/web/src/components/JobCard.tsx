@@ -1,6 +1,6 @@
 "use client"
 
-import { formatHours, formatRate } from "@/lib/ui"
+import { formatHours, formatMatchScore, formatRate } from "@/lib/ui"
 import { Badge } from "@agora/ui"
 import { Banknote, Clock, MapPin } from "lucide-react"
 import { TickRow, type Ticks } from "./TickRow"
@@ -28,9 +28,11 @@ export function JobCard({ card }: { card: DeckCard }) {
           <h2 className="text-lg font-bold leading-tight">{card.title}</h2>
           <p className="text-sm text-muted">{card.company}</p>
         </div>
-        <Badge variant="info" className="shrink-0 text-sm">
-          {card.matchScore.toFixed(1)}
-        </Badge>
+        {formatMatchScore(card.matchScore) && (
+          <Badge variant="info" className="shrink-0 text-sm" title="Match score out of 10">
+            {formatMatchScore(card.matchScore)}
+          </Badge>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
@@ -51,6 +53,21 @@ export function JobCard({ card }: { card: DeckCard }) {
         <Badge variant="neutral" className="w-fit">
           {card.contractType.replaceAll("_", " ")}
         </Badge>
+      )}
+
+      {/* Fills the card body on sparse listings, which would otherwise leave a
+          dead gap above the ticks. Full list stays behind tap-for-detail. */}
+      {card.eligibilityReasons.length > 0 && (
+        <ul className="space-y-1 text-sm text-muted">
+          {card.eligibilityReasons.slice(0, 3).map((reason) => (
+            <li key={reason} className="flex gap-1.5">
+              <span aria-hidden className="text-cta">
+                ✓
+              </span>
+              <span>{reason}</span>
+            </li>
+          ))}
+        </ul>
       )}
 
       <div className="mt-auto">

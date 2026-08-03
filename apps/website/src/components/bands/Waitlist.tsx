@@ -87,7 +87,18 @@ export function Waitlist() {
         )}
 
         <p aria-live="polite" className="mt-3 min-h-5 text-sm text-text-on-ink/60">
-          {state === "error" ? t.error : ""}
+          {state === "error" ? (
+            <>
+              {t.error}{" "}
+              <button
+                type="button"
+                onClick={() => setState("idle")}
+                className="underline underline-offset-2 hover:text-text-on-ink"
+              >
+                Try again
+              </button>
+            </>
+          ) : ""}
         </p>
         <p className="mt-6 font-data text-xs uppercase tracking-[0.14em] text-text-on-ink/45">
           {t.smallPrint}

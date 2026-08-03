@@ -50,11 +50,14 @@ export function SwipeDeck({ cards, onSwipe, emptyState }: SwipeDeckProps) {
   return (
     <MotionConfig reducedMotion="user">
       <div className="relative mx-auto h-[420px] w-full max-w-sm select-none">
-        {/* The card behind, peeking */}
+        {/* The card behind is pure depth — deliberately blank. Rendering a real
+            JobCard here bled its text through the top card, because the card
+            face is glass (bg-white/90) and therefore see-through. */}
         {next && (
-          <div className="absolute inset-0 translate-y-2 scale-[0.97] opacity-70" aria-hidden>
-            <JobCard card={next} />
-          </div>
+          <div
+            className="absolute inset-0 translate-y-2 scale-[0.97] rounded-2xl border border-white/50 bg-white/70 shadow-glass"
+            aria-hidden
+          />
         )}
 
         <AnimatePresence>

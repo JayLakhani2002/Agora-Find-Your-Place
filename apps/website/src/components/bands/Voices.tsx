@@ -31,6 +31,9 @@ export function Voices() {
       </div>
       <div data-reveal>
         <DragRow />
+        <p aria-hidden className="mt-4 text-center font-data text-xs text-text-mute">
+          ← drag to explore →
+        </p>
       </div>
     </section>
   )

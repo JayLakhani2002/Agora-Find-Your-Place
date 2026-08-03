@@ -121,7 +121,15 @@ export function Story() {
           </div>
         </div>
 
-        {/* Morphing phone mock */}
+        {/* Morphing phone mock — desktop: animated; mobile: static simplified */}
+        <div className="flex flex-col items-center gap-4 lg:hidden">
+          <DeviceFrame tone="dark" className="w-[min(72vw,240px)]">
+            <StoryMockStatic />
+          </DeviceFrame>
+          <p className="max-w-[220px] text-center font-data text-xs text-text-on-ink/45">
+            Hundreds of listings → the handful you can actually take.
+          </p>
+        </div>
         <div className="hidden lg:flex lg:flex-col lg:items-center lg:gap-4">
           <DeviceFrame tone="dark">
             <StoryMock />
@@ -140,6 +148,40 @@ export function Story() {
         </div>
       </div>
     </section>
+  )
+}
+
+/** Static version for mobile — shows the final "match found" state directly. */
+function StoryMockStatic() {
+  return (
+    <div className="relative h-full px-3 py-2">
+      <div className="mb-2.5 flex items-center justify-between border-b border-text-on-ink/10 pb-2">
+        <span className="font-data text-[0.6rem] uppercase tracking-wider text-text-on-ink/50">
+          Berlin · Werkstudent
+        </span>
+        <span className="font-data text-[0.6rem] text-laurel-bright">1 match</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2 opacity-30">
+        {Array.from({ length: 6 }, (_, i) => `card-${i}`).map((key) => (
+          <div key={key} className="relative rounded-lg border border-text-on-ink/10 bg-ink-soft p-2.5">
+            <div className="h-2 w-3/4 rounded bg-text-on-ink/20" />
+            <div className="mt-1.5 h-2 w-1/2 rounded bg-text-on-ink/10" />
+            <span aria-hidden className="absolute left-2 right-2 top-1/2 h-px bg-text-on-ink/50" />
+          </div>
+        ))}
+      </div>
+      <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 rounded-xl border border-laurel-bright/60 bg-ink-soft p-4 shadow-lg">
+        <div className="h-2.5 w-4/5 rounded bg-text-on-ink/30" />
+        <div className="mt-2 h-2 w-1/2 rounded bg-text-on-ink/15" />
+        <div className="mt-3 flex gap-1.5">
+          {["✓ Visa", "✓ B1", "✓ 20h"].map((c) => (
+            <span key={c} className="rounded-full border border-laurel-bright/50 px-1.5 py-0.5 font-data text-[0.6rem] text-laurel-bright">
+              {c}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 

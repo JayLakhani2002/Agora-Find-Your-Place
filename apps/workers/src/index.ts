@@ -5,12 +5,16 @@ import { type ExtractProfileJob, extractProfile } from "./jobs/extract-profile"
 import { type GenerateDocumentsJob, generateDocuments } from "./jobs/generate-documents"
 import { type GenerateFollowUpJob, generateFollowUpDraft } from "./jobs/generate-followup"
 import { type GenerateQuestionsJob, generateQuestions } from "./jobs/generate-questions"
+import { scrapeArbeitnow } from "./jobs/scrape-arbeitnow"
+import { scrapeArbeitsagentur } from "./jobs/scrape-arbeitsagentur"
 import { scrapeBerlinStartupJobs } from "./jobs/scrape-berlin-startup-jobs"
 import { scrapeJobicco } from "./jobs/scrape-jobicco"
 import { scrapeStellenticket } from "./jobs/scrape-stellenticket"
 import { getConnection, getEmbeddingQueue, getScraperQueue } from "./queues"
 
 const SCRAPERS = {
+  arbeitsagentur: scrapeArbeitsagentur,
+  arbeitnow: scrapeArbeitnow,
   berlin_startup_jobs: scrapeBerlinStartupJobs,
   stellenticket: scrapeStellenticket,
   jobicco: scrapeJobicco,

@@ -1,26 +1,23 @@
 "use client"
 
+import { NAV_ITEMS, isActive } from "@/components/nav-items"
 import { cn } from "@agora/ui"
-import { Layers, ListChecks, Settings } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-const ITEMS = [
-  { href: "/dashboard", label: "Deck", Icon: Layers },
-  { href: "/tracker", label: "Tracker", Icon: ListChecks },
-  { href: "/settings", label: "Settings", Icon: Settings },
-] as const
+const ITEMS = NAV_ITEMS.filter((item) => item.primary)
 
+/** Mobile-only bar. Desktop uses the sidebar rail (see Sidebar). */
 export function BottomNav() {
   const pathname = usePathname()
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/50 bg-white/80 backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/50 bg-white/80 backdrop-blur-md md:hidden"
     >
       <div className="mx-auto flex max-w-md">
         {ITEMS.map(({ href, label, Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`)
+          const active = isActive(pathname, href)
           return (
             <Link
               key={href}

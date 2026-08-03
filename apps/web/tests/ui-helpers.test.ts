@@ -5,6 +5,7 @@ import {
   TRACKER_NEXT,
   daysSince,
   formatHours,
+  formatMatchScore,
   formatRate,
   scoreBand,
 } from "../src/lib/ui"
@@ -125,5 +126,24 @@ describe("formatRate / formatHours", () => {
   it("is honest about missing values (never fakes a number)", () => {
     expect(formatRate(null)).toBe("Rate not stated")
     expect(formatHours(null)).toBe("Hours not stated")
+  })
+
+  it("treats a zero rate as missing, not as a job that pays nothing", () => {
+    // Scrapers write 0 when a listing omits the wage.
+    expect(formatRate(0)).toBe("Rate not stated")
+    expect(formatRate(-5)).toBe("Rate not stated")
+  })
+})
+
+describe("formatMatchScore", () => {
+  it("renders a real score to one decimal", () => {
+    expect(formatMatchScore(7.25)).toBe("7.3")
+    expect(formatMatchScore(10)).toBe("10.0")
+  })
+
+  it("returns null for no-signal scores so the badge is hidden, not shown as 0.0", () => {
+    expect(formatMatchScore(0)).toBeNull()
+    expect(formatMatchScore(null)).toBeNull()
+    expect(formatMatchScore(undefined)).toBeNull()
   })
 })

@@ -9,7 +9,12 @@ export type GermanLevel = (typeof germanLevelEnum.enumValues)[number]
 // Inference-only intermediate (not a DB column). Mapped to allowedVisaTypes + requiresEnrollment.
 export type VisaRequirement = "none" | "eu_only" | "any"
 
-export type SourceName = "berlin_startup_jobs" | "stellenticket" | "jobicco"
+export type SourceName =
+  | "berlin_startup_jobs"
+  | "stellenticket"
+  | "jobicco"
+  | "arbeitsagentur"
+  | "arbeitnow"
 
 /**
  * Normalized job, shaped to Agent 2's `jobs` table columns (NOT the old spec's

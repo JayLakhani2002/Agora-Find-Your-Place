@@ -1,6 +1,6 @@
 import { Cta } from "@/components/sections/Cta"
-import { FaqTeaser } from "@/components/sections/FaqTeaser"
 import { Eligibility } from "@/components/sections/Eligibility"
+import { FaqTeaser } from "@/components/sections/FaqTeaser"
 import { Hero } from "@/components/sections/Hero"
 import { Numbers } from "@/components/sections/Numbers"
 import { Offer } from "@/components/sections/Offer"

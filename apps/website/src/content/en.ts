@@ -14,7 +14,7 @@ import { claims } from "./claims"
  *  - The full agent story is told in the present tense ONLY under the visible early-access
  *    frame: the hero badge, every CTA, and the FAQ anchor below.
  *  - Anything not running yet carries a mono `at launch` tag — the Apply step and four of
- *    the five platform cards.
+ *    the five platform doors.
  *  - `faq.items[0]` is the honesty anchor. Its meaning is never softened, never trimmed,
  *    and never moved out of first position.
  */
@@ -53,16 +53,12 @@ export const en = {
     ctaPrimary: "Get early access",
     ctaSecondary: "See how it works",
     ctaSecondaryHref: "/#how-it-works",
-    // ⚠ This describes the image that is ACTUALLY there, which is still the v5 Berlin-at-night
-    // shot. It briefly described three shift workers instead — aspirational, and wrong: alt
-    // text describes the image on the page, never the image we intend to commission. A screen
-    // reader user must get the same picture a sighted user gets.
-    //
-    // The image itself is the remaining mismatch with the new positioning — a lone laptop in a
-    // flat above the Berlin skyline reads office-worker and reads Berlin, and the page now
-    // promises neither. Replace it (Higgsfield) and update this line in the same commit.
+    // Describes the FOOTAGE, and specifically its opening/poster frame — that is what a
+    // sighted visitor sees first and what anyone with the sequence disabled sees throughout.
+    // Naming the individual garments matters: they are the entire argument of the hero, so a
+    // screen reader user who only gets this sentence still receives the point.
     imageAlt:
-      "A darkened flat at night, seen from behind a desk: an open laptop glowing by the window, with the Berlin skyline and television tower beyond.",
+      "A row of iron coat hooks on a warm plaster wall in a dim staff corridor before dawn, hung with work clothes for six different trades: a chef's white jacket, an orange hi-vis vest, a pale care-worker tunic with a lanyard, a courier's rain jacket, a canvas shop apron and a wool blazer. Warm light spills from an open doorway at the end of the corridor.",
     // Deliberately does NOT repeat the listing count — the terminal footer directly above
     // already carries it. This line adds what that one doesn't: breadth and cadence.
     receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value} CET`,
@@ -78,12 +74,37 @@ export const en = {
     alt: "Terminal panel replaying the engine's nightly scan and the real listings it found.",
   },
 
-  // 2 — Real-data proof wall
+  // 2 — Real-data proof wall, set as a broadsheet classifieds page
   proof: {
     eyebrow: "In the index right now",
-    headline: "Real roles, from real companies, today.",
-    micro:
-      "Pulled live from our index when this page was built. These are companies whose roles we index — not partners, and not a claim about who hires our users.",
+    headline: "The classifieds page, printed from the index.",
+    /**
+     * The dateline under the masthead. Every value is a live claim, none is typed by hand —
+     * a broadsheet dates its edition, and this one can only date itself from the last scrape.
+     */
+    dateline: `Berlin · last scan ${claims.lastScanDate.value}, ${claims.lastScan.value} CET · ${claims.activeListings.value} listings · ${claims.sourcesIndexed.value} sources`,
+    /** Column headers. Print structure, and each one says plainly what its block contains. */
+    columnLead: "Latest across the index",
+    // Says what the count in each box means, once, instead of repeating a note in all 22.
+    columnNotices: "Employers with several live listings in our index",
+    columnTail: "Also listed",
+    /**
+     * The rubber-stamp overprint. German for "indexed", and deliberately the ONLY verb we
+     * stamp on a listing: we indexed it at that minute. Not sourced, not verified, not
+     * partnered. The stamp is the graphic device and the honesty device at once.
+     */
+    stamp: "Indexiert",
+    /** "11 Stellen" — the count is real, the word is the one the ads themselves use. */
+    rolesLabel: "Stellen",
+    /**
+     * The imprint. Legally load-bearing under UWG §5 and set like a masthead imprint for
+     * exactly that reason: logos imply endorsement in a way plain text does not, so the
+     * sentence that denies it is a formal fixture of the page, not fine print. It is never
+     * shrunk below body size and never moved out from under the listings.
+     */
+    imprint:
+      "Companies whose public listings appear in our index. Not partners. Not endorsements. No hiring outcomes implied.",
+    imprintSource: `Pulled from the index when this page was built, ${claims.activeListings.checkedOn}. Every role, employer, count and timestamp on this page is printed from that snapshot.`,
   },
 
   // 3 — The problem
@@ -266,48 +287,57 @@ export const en = {
       "Guidance, not legal advice. Genuine edge cases belong with your local immigration office — in Germany that's the Ausländerbehörde — and we tell you when you've hit one instead of guessing.",
   },
 
-  // 7 — Platforms
+  /**
+   * 7 — Platforms, as a colonnade: one lit doorway, four drawings.
+   *
+   * The five channels used to be five identical cards, four of which existed only as a
+   * promise — a feature grid where most cells were apologies. The shape now carries the
+   * truth: the built channel is a door you can walk through, the unbuilt four are
+   * construction drawings, and no reader has to parse a tag to tell them apart.
+   *
+   * The drawing does legal work. UWG §5 forbids implying an unshipped feature exists, and a
+   * blueprint cannot be mistaken for a product. `at launch` still appears on every closed
+   * door in plain text — the picture reinforces the tag, it never replaces it.
+   */
   platforms: {
     eyebrow: "Wherever you already are",
-    headline: "One agent. Five front doors.",
-    cards: [
-      {
-        id: "web",
-        icon: "window" as const,
-        title: "Web app",
-        body: "The full workspace — matches, drafts, tracker.",
-        tag: "first",
-      },
+    headline: "One agent. Five front doors. The first one's open.",
+    body: "The web app is the door you can walk through today. The other four are drawn, not built — measured, planned, and honest about which is which. Each one opens when it is real, and this page will say so on the day.",
+    /** The one that exists. Lit doorway, solid sign, and the only link in the row. */
+    open: {
+      name: "Web app",
+      body: "The full workspace — matches, drafts, tracker.",
+      tag: "early access",
+    },
+    /** Drawings. Every `at launch` below is load-bearing — never soften or drop one. */
+    closed: [
       {
         id: "whatsapp",
-        icon: "message" as const,
-        title: "WhatsApp",
+        name: "WhatsApp",
         body: "“Anything good today?” — and it answers.",
         tag: "at launch",
       },
       {
         id: "imessage",
-        icon: "bubble" as const,
-        title: "iMessage",
+        name: "iMessage",
         body: "Same agent, blue bubbles.",
         tag: "at launch",
       },
       {
         id: "claude",
-        icon: "terminal" as const,
-        title: "Claude / MCP",
+        name: "Claude / MCP",
         body: "Run your job hunt from inside Claude.",
         tag: "at launch",
       },
       {
         id: "chrome",
-        icon: "puzzle" as const,
-        title: "Chrome extension",
+        name: "Chrome extension",
         body: "On any job page: score it, draft for it, save it.",
         tag: "at launch",
       },
     ],
     cta: "Get early access",
+    note: "Four of the five are architectural drawings. Nothing is running behind them yet.",
   },
 
   /**
@@ -576,7 +606,6 @@ export const en = {
     gdpr: "EU-hosted · GDPR-first. Export or delete your data at any time, documents included.",
     smallPrint: "Made in Berlin · Hosted in the EU · GDPR-first",
   },
-
 
   frames: {
     scoreTitle: "Quality score",

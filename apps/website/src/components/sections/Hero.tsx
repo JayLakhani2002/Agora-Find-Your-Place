@@ -1,83 +1,125 @@
 import { EngineTheater } from "@/components/frames/EngineTheater"
+import { CinematicScrub } from "@/components/ui/CinematicScrub"
 import { Split } from "@/components/ui/Split"
 import { en } from "@/content/en"
 import { theaterScript } from "@/content/live-data"
-import Image from "next/image"
 import Link from "next/link"
 import type { CSSProperties } from "react"
 
 const cue = (d: string) => ({ "--d": d }) as CSSProperties
 
 /**
- * Hero — a full-bleed cinematic open, then the proof.
+ * Hero — "Schichtwechsel", a scroll-scrubbed cinematic open, then the proof.
  *
- * The photograph is 02:00 in a Berlin apartment: empty chair, laptop lit and working,
- * the city asleep through the window. It is the headline as an image — the desk is empty
- * because you are not at it. The footer closes on the same room at 07:00 with the laptop
- * shut, so the whole page reads as one night passing.
+ * WHY THIS IMAGE. The previous hero was a Berlin flat at 02:00 with a glowing laptop. It was
+ * a good photograph and it was the wrong one: a lone laptop above the Berlin skyline reads
+ * office-worker and reads Berlin, and this page promises neither. It sells to the audience
+ * every competitor already fights over, and quietly excludes the one nobody is serving.
  *
- * The terminal sits directly underneath on the light canvas, which is deliberate: the
- * image shows a screen glowing, and the next thing you see is what that screen was
- * actually doing — real rows from the real index.
+ * What replaced it is a wall of coat hooks in a back-of-house corridor before dawn: chef's
+ * whites, hi-vis, a care tunic with a lanyard, a courier jacket, a shop apron, a blazer. The
+ * camera tracks past them, then pushes through the open door into dawn light that blows out
+ * to warm white — and that white resolves into the ivory page canvas, so the section below
+ * IS the room you just walked into.
  *
- * Text legibility over photography is handled by a two-axis scrim (bottom + left) rather
- * than by darkening the whole image, so the Fernsehturm and the window light survive.
+ * NO FACES, deliberately. Any face codes an age, a gender, an ethnicity, and quietly tells
+ * most readers the product is for someone else. Empty garments code the WORK instead, and
+ * the reader fills them in themselves. It also sidesteps the stock-photo-of-smiling-workers
+ * cliché that every rival in this category leans on.
+ *
+ * The terminal sits directly underneath on the light canvas: the film ends by walking into
+ * the light, and the first thing in that light is what the engine actually did last night.
+ *
+ * Text legibility over the footage is a bottom scrim only, not a full darkening, so the
+ * garments and the doorway survive behind the copy.
  */
 export function Hero() {
   const { hero, theater } = en
   return (
     <>
-      {/*
-       * Height is kept close to the image's own 21:9 so `object-cover` barely crops. At
-       * 88vh the container was ~1.8:1, which sliced ~200px off each side and threw away
-       * both the window on the left and the desk lamp on the right — the two things that
-       * make the photograph readable as a room.
-       */}
-      <section className="relative flex min-h-[clamp(36rem,90vh,52rem)] items-end overflow-hidden">
-        <Image
-          src="/img/hero-night.jpg"
-          alt={hero.imageAlt}
-          fill
-          priority
-          sizes="100vw"
-          className="-z-20 object-cover object-center"
-        />
-        {/*
-         * Scrim. Two gradients, each covering only the part of the frame the copy sits on,
-         * so the photograph survives everywhere else. Stacking two full-inset gradients
-         * (the first attempt) compounded to near-opaque and wiped the image out entirely —
-         * the window, the lamp and the Fernsehturm all disappeared.
-         */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 -z-10 h-[64%] bg-gradient-to-t from-ink via-ink/78 to-transparent"
-        />
+      <CinematicScrub
+        frameCount={150}
+        framePrefix="/frames/shift/frame_"
+        poster="/img/hero-shift-poster.jpg"
+        alt={hero.imageAlt}
+        stageVh={420}
+      >
+        <>
+          {/*
+           * Scrim over the bottom only. Darkening the whole frame killed the doorway light,
+           * which is the one thing the last third of the clip is about.
+           *
+           * A scrubbing hero raises a problem a still one doesn't: the copy has to stay legible
+           * against ALL 150 frames. This clip runs from a near-black corridor to a blown-out
+           * white doorway, so there is no single overlay that is safe by luck. The gradient is
+           * therefore opaque at the very bottom — where the headline, sub and buttons sit —
+           * rather than merely tinted.
+           */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[82%] bg-gradient-to-t from-ink via-ink/90 to-transparent"
+          />
+          {/*
+           * Second, tighter scrim under the copy block itself. The gradient above is shaped for
+           * the DARK frames; on the blown-out doorway frames at the end of the clip the accent
+           * line ("Not just desk jobs.") measured barely above its background, because clay-soft
+           * over near-white is a weak pair. Rather than darken the whole hero — which would
+           * throw away the doorway light the last third of the clip is built around — the copy
+           * band gets its own floor.
+           */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-gradient-to-t from-ink via-ink/92 to-transparent"
+          />
 
-        <div className="shell on-ink relative pb-[clamp(3rem,6vw,4.5rem)] pt-24">
-          <p style={cue("0.1s")} className="cue chip chip-launch">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay" />
-            {hero.badge}
-          </p>
+          {/*
+           * data-scrub-fade: this block leaves before the frame blows out to white. See the
+           * fade logic in CinematicScrub — it exists for contrast, not for flourish. With no
+           * scrub running (mobile, reduced motion, no JS) the attribute does nothing and the
+           * copy simply stays at full opacity, which is the correct static hero.
+           */}
+          <div data-scrub-fade className="absolute inset-x-0 bottom-0 transition-opacity">
+            <div className="shell on-ink relative pb-[clamp(3rem,6vw,4.5rem)]">
+              {/*
+               * The badge carries its own backdrop rather than relying on the scrim. It sits
+               * highest of all the copy, where the gradient has already faded to near-nothing,
+               * and testing showed it unreadable against the mid-clip frames — the wall behind
+               * it is a light plaster tan. `chip-launch` is a deliberately quiet treatment for
+               * "not built yet" markers on a light canvas; this is neither of those things.
+               */}
+              <p
+                style={cue("0.1s")}
+                className="cue chip border border-white/25 bg-ink/70 text-white/90 backdrop-blur-sm"
+              >
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay-soft" />
+                {hero.badge}
+              </p>
 
-          <h1 className="mt-7 max-w-[20ch] text-balance text-d1 font-bold text-white">
-            <Split text={hero.headline} accent={hero.headlineAccent} accentClass="text-clay" />
-          </h1>
+              <h1 className="mt-7 max-w-[20ch] text-balance text-d1 font-bold text-white">
+                <Split
+                  text={hero.headline}
+                  accent={hero.headlineAccent}
+                  accentClass="text-clay-bright"
+                />
+              </h1>
 
-          <p style={cue("0.55s")} className="cue mt-7 max-w-prose text-lead text-white/70">
-            {hero.sub}
-          </p>
+              <p style={cue("0.55s")} className="cue mt-7 max-w-prose text-lead text-white/70">
+                {hero.sub}
+              </p>
 
-          <div style={cue("0.7s")} className="cue mt-9 flex flex-wrap items-center gap-3">
-            <a href={en.nav.ctaHref} data-magnetic className="btn btn-primary">
-              {hero.ctaPrimary}
-            </a>
-            <Link href={hero.ctaSecondaryHref} className="btn btn-secondary">
-              {hero.ctaSecondary}
-              <span aria-hidden="true">↓</span>
-            </Link>
+              <div style={cue("0.7s")} className="cue mt-9 flex flex-wrap items-center gap-3">
+                <a href={en.nav.ctaHref} data-magnetic className="btn btn-primary">
+                  {hero.ctaPrimary}
+                </a>
+                <Link href={hero.ctaSecondaryHref} className="btn btn-secondary">
+                  {hero.ctaSecondary}
+                  <span aria-hidden="true">↓</span>
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </>
+      </CinematicScrub>
 
       {/* The proof, immediately: that glowing screen, and what was actually on it. */}
       <section className="band pb-band pt-[clamp(3rem,6vw,5rem)]">

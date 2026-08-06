@@ -1,5 +1,5 @@
-import type { LegalSection } from "@/content/legal"
 import { Cta } from "@/components/sections/Cta"
+import type { LegalSection } from "@/content/legal"
 
 /**
  * Renders the Impressum and the privacy notice.

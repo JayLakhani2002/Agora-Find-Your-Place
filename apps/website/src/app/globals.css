@@ -16,6 +16,7 @@
   --clay: #b5502e; /* the accent — actions, links, active states */
   --clay-deep: #8f3e23; /* hover/pressed; the text-safe clay on ivory-deep + clay-wash */
   --clay-soft: #e0885c; /* clay-family text ON ink */
+  --clay-bright: #f2b79c; /* accent text over photography/video — see tailwind.config.ts */
   --clay-wash: #f7ede8; /* clay-tinted surface on ivory — decoration; text uses clay-deep */
   --text: #1c1b19;
   --text-mute: #55504a;
@@ -48,7 +49,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Sora carries every display line; DM Sans (on body) carries everything readable. */
+  /* Fraunces carries every display line; Inter (on body) carries everything readable. */
   h1,
   h2,
   h3 {
@@ -209,11 +210,11 @@
   .btn-primary {
     background: var(--clay);
     color: #fff;
-    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 10px 30px -12px rgba(79, 70, 229, 0.55);
+    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 10px 30px -12px rgba(181, 80, 46, 0.55);
   }
   .btn-primary:hover {
     background: var(--clay-deep);
-    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 16px 44px -12px rgba(79, 70, 229, 0.7);
+    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 16px 44px -12px rgba(181, 80, 46, 0.7);
   }
   /* Sheen sweep on hover — transform only */
   .btn-primary::after {
@@ -301,16 +302,16 @@
   }
   .lift:hover {
     transform: translateY(-2px);
-    border-color: rgba(79, 70, 229, 0.4);
-    box-shadow: 0 2px 6px rgba(var(--shadow-rgb), 0.05), 0 22px 48px -22px rgba(79, 70, 229, 0.32);
+    border-color: rgba(181, 80, 46, 0.4);
+    box-shadow: 0 2px 6px rgba(var(--shadow-rgb), 0.05), 0 22px 48px -22px rgba(181, 80, 46, 0.32);
   }
   .lift.card-dark:hover {
-    border-color: rgba(169, 178, 255, 0.4);
-    box-shadow: 0 0 60px -18px rgba(79, 70, 229, 0.6);
+    border-color: rgba(224, 136, 92, 0.4);
+    box-shadow: 0 0 60px -18px rgba(181, 80, 46, 0.6);
   }
 
   .dot-grid {
-    background-image: radial-gradient(circle at 1px 1px, rgba(30, 27, 58, 0.07) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(23, 21, 18, 0.07) 1px, transparent 0);
     background-size: 28px 28px;
   }
 }
@@ -457,7 +458,7 @@
   }
   .js-motion [data-rail][data-done="true"] {
     opacity: 0.85;
-    border-color: rgba(79, 70, 229, 0.45);
+    border-color: rgba(181, 80, 46, 0.45);
   }
   .js-motion [data-rail][data-active="true"] {
     opacity: 1;
@@ -574,6 +575,38 @@
 .marquee:hover .marquee-track,
 .marquee:focus-within .marquee-track {
   animation-play-state: paused;
+}
+
+/*
+ * Classifieds overprint. The stamp rests at a slight tilt so it reads as ink pressed onto
+ * paper rather than a UI badge; the tilt is set per entry in ProofWall.tsx.
+ *
+ * The stamping-in runs on a scroll-driven view() timeline — no JS, no observer, and the
+ * entries land in reading order because the timeline IS their position on the page. Two
+ * fallbacks, both landing on "stamp present":
+ *   - no `animation-timeline` support: the animation has no duration, so `both` fill applies
+ *     the end keyframe immediately;
+ *   - reduced motion or no JS: `.js-motion` is never added, so no animation is declared here
+ *     at all and the stamps are simply there. That is the hard line the rest of this file keeps.
+ * `--i` staggers the range so entries sharing a screen still land one after another.
+ */
+.stamp {
+  transform: rotate(var(--stamp-tilt, -2deg));
+}
+.js-motion .stamp {
+  animation: agora-stamp linear both;
+  animation-timeline: view();
+  animation-range: entry calc(4% + var(--i, 0) * 4%) cover calc(24% + var(--i, 0) * 4%);
+}
+@keyframes agora-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(9deg) scale(1.55);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--stamp-tilt, -2deg)) scale(1);
+  }
 }
 
 /* Odometer digit column: 0–9 stacked, translated to the target digit. */

@@ -37,7 +37,7 @@ export function Numbers() {
       <div className="shell">
         <div
           onMouseEnter={() => setReplay((n) => n + 1)}
-          className="card-ink on-ink group relative overflow-hidden p-8 shadow-float transition-all duration-slow ease-out hover:-translate-y-1 hover:shadow-[0_2px_6px_rgba(30,27,58,0.06),0_40px_80px_-32px_rgba(79,70,229,0.55)] sm:p-12 lg:p-16"
+          className="card-ink on-ink group relative overflow-hidden p-8 shadow-float transition-all duration-slow ease-out hover:-translate-y-1 hover:shadow-[0_2px_6px_rgba(23,21,18,0.06),0_40px_80px_-32px_rgba(181,80,46,0.55)] sm:p-12 lg:p-16"
         >
           <Aurora tone="cool" dark />
 

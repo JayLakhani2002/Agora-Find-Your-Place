@@ -45,7 +45,16 @@ export default {
         clay: {
           DEFAULT: "#B5502E", // THE accent. Primary actions, links, active states
           deep: "#8F3E23", // hover/pressed, and text on ivory-deep or clay-wash
-          soft: "#E0885C", // clay-family text ON ink (AA-safe)
+          soft: "#E0885C", // clay-family text ON ink (AA-safe on a FLAT ink surface)
+          /**
+           * Accent text over PHOTOGRAPHY or video, where the background is not a flat colour.
+           * `soft` is a mid-tone: measured against the hero footage it fell to 2.33:1, below
+           * even the 3:1 large-text floor, because a scrubbing clip's background luminance
+           * moves under the text. This is lifted to luminance 0.55, which holds 3.57:1 against
+           * the worst frame behind the hero copy and 10.4:1 on flat ink.
+           * Use `soft` on flat dark surfaces; use this one whenever an image is underneath.
+           */
+          bright: "#F2B79C",
           wash: "#F7EDE8", // clay-tinted surface on ivory — pair with clay.deep for text
         },
         text: {

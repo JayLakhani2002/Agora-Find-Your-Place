@@ -240,7 +240,11 @@ export const privacy = {
           kind: "table",
           head: ["Processor", "What for", "Where"],
           rows: [
-            ["Amazon Web Services", "AI models (Bedrock), file storage, encryption keys", "EU — Frankfurt"],
+            [
+              "Amazon Web Services",
+              "AI models (Bedrock), file storage, encryption keys",
+              "EU — Frankfurt",
+            ],
             ["Neon", "The database", "EU"],
             ["Clerk", "Accounts and sign-in", "EU data residency"],
             ["Upstash", "Rate limiting and the job queue", "EU"],

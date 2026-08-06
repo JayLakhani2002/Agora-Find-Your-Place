@@ -34,7 +34,7 @@ export function ApplyCard({
         {fields.map((f) => (
           <div key={f.label} className="flex items-baseline justify-between gap-3">
             <dt className="text-[0.8125rem] text-text-soft">{f.label}</dt>
-            <dd className="font-data text-[0.75rem] text-indigo">{f.value}</dd>
+            <dd className="font-data text-[0.75rem] text-clay">{f.value}</dd>
           </div>
         ))}
       </dl>

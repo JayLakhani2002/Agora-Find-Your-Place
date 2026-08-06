@@ -35,14 +35,14 @@ export function DiffCard({
               key={row.text}
               className={cn(
                 "flex gap-2.5 border-b border-ivory-line/70 px-4 py-2.5 text-[0.8125rem] leading-snug last:border-b-0",
-                row.kind === "add" ? "bg-indigo-wash" : "bg-ivory-deep/60",
+                row.kind === "add" ? "bg-clay-wash" : "bg-ivory-deep/60",
               )}
             >
               <span
                 aria-hidden="true"
                 className={cn(
                   "font-data text-[0.8125rem] leading-snug",
-                  row.kind === "add" ? "text-indigo" : "text-text-soft",
+                  row.kind === "add" ? "text-clay" : "text-text-soft",
                 )}
               >
                 {row.kind === "add" ? "+" : "−"}

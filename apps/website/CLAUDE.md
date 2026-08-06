@@ -1,11 +1,36 @@
 # CLAUDE.md — Agora Marketing Website (Landing Page)
 
-> **⚠ DIRECTION SUPERSEDED (Jay, 2026-08-04): read [BUILD-GUIDE.md](BUILD-GUIDE.md) FIRST — it is
-> the binding spec.** The "Sunlit stoa" concept (§4), Marcellus serif, Ari-as-mascot/thread/labyrinth
-> motifs (§6) and the student-only positioning are replaced by the Modern-SaaS direction, broader
-> international-job-seeker positioning, and 5-page site defined there. Still binding from THIS file:
-> the brand facts (§2), honesty/legal guardrails, design tokens (§5 colors), and analytics events.
-> Where the two files conflict, BUILD-GUIDE.md wins.
+> # ⚠ MOST OF THIS FILE IS DEAD. Read this box, then stop and read the live sources.
+>
+> Two supersessions have landed since it was written. Only the guardrails below survive.
+>
+> **STILL BINDING from this file — and only these:**
+> - §2 honesty/legal guardrails (UWG §5: no invented counts, hires, ratings or testimonials;
+>   never phrase anything as "AI applies for you"; `at launch` tags on unshipped features)
+> - §10 performance and accessibility floor
+> - §3 tech stack, except fonts
+>
+> **DEAD — do not build any of it:** the "Sunlit stoa" concept (§4), Marcellus serif, the laurel
+> green `#1F7A53` palette (§5), Ari-as-mascot, the Thread, the labyrinth motif (§6), the Ari chat
+> demo (§7), the nine-band architecture (§8), and the build order (§11).
+>
+> **Superseded 2026-08-04** by [BUILD-GUIDE.md](BUILD-GUIDE.md): Modern-SaaS direction, 5-page site.
+>
+> **Superseded again 2026-08-06** by the positioning and design rulings in
+> [/docs/scope/DECISIONS-NEEDED.md](../../docs/scope/DECISIONS-NEEDED.md) and root `CLAUDE.md`:
+> - **Audience is every kind of work** — kitchen, warehouse, delivery, care, retail, trades, office.
+>   NOT students. The student/Werkstudent framing is removed from the default surface and must not
+>   come back. The eligibility engine is a conditional capability, not the headline moat.
+> - **Geography claims stay honest.** 786 of 921 indexed roles are Berlin, all five sources German.
+>   Say "starting in Germany". Never claim global coverage until the index is actually global —
+>   that is a UWG §5 exposure, not a stylistic preference.
+> - **Design tokens v6 "Warm Ink"** live in `tailwind.config.ts`, not in §5 here. Clay `#B5502E` on
+>   ivory `#FAF8F4`, one chromatic family, warm near-black `#171512`. No green (reserved for the
+>   app's eligibility ticks), no pure black, no blue — blue is the category uniform.
+> - **Type is Fraunces (display) + Inter (body) + Spline Sans Mono (data)**, in `src/lib/fonts.ts`.
+>
+> Where anything conflicts, the newest source wins: root `CLAUDE.md` → `docs/scope/` → BUILD-GUIDE
+> → this file.
 
 You are the frontend agent for the **Agora marketing website**. This file is your complete context.
 Read it fully before writing any code. Where this file makes a decision, follow it exactly.

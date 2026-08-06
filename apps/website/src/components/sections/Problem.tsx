@@ -52,7 +52,7 @@ export function Problem() {
 
         {/* The tally climbs as the beats land — the cost, counted. */}
         <p className="mt-10 flex items-baseline gap-3" aria-hidden="true">
-          <span className="font-display text-[clamp(2.5rem,5vw,4rem)] font-bold leading-none tracking-[-0.04em] text-indigo tabular-nums transition-all duration-slow ease-out">
+          <span className="font-display text-[clamp(2.5rem,5vw,4rem)] font-bold leading-none tracking-[-0.04em] text-clay tabular-nums transition-all duration-slow ease-out">
             {problem.tally[Math.max(0, shown - 1)]?.value ?? problem.tally[0]?.value}
           </span>
           <span className="text-[0.9375rem] text-text-mute">
@@ -67,7 +67,7 @@ export function Problem() {
               className={cn(
                 "border-t pt-7 transition-all duration-slow ease-out",
                 i < shown
-                  ? "translate-y-0 border-indigo/35 opacity-100"
+                  ? "translate-y-0 border-clay/35 opacity-100"
                   : "translate-y-4 border-ivory-line opacity-25",
               )}
             >
@@ -84,7 +84,7 @@ export function Problem() {
             shown >= problem.beats.length ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
           )}
         >
-          <p className="max-w-[26ch] text-quote font-semibold text-apricot-soft">{problem.close}</p>
+          <p className="max-w-[26ch] text-quote font-semibold text-clay-soft">{problem.close}</p>
         </div>
       </div>
     </section>

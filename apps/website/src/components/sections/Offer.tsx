@@ -60,7 +60,7 @@ export function Offer() {
                   className={cn(
                     "flex flex-col justify-between rounded-frame border bg-white p-5",
                     "featured" in tier && tier.featured
-                      ? "border-indigo/40 shadow-lift"
+                      ? "border-clay/40 shadow-lift"
                       : "border-ivory-line",
                   )}
                 >
@@ -82,7 +82,7 @@ export function Offer() {
             </a>
             <Link
               href={pricing.link.href}
-              className="text-[0.9375rem] font-medium text-indigo underline-offset-4 hover:underline"
+              className="text-[0.9375rem] font-medium text-clay underline-offset-4 hover:underline"
             >
               {pricing.link.label} →
             </Link>

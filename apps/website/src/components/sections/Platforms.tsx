@@ -51,7 +51,7 @@ export function Platforms() {
                 <span
                   className={cn(
                     "flex h-10 w-10 items-center justify-center rounded-full",
-                    live ? "bg-indigo-soft/15 text-indigo-soft" : "bg-indigo-wash text-indigo",
+                    live ? "bg-clay-soft/15 text-clay-soft" : "bg-clay-wash text-clay",
                   )}
                 >
                   <Icon name={card.icon} />

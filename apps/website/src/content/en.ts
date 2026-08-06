@@ -25,7 +25,9 @@ export const en = {
   nav: {
     links: [
       { label: "How it works", href: "/#how-it-works" },
-      { label: "Germany", href: "/#germany" },
+      // v6: was "Germany". The eligibility engine is a capability now, not the headline —
+      // it earns its place by being useful when your situation needs it, not by defining us.
+      { label: "Eligibility", href: "/#eligibility" },
       { label: "Pricing", href: "/pricing" },
       { label: "FAQ", href: "/faq" },
     ],
@@ -37,19 +39,25 @@ export const en = {
 
   // 1 — Hero
   hero: {
-    badge: "Early access — Berlin first",
-    headline: "An agent that job-hunts while you get on with your life.",
+    // Geography stays explicit and honest. 786 of 921 indexed roles are Berlin and all five
+    // sources are German — "global" would be a false claim under UWG §5 until the index
+    // actually expands. The ambition is global; the badge tells the truth about today.
+    badge: "Early access — starting in Germany",
+    headline: "Every kind of work. Not just desk jobs.",
     /** Words from here on render in the brand colour: the half about you, not the machine. */
-    headlineAccent: 4,
-    sub: "Agora watches every major job source in Germany, tailors your CV and cover letter to each role, and files the application. You just approve. Works in English. Built for how German hiring actually works.",
+    headlineAccent: 3,
+    // All-professions is TRUE today and it is the category's blind spot: a scan of twelve AI
+    // job platforms found every one of them built solely around office/tech roles. The kitchen,
+    // warehouse and delivery roles named here are really in the index — see live-data.json.
+    sub: "Kitchen, warehouse, delivery, care, retail, trades, office — Agora reads every job source we index, tailors your CV and cover letter to each role, and files the application. You just approve. Works in English.",
     ctaPrimary: "Get early access",
     ctaSecondary: "See how it works",
     ctaSecondaryHref: "/#how-it-works",
     imageAlt:
-      "A Berlin apartment at 2am: an empty chair pushed back from a desk, a laptop open and glowing, the sleeping city and the Fernsehturm through the window.",
+      "Early morning: a kitchen porter, a warehouse picker and an office worker starting their shifts, lit by the same low sun.",
     // Deliberately does NOT repeat the listing count — the terminal footer directly above
     // already carries it. This line adds what that one doesn't: breadth and cadence.
-    receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value}, Berlin time`,
+    receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value} CET`,
   },
 
   /** The engine terminal — labelled a replay, because that is exactly what it is. */
@@ -77,7 +85,10 @@ export const en = {
     beats: [
       "You check the same five sites every night and see the same roles you saw last night.",
       "Every application wants your CV rewritten for its keywords, its form, its screening questions.",
-      "And in Germany there's a second layer nobody explains: which contract you're allowed to take, how many hours you may work, whether that “B2 required” is real.",
+      // v6: this beat used to open "And in Germany there's a second layer" — which made the
+      // whole problem German. The rules layer is universal (permits, hours, language, licences);
+      // Germany is just where we model it first. Stated so it reads true for any reader.
+      "And there's a layer nobody explains: which contracts you're allowed to take, how many hours you may work, whether that language requirement is real.",
     ],
     /**
      * The running tally above the beats. It climbs as each beat lands, so the reader feels
@@ -171,17 +182,25 @@ export const en = {
   },
 
   /**
-   * 6 — Germany. The moat section.
+   * 6 — Eligibility. DEMOTED from "the moat section" (Jay, 2026-08-06).
+   *
+   * This engine is real, tested and genuinely rare — but leading with it made the whole
+   * product look like it was only for foreign students in Germany. It now reads as a
+   * capability that matters WHEN YOUR SITUATION NEEDS IT, and is invisible when it doesn't.
+   * Most readers should be able to skip this section entirely and lose nothing.
+   *
+   * Do not restore it to the headline position, and do not delete it either: it is the one
+   * thing in this category no competitor has (see docs/scope/DECISIONS-NEEDED.md Q1).
    *
    * Every figure below is copied from `packages/legal/src/constraints.ts`, the same table
    * the product's SQL hard filter and per-card eligibility checks read from, and the one
    * covered by the 374 passing tests. If that table changes, this changes with it — do not
    * edit these numbers here in isolation.
    */
-  germany: {
-    eyebrow: "The part other tools skip",
-    headline: "It knows the German rules. All of them.",
-    body: "Most job boards show you everything and let you find out later that you were never allowed to take it. Agora models the permit rules first, then filters — so what you see is what you can actually accept.",
+  eligibility: {
+    eyebrow: "If your situation has rules",
+    headline: "Some people can take any job. Some can't. It knows which you are.",
+    body: "If you hold a passport that lets you work without limits, this section does nothing for you — and that's fine. If you're on a permit, there are caps on hours, days and contract types, and most job boards let you find out only after you've applied. Agora models those rules first, then filters. Germany is modelled today; each new country is modelled before we index it.",
     /** Source: VISA_CONSTRAINTS in packages/legal/src/constraints.ts */
     permits: [
       {
@@ -236,7 +255,7 @@ export const en = {
       },
     ],
     micro:
-      "Guidance, not legal advice. Genuine edge cases belong with the Ausländerbehörde — and we tell you when you've hit one instead of guessing.",
+      "Guidance, not legal advice. Genuine edge cases belong with your local immigration office — in Germany that's the Ausländerbehörde — and we tell you when you've hit one instead of guessing.",
   },
 
   // 7 — Platforms
@@ -438,9 +457,11 @@ export const en = {
   cta: {
     eyebrow: "Early access",
     headline: "Your job hunt, off your plate.",
-    body: "Berlin first, then the rest of Germany. Get in before the doors open.",
+    // Names where we are without making it the identity: a fact about coverage, not about
+    // who the product is for.
+    body: "Every trade, every shift, every desk. Germany first, more countries as we index them. Get in before the doors open.",
     imageAlt:
-      "The same Berlin apartment at 7am: the laptop closed, papers stacked, the Fernsehturm against a sunrise over the rooftops.",
+      "The same room at 7am: the laptop closed, papers stacked, a city waking up beyond the window.",
     /** What signing up actually gets you. Concrete, checkable, no invented numbers. */
     points: [
       {
@@ -474,8 +495,12 @@ export const en = {
   },
 
   footer: {
+    // "Built for Germany" told readers who the product was FOR. "Indexing Germany first"
+    // tells them where it currently REACHES. Same fact, and only one of them excludes people.
+    // The EU-residency line stays prominent: a scan of twelve rivals found only one showing
+    // any compliance signal at all, so this is an unclaimed trust wedge.
     blurb:
-      "Agora is an agent for the job hunt: it watches the sources, writes the documents, and keeps the pipeline moving. Built for Germany, in English.",
+      "Agora is an agent for the job hunt: it watches the sources, writes the documents, and keeps the pipeline moving. Every kind of work, in English. Indexing Germany first, and your data never leaves the EU.",
     columns: [
       {
         title: "Product",

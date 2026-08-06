@@ -14,7 +14,7 @@ import { useId } from "react"
  * hand-nudged to fit.
  *
  * The frame and mullions use `currentColor`, so the mark inherits ink on light surfaces
- * and white on dark ones with no variants to maintain. The lit pane stays apricot in every
+ * and white on dark ones with no variants to maintain. The lit pane stays clay in every
  * context — it is the one fixed colour, because it is the thing the logo is *about*.
  */
 export function Logo({ className = "h-7 w-7" }: { className?: string }) {
@@ -31,7 +31,7 @@ export function Logo({ className = "h-7 w-7" }: { className?: string }) {
 
       {/* The lit pane — top-right quadrant, clipped to the frame's rounded corner. */}
       <g clipPath={`url(#${clipId})`}>
-        <rect x="16" y="0" width="16" height="16" fill="#FF9F5A" />
+        <rect x="16" y="0" width="16" height="16" fill="#B5502E" />
       </g>
 
       {/* Frame and mullions, drawn over the pane so the joins stay crisp. */}

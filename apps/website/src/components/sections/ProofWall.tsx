@@ -64,7 +64,7 @@ export function ProofWall() {
                     // Same footprint as a logo, so a text-mark pill doesn't collapse.
                     <span
                       aria-hidden="true"
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] bg-indigo-wash font-display text-[0.8125rem] font-bold text-indigo"
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] bg-clay-wash font-display text-[0.8125rem] font-bold text-clay"
                     >
                       {c.name.slice(0, 1)}
                     </span>

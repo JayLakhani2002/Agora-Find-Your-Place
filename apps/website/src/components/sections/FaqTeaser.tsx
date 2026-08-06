@@ -33,7 +33,7 @@ export function FaqTeaser() {
         <div className="mt-14 grid gap-x-16 gap-y-14 lg:grid-cols-2">
           {faq.groups.map((group, gi) => (
             <div key={group.title} data-reveal>
-              <h3 className="eyebrow mb-4 text-indigo">{group.title}</h3>
+              <h3 className="eyebrow mb-4 text-clay">{group.title}</h3>
               {/* Only the very first row starts open — the honesty anchor. */}
               <Accordion items={group.items} defaultOpen={gi === 0 ? 0 : null} />
             </div>

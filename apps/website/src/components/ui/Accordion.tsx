@@ -37,12 +37,12 @@ export function Accordion({
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="group flex w-full cursor-pointer items-center justify-between gap-6 py-6 text-left"
               >
-                <span className="text-lg font-semibold tracking-[-0.015em] text-text transition-colors duration-fast group-hover:text-indigo">
+                <span className="text-lg font-semibold tracking-[-0.015em] text-text transition-colors duration-fast group-hover:text-clay">
                   {item.q}
                 </span>
                 <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ivory-line text-text-mute transition-all duration-base ease-out group-hover:border-indigo/40 group-hover:text-indigo ${
-                    isOpen ? "rotate-90 border-indigo/40 text-indigo" : ""
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ivory-line text-text-mute transition-all duration-base ease-out group-hover:border-clay/40 group-hover:text-clay ${
+                    isOpen ? "rotate-90 border-clay/40 text-clay" : ""
                   }`}
                 >
                   <Icon name="arrowRight" className="h-4 w-4" />

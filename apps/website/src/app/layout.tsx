@@ -11,8 +11,11 @@ import "./globals.css"
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001"
 
 const title = "Agora — an agent that runs your job hunt"
+// Names the trades and shift work deliberately. Every AI job platform surveyed describes
+// only office/tech roles, so this is both the honest description of what we index (kitchen,
+// warehouse and delivery roles are really in there) and the clearest differentiator we have.
 const description =
-  "Agora watches every major job source in Germany, tailors your CV and cover letter to each role, and files the application once you approve. Works in English. Early access, Berlin first."
+  "Kitchen, warehouse, delivery, care, retail, trades, office — Agora reads every job source we index, tailors your CV and cover letter to each role, and files the application once you approve. Works in English. Early access, starting in Germany."
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -34,7 +37,9 @@ const organizationLd = {
   name: "Agora",
   description,
   url: siteUrl,
-  areaServed: "Berlin, Germany",
+  // Honest to the index: 786 of 921 indexed roles are Berlin and all five sources are German.
+  // Widen this only when the index actually widens, never to match ambition.
+  areaServed: "Germany",
 }
 
 /**
@@ -55,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="grain">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-pill focus:bg-indigo focus:px-4 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-pill focus:bg-clay focus:px-4 focus:py-2 focus:text-white"
         >
           {en.a11y.skipToContent}
         </a>

@@ -55,12 +55,12 @@ export function Hero() {
 
         <div className="shell on-ink relative pb-[clamp(3rem,6vw,4.5rem)] pt-24">
           <p style={cue("0.1s")} className="cue chip chip-launch">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-apricot" />
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay" />
             {hero.badge}
           </p>
 
           <h1 className="mt-7 max-w-[20ch] text-balance text-d1 font-bold text-white">
-            <Split text={hero.headline} accent={hero.headlineAccent} accentClass="text-apricot" />
+            <Split text={hero.headline} accent={hero.headlineAccent} accentClass="text-clay" />
           </h1>
 
           <p style={cue("0.55s")} className="cue mt-7 max-w-prose text-lead text-white/70">
@@ -88,7 +88,7 @@ export function Hero() {
           <div data-reveal-card className="relative mt-6">
             <div
               aria-hidden="true"
-              className="glow-indigo pointer-events-none absolute inset-x-10 bottom-6 top-12 -z-10 rounded-card"
+              className="glow-clay pointer-events-none absolute inset-x-10 bottom-6 top-12 -z-10 rounded-card"
             />
             <EngineTheater
               events={theaterScript()}

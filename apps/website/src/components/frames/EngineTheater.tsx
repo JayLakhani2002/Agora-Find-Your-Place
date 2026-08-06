@@ -138,11 +138,11 @@ export function EngineTheater({
         <span aria-hidden="true" className="flex gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
           <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          <span className="h-2.5 w-2.5 rounded-full bg-indigo-soft/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-clay-soft/60" />
         </span>
         <span className="ml-1.5 font-data text-[0.75rem] text-text-on-dark/80">{title}</span>
-        <span className="ml-auto flex items-center gap-1.5 font-data text-[0.6875rem] uppercase tracking-[0.14em] text-indigo-soft">
-          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-indigo-soft" />
+        <span className="ml-auto flex items-center gap-1.5 font-data text-[0.6875rem] uppercase tracking-[0.14em] text-clay-soft">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay-soft" />
           {status}
         </span>
       </div>
@@ -159,11 +159,11 @@ export function EngineTheater({
           ) : (
             <li key={`${e.t}-${e.company}`} data-line className="pl-1">
               <p className="flex flex-wrap items-baseline gap-x-2">
-                <span aria-hidden="true" className="text-indigo-soft">
+                <span aria-hidden="true" className="text-clay-soft">
                   ✓
                 </span>
                 <span data-mask className="text-text-on-dark">
-                  <span className="text-apricot-soft">{e.company}</span>
+                  <span className="text-clay-soft">{e.company}</span>
                   <span className="text-white/30"> · </span>
                   {e.title}
                 </span>
@@ -177,7 +177,7 @@ export function EngineTheater({
             </li>
           ),
         )}
-        <li aria-hidden="true" className="pl-1 text-indigo-soft">
+        <li aria-hidden="true" className="pl-1 text-clay-soft">
           <span className="caret">▍</span>
         </li>
       </ol>

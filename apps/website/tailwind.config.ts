@@ -1,20 +1,31 @@
 import type { Config } from "tailwindcss"
 
 /**
- * Agora marketing site — design tokens v5, "indigo & apricot on ivory".
- * Chosen by Jay 2026-08-04 (Wobo reference). Explicitly NO green and NO black: the darkest
- * surface is `ink` #1E1B3A, a deep indigo, and every neutral is warm rather than grey.
+ * Agora marketing site — design tokens v6, "Warm Ink". Chosen by Jay 2026-08-06.
  *
- * Canvas rule: the page is light-dominant. Dark appears as CARDS and the terminal, plus one
- * closing band — never as alternating full-width bands.
+ * Replaces v5's "indigo & apricot on ivory". The indigo went for a strategic reason, not a
+ * taste one: #4F46E5 is Tailwind's stock indigo-500, and a competitive scan of twelve AI
+ * job platforms (Tsenta, Simplify, Jobscan, Huntr, Careerflow, AIApply, LazyApply, Jobright,
+ * Final Round AI, Welcome to the Jungle et al) found every single one using blue or teal.
+ * Blue is the category uniform. Terracotta is not.
  *
- * Contrast, measured not estimated (AA needs 4.5:1 body, 3:1 large):
- *   text/ivory 16.26 AAA · mute/ivory 7.55 AAA · soft/ivory 5.72 · indigo/ivory 5.93
- *   indigo-deep/ivory 7.45 AAA · white/indigo 6.29 · apricot-ink/ivory 5.89
- *   on-dark/ink 14.09 AAA · on-dark-mute/ink 6.74 · indigo-soft/ink 8.25 AAA
- *   apricot/ink 8.14 AAA · on-dark/ink-card 12.63 AAA · indigo-soft/ink-card 7.39 AAA
- * `apricot` is 1.91 on ivory — decoration ONLY there (rules, glows, dots). Never text.
- * `apricot.ink` is the text-safe apricot for light surfaces.
+ * ONE chromatic family (`clay`), Linear-style — everything else is a warm neutral. The accent
+ * is reserved for encouragement moments (match found, application sent) and primary actions.
+ * Persistent chrome stays neutral, so warmth reads as earned rather than decorative.
+ *
+ * Still binding from v5: NO green (it is load-bearing in the app's eligibility ticks and must
+ * not be diluted into brand chrome) and NO pure black — `ink` is a warm near-black.
+ *
+ * Canvas rule unchanged: light-dominant. Dark appears as CARDS and one closing band, never as
+ * alternating full-width bands.
+ *
+ * Contrast, computed not estimated (AA needs 4.5:1 body, 3:1 large):
+ *   text/ivory 16.23 AAA · mute/ivory 7.52 AAA · soft/ivory 5.43 AA · clay/ivory 4.77 AA
+ *   clay-deep/ivory 6.87 AA · white/clay 5.06 AA · white/clay-deep 7.29 AAA
+ *   on-dark/ink 16.19 AAA · on-dark-mute/ink 7.75 AAA · clay-soft/ink 6.81 AA
+ *   on-dark/ink-card 14.58 AAA · clay-soft/ink-card 6.13 AA · text/ivory-deep 15.02 AAA
+ * DECORATION ONLY (both AA-large, never body text):
+ *   clay/ivory-deep 4.41 · clay/clay-wash 4.39 — use `clay.deep` for text on those surfaces.
  */
 export default {
   content: ["./src/**/*.{ts,tsx}"],
@@ -22,33 +33,27 @@ export default {
     extend: {
       colors: {
         ivory: {
-          DEFAULT: "#FAF8F4", // page canvas — warm ivory
+          DEFAULT: "#FAF8F4", // page canvas — warm ivory, carried over from v5
           deep: "#F3EFE8", // insets, section washes
           line: "#E7E1D6", // hairlines on ivory
         },
         ink: {
-          DEFAULT: "#1E1B3A", // deep indigo — dark cards, the terminal, the closing band
-          card: "#272348", // raised surfaces on ink
-          line: "#39345E", // hairlines on ink
+          DEFAULT: "#171512", // warm near-black — dark cards and the closing band
+          card: "#221F1A", // raised surfaces on ink
+          line: "#38332B", // hairlines on ink
         },
-        indigo: {
-          DEFAULT: "#4F46E5", // primary actions, links, active states
-          deep: "#4338CA", // hover / pressed
-          soft: "#A9B2FF", // indigo-family text ON ink (AA-safe)
-          wash: "#EEEDFD", // indigo-tinted surface on ivory
-        },
-        apricot: {
-          DEFAULT: "#FF9F5A", // warm accent — decoration only on ivory
-          soft: "#FFC49A", // apricot text on ink
-          ink: "#9A4A12", // the only apricot allowed as text on ivory
-          wash: "#FDF0E6", // apricot-tinted surface on ivory
+        clay: {
+          DEFAULT: "#B5502E", // THE accent. Primary actions, links, active states
+          deep: "#8F3E23", // hover/pressed, and text on ivory-deep or clay-wash
+          soft: "#E0885C", // clay-family text ON ink (AA-safe)
+          wash: "#F7EDE8", // clay-tinted surface on ivory — pair with clay.deep for text
         },
         text: {
-          DEFAULT: "#1A1830",
-          mute: "#514D6B",
-          soft: "#635F7C", // 5.72 on ivory — safe down to 13px labels
-          "on-dark": "#EDECF7",
-          "on-dark-mute": "#A6A2C4",
+          DEFAULT: "#1C1B19",
+          mute: "#55504A",
+          soft: "#6B655D", // 5.43 on ivory — safe down to 13px labels
+          "on-dark": "#F5F1EA",
+          "on-dark-mute": "#B0A89D",
         },
       },
       fontFamily: {
@@ -57,16 +62,22 @@ export default {
         data: ["var(--font-data)", "ui-monospace", "monospace"],
       },
       fontSize: {
-        // Sora runs wider and taller than the previous face, so the display scale is
-        // pulled back slightly and tracking tightened to keep hero lines from wrapping.
-        d1: ["clamp(2.5rem, 5.9vw, 5.25rem)", { lineHeight: "1.02", letterSpacing: "-0.035em" }],
-        d2: ["clamp(2rem, 4.1vw, 3.25rem)", { lineHeight: "1.08", letterSpacing: "-0.03em" }],
-        d3: ["clamp(1.4375rem, 2.3vw, 2rem)", { lineHeight: "1.16", letterSpacing: "-0.024em" }],
+        // Scale-driven hierarchy, the Apple mechanic: a ~5x ratio between d1 and body, with
+        // only TWO weights (400 body / 600 display) doing all the work. Hierarchy comes from
+        // size, never from piling on weights.
+        //
+        // Fraunces is a serif, so tracking is much looser than Sora's -0.035em — negative
+        // tracking on a serif collapses the counters and reads cramped at display sizes.
+        // Body is 19px (not the usual 16), which measurably lowers reading effort for
+        // non-native speakers and anyone reading under stress. Both matter for this audience.
+        d1: ["clamp(2.75rem, 6.2vw, 5.75rem)", { lineHeight: "1.04", letterSpacing: "-0.015em" }],
+        d2: ["clamp(2.125rem, 4.3vw, 3.5rem)", { lineHeight: "1.1", letterSpacing: "-0.012em" }],
+        d3: ["clamp(1.5rem, 2.4vw, 2.125rem)", { lineHeight: "1.18", letterSpacing: "-0.008em" }],
         quote: [
-          "clamp(1.4375rem, 2.9vw, 2.125rem)",
-          { lineHeight: "1.28", letterSpacing: "-0.02em" },
+          "clamp(1.5rem, 3vw, 2.25rem)",
+          { lineHeight: "1.3", letterSpacing: "-0.006em" },
         ],
-        lead: ["clamp(1.0625rem, 1.2vw, 1.25rem)", { lineHeight: "1.62" }],
+        lead: ["clamp(1.125rem, 1.25vw, 1.3125rem)", { lineHeight: "1.6" }],
         eyebrow: ["0.75rem", { lineHeight: "1.4", letterSpacing: "0.16em" }],
         micro: ["0.8125rem", { lineHeight: "1.5" }],
       },
@@ -84,9 +95,11 @@ export default {
         pill: "999px",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(30,27,58,0.04), 0 10px 30px -18px rgba(30,27,58,0.22)",
-        float: "0 2px 4px rgba(30,27,58,0.04), 0 28px 60px -24px rgba(30,27,58,0.32)",
-        lift: "0 2px 6px rgba(30,27,58,0.05), 0 18px 40px -20px rgba(30,27,58,0.28)",
+        // Tinted to the warm-neutral ink (23,21,18), never neutral grey — a cool shadow on a
+        // warm canvas is the tell that a palette was swapped without redoing the depth layer.
+        card: "0 1px 2px rgba(23,21,18,0.04), 0 10px 30px -18px rgba(23,21,18,0.22)",
+        float: "0 2px 4px rgba(23,21,18,0.04), 0 28px 60px -24px rgba(23,21,18,0.32)",
+        lift: "0 2px 6px rgba(23,21,18,0.05), 0 18px 40px -20px rgba(23,21,18,0.28)",
       },
       transitionTimingFunction: {
         out: "cubic-bezier(0.22, 1, 0.36, 1)",

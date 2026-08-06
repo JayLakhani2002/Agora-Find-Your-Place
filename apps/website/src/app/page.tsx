@@ -1,6 +1,6 @@
 import { Cta } from "@/components/sections/Cta"
 import { FaqTeaser } from "@/components/sections/FaqTeaser"
-import { Germany } from "@/components/sections/Germany"
+import { Eligibility } from "@/components/sections/Eligibility"
 import { Hero } from "@/components/sections/Hero"
 import { Numbers } from "@/components/sections/Numbers"
 import { Offer } from "@/components/sections/Offer"
@@ -39,7 +39,7 @@ export default function Home() {
       <Problem />
       <Pipeline />
       <Numbers />
-      <Germany />
+      <Eligibility />
       <Platforms />
       <Reviews />
       <Offer />

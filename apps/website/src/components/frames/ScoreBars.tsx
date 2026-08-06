@@ -66,7 +66,7 @@ export function ScoreBars({
             </span>
             <span className="h-1.5 flex-1 overflow-hidden rounded-pill bg-ivory-deep">
               <span
-                className="block h-full rounded-pill bg-indigo transition-[width] duration-[900ms] ease-out"
+                className="block h-full rounded-pill bg-clay transition-[width] duration-[900ms] ease-out"
                 style={{ width: grown ? `${d.value}%` : "4%" }}
               />
             </span>

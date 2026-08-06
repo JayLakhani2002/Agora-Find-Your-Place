@@ -14,13 +14,13 @@ export function Split({
   text,
   className,
   accent,
-  accentClass = "text-indigo",
+  accentClass = "text-clay",
 }: {
   text: string
   className?: string
   /** Words from this index on are rendered in the accent colour. */
   accent?: number
-  /** Override the accent colour — indigo is unreadable over the dark hero photograph. */
+  /** Override the accent colour — clay is unreadable over the dark hero photograph. */
   accentClass?: string
 }) {
   const words = text.split(" ")

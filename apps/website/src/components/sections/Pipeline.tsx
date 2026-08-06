@@ -106,7 +106,7 @@ export function Pipeline() {
             ))}
           </ul>
           <div aria-hidden="true" className="mt-5 h-px w-full bg-ivory-line">
-            <div data-progress-line className="h-px w-full bg-indigo" />
+            <div data-progress-line className="h-px w-full bg-clay" />
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export function Pipeline() {
             >
               <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-16">
                 <div>
-                  <p className="receipt text-indigo">
+                  <p className="receipt text-clay">
                     {step.n} · {step.key}
                   </p>
                   <h3 className="mt-4 max-w-[16ch] text-d3 font-semibold text-ink">{step.title}</h3>
@@ -145,7 +145,7 @@ export function Pipeline() {
                       <li key={d} className="flex gap-3">
                         <span
                           aria-hidden="true"
-                          className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-indigo"
+                          className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-clay"
                         />
                         <span className="text-[0.9375rem] leading-relaxed text-text-mute">{d}</span>
                       </li>

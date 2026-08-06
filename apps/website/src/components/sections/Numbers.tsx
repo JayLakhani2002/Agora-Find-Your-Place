@@ -53,9 +53,9 @@ export function Numbers() {
               <div
                 key={tile.label}
                 data-reveal
-                className="border-t border-ink-line pt-6 transition-colors duration-base group-hover:border-indigo-soft/45"
+                className="border-t border-ink-line pt-6 transition-colors duration-base group-hover:border-clay-soft/45"
               >
-                <dd className="font-display text-[clamp(2.5rem,4.6vw,3.75rem)] font-bold leading-none tracking-[-0.04em] text-apricot-soft">
+                <dd className="font-display text-[clamp(2.5rem,4.6vw,3.75rem)] font-bold leading-none tracking-[-0.04em] text-clay-soft">
                   <Odometer value={tile.value} replay={replay} />
                 </dd>
                 <dt className="mt-4 text-[0.9375rem] text-text-on-dark-mute">{tile.label}</dt>

@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn"
  * to say the name. The domain can still be agora.jobs; the logo doesn't have to.
  *
  * Everything inherits `currentColor`, so placing this on ink versus ivory needs no
- * variant — only the lit pane holds its apricot, everywhere.
+ * variant — only the lit pane holds its clay, everywhere.
  */
 export function Wordmark({
   className,

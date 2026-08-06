@@ -71,7 +71,7 @@ export function Cta() {
       <div className="shell on-ink relative py-band-lg">
         {state === "success" ? (
           <div className="max-w-xl" aria-live="polite">
-            <span className="glow-indigo flex h-14 w-14 items-center justify-center rounded-full bg-indigo-soft/15 text-indigo-soft">
+            <span className="glow-clay flex h-14 w-14 items-center justify-center rounded-full bg-clay-soft/15 text-clay-soft">
               <Icon name="check" className="h-7 w-7" />
             </span>
             <h2 className="mt-7 text-d2 font-bold text-white">{cta.successTitle}</h2>
@@ -109,7 +109,7 @@ export function Cta() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={cta.placeholder}
                   autoComplete="email"
-                  className="min-w-0 flex-1 rounded-pill border border-white/20 bg-white/10 px-5 py-3 text-[0.9375rem] text-white backdrop-blur-sm transition-colors duration-fast placeholder:text-white/45 focus:border-indigo-soft focus:outline-none"
+                  className="min-w-0 flex-1 rounded-pill border border-white/20 bg-white/10 px-5 py-3 text-[0.9375rem] text-white backdrop-blur-sm transition-colors duration-fast placeholder:text-white/45 focus:border-clay-soft focus:outline-none"
                 />
                 <button
                   type="submit"
@@ -144,7 +144,7 @@ export function Cta() {
               {cta.points.map((p) => (
                 <li key={p.title} data-reveal className="bg-ink/55 p-6">
                   <p className="flex items-center gap-2 text-[0.9375rem] font-semibold text-white">
-                    <span className="text-indigo-soft">
+                    <span className="text-clay-soft">
                       <Icon name="check" className="h-4 w-4" />
                     </span>
                     {p.title}

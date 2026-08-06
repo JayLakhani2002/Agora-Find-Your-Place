@@ -3,28 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* Core — design tokens v5, "indigo & apricot on ivory". Ratios in tailwind.config.ts.
-     No green anywhere, and no black: `--ink` is a deep indigo, not a neutral. */
+  /* Core — design tokens v6, "Warm Ink". Ratios computed in tailwind.config.ts.
+     ONE chromatic family (clay); v5's indigo and apricot both collapse into it. Still
+     binding: no green (reserved for eligibility ticks in the app) and no pure black —
+     `--ink` is a warm near-black, not a neutral grey. */
   --ivory: #faf8f4;
   --ivory-deep: #f3efe8;
   --hairline: #e7e1d6;
-  --ink: #1e1b3a;
-  --ink-card: #272348;
-  --hairline-dark: #39345e;
-  --indigo: #4f46e5;
-  --indigo-deep: #4338ca;
-  --indigo-soft: #a9b2ff;
-  --apricot: #ff9f5a;
-  --apricot-soft: #ffc49a;
-  --apricot-ink: #9a4a12;
-  --text: #1a1830;
-  --text-mute: #514d6b;
-  --text-soft: #635f7c;
-  --text-on-dark: #edecf7;
-  --text-on-dark-mute: #a6a2c4;
+  --ink: #171512;
+  --ink-card: #221f1a;
+  --hairline-dark: #38332b;
+  --clay: #b5502e; /* the accent — actions, links, active states */
+  --clay-deep: #8f3e23; /* hover/pressed; the text-safe clay on ivory-deep + clay-wash */
+  --clay-soft: #e0885c; /* clay-family text ON ink */
+  --clay-wash: #f7ede8; /* clay-tinted surface on ivory — decoration; text uses clay-deep */
+  --text: #1c1b19;
+  --text-mute: #55504a;
+  --text-soft: #6b655d;
+  --text-on-dark: #f5f1ea;
+  --text-on-dark-mute: #b0a89d;
 
-  /* Shadow base — tinted to the indigo family, never neutral black */
-  --shadow-rgb: 30, 27, 58;
+  /* Shadow base — tinted to the warm ink, never neutral black */
+  --shadow-rgb: 23, 21, 18;
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -56,18 +56,18 @@
   }
 
   ::selection {
-    background: var(--indigo);
+    background: var(--clay);
     color: #fff;
   }
 
   :focus-visible {
-    outline: 2px solid var(--indigo);
+    outline: 2px solid var(--clay);
     outline-offset: 3px;
     border-radius: 6px;
   }
   .band-dark :focus-visible,
   .on-ink :focus-visible {
-    outline-color: var(--indigo-soft);
+    outline-color: var(--clay-soft);
   }
 }
 
@@ -125,7 +125,7 @@
   }
   .band-dark .eyebrow,
   .on-ink .eyebrow {
-    color: var(--indigo-soft);
+    color: var(--clay-soft);
   }
 
   /*
@@ -159,28 +159,32 @@
     color: var(--text-mute);
   }
   .chip-brand {
-    background: #eeedfd;
-    color: var(--indigo-deep);
+    background: var(--clay-wash);
+    color: var(--clay-deep);
   }
   .chip-on-dark {
-    background: rgba(169, 178, 255, 0.16);
-    color: var(--indigo-soft);
+    background: rgba(224, 136, 92, 0.16);
+    color: var(--clay-soft);
   }
   /*
-   * `at launch` tags — always mono, always apricot, never dressed up as live. These are the
-   * honesty markers on the Apply step and the platform cards; they must stay visually
-   * distinct from anything describing shipped behaviour.
+   * `at launch` tags — the honesty markers on the Apply step and the platform cards. They
+   * must stay visually distinct from anything describing SHIPPED behaviour.
+   *
+   * v5 achieved that with a second hue (apricot vs indigo). v6 runs one accent family, so
+   * they now differ by TREATMENT: neutral fill, no accent colour, dashed hairline. That is
+   * the better encoding anyway — "not built yet" should read quieter than shipped features,
+   * not merely a different colour. Never give these the accent; the accent means real.
    */
   .chip-launch {
-    background: #fdf0e6;
-    color: var(--apricot-ink);
-    border: 1px solid rgba(255, 159, 90, 0.4);
+    background: transparent;
+    color: var(--text-soft);
+    border: 1px dashed var(--hairline);
   }
   .band-dark .chip-launch,
   .on-ink .chip-launch {
-    background: rgba(255, 159, 90, 0.16);
-    color: var(--apricot-soft);
-    border-color: rgba(255, 159, 90, 0.32);
+    background: transparent;
+    color: var(--text-on-dark-mute);
+    border-color: var(--hairline-dark);
   }
 
   /* ---- Buttons --------------------------------------------------------- */
@@ -203,12 +207,12 @@
       box-shadow var(--dur-base) var(--ease-out), transform 400ms var(--ease-out);
   }
   .btn-primary {
-    background: var(--indigo);
+    background: var(--clay);
     color: #fff;
     box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 10px 30px -12px rgba(79, 70, 229, 0.55);
   }
   .btn-primary:hover {
-    background: var(--indigo-deep);
+    background: var(--clay-deep);
     box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 16px 44px -12px rgba(79, 70, 229, 0.7);
   }
   /* Sheen sweep on hover — transform only */
@@ -285,12 +289,10 @@
     border-radius: 20px;
   }
 
-  /* Glow blooms behind the terminal and score moments */
-  .glow-indigo {
-    box-shadow: 0 0 70px -12px rgba(79, 70, 229, 0.45);
-  }
-  .glow-apricot {
-    box-shadow: 0 0 70px -16px rgba(255, 159, 90, 0.6);
+  /* Glow bloom behind the terminal and score moments. One class now — v5 had two (indigo
+     and apricot) and the second silently won, so the first was always dead code. */
+  .glow-clay {
+    box-shadow: 0 0 70px -14px rgba(181, 80, 46, 0.5);
   }
 
   .lift {
@@ -331,23 +333,27 @@
 .aurora-dark {
   opacity: 0.34;
 }
-/* Warm: the apricot aura at the top of the hero. */
+/* v6 runs ONE chromatic family, so the three auroras can no longer differ by hue the way
+   indigo-vs-apricot did. They differ by DEPTH instead: bright at the top of the page, muted
+   through the middle, deep at the close. Same colour, three temperatures of it. */
+
+/* Bright: the clay aura at the top of the hero. */
 .aurora-warm {
-  background: radial-gradient(40% 44% at 24% 26%, var(--apricot), transparent 70%),
-    radial-gradient(34% 38% at 74% 22%, var(--indigo), transparent 70%),
-    radial-gradient(42% 46% at 55% 84%, var(--apricot-soft), transparent 72%);
+  background: radial-gradient(40% 44% at 24% 26%, var(--clay-soft), transparent 70%),
+    radial-gradient(34% 38% at 74% 22%, var(--clay), transparent 70%),
+    radial-gradient(42% 46% at 55% 84%, var(--clay-soft), transparent 72%);
 }
-/* Cool: indigo washes for the calmer light sections. */
+/* Muted: pulled back for the calmer mid-page light sections. */
 .aurora-cool {
-  background: radial-gradient(38% 42% at 18% 26%, var(--indigo), transparent 70%),
-    radial-gradient(36% 40% at 82% 34%, var(--indigo-soft), transparent 70%),
-    radial-gradient(44% 44% at 50% 88%, var(--indigo-deep), transparent 72%);
+  background: radial-gradient(38% 42% at 18% 26%, var(--clay-deep), transparent 72%),
+    radial-gradient(36% 40% at 82% 34%, var(--clay), transparent 74%),
+    radial-gradient(44% 44% at 50% 88%, var(--clay-deep), transparent 76%);
 }
-/* Ember: the warm close on the final CTA band. */
+/* Ember: the deep warm close on the final CTA band. */
 .aurora-ember {
-  background: radial-gradient(40% 44% at 22% 30%, var(--apricot), transparent 70%),
-    radial-gradient(38% 42% at 78% 26%, var(--indigo-soft), transparent 70%),
-    radial-gradient(46% 48% at 52% 92%, var(--apricot-soft), transparent 74%);
+  background: radial-gradient(40% 44% at 22% 30%, var(--clay), transparent 70%),
+    radial-gradient(38% 42% at 78% 26%, var(--clay-deep), transparent 70%),
+    radial-gradient(46% 48% at 52% 92%, var(--clay-soft), transparent 74%);
 }
 .aurora-slow {
   animation-duration: 44s;
@@ -455,8 +461,8 @@
   }
   .js-motion [data-rail][data-active="true"] {
     opacity: 1;
-    background: var(--indigo);
-    border-color: var(--indigo);
+    background: var(--clay);
+    border-color: var(--clay);
     color: #fff;
   }
 }

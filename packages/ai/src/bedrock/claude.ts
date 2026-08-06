@@ -16,6 +16,18 @@ function resolveModelId(model: ClaudeModel): string {
   const env = model === "sonnet" ? "CLAUDE_SONNET_MODEL_ID" : "CLAUDE_HAIKU_MODEL_ID"
   const id = process.env[env]
   if (!id) throw new Error(`${env} is not set`)
+  // Claude 4.5-class models are inference-profile-only on Bedrock: a bare
+  // `anthropic.*` id fails at invoke time with "on-demand throughput isn't
+  // supported". That surfaces as a runtime 500 on the user's first generation
+  // rather than at boot, which is how this went unnoticed for two months.
+  // Fail here instead, where the message can name the fix.
+  if (id.startsWith("anthropic.")) {
+    throw new Error(
+      `${env}="${id}" is a bare foundation-model id. Bedrock requires a regional ` +
+        `inference profile for this model family — prefix it with the region, ` +
+        `e.g. "eu.${id}".`,
+    )
+  }
   return id
 }
 

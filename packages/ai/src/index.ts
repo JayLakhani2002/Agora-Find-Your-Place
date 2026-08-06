@@ -1,10 +1,12 @@
 export * from "./storage"
+export * from "./crypto/field-encryption"
 export * from "./embedding/cohere"
 export * from "./embedding/profile"
 export * from "./bedrock/claude"
 // Agent 6 — generation, prompts, eval
 export * from "./eval"
 export * from "./generation"
+export * from "./prompts/untrusted"
 export * from "./prompts/cv-generation"
 export * from "./prompts/cover-letter"
 export * from "./prompts/follow-up"

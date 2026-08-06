@@ -90,7 +90,12 @@ export const userProfiles = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [
-    index("user_profiles_user_id_idx").on(t.userId),
+    // UNIQUE, not a plain index: the relation below is one(), and onboarding writes the
+    // row with a check-then-insert. neon-http has no interactive transaction to make that
+    // atomic, so two concurrent saveVisaStep calls (double-click, client retry) would both
+    // see no row and both insert. Every later findFirst would then read a coin-flip profile.
+    // The constraint makes the race impossible instead of unlikely.
+    uniqueIndex("user_profiles_user_id_idx").on(t.userId),
     // HNSW index only on non-NULL rows — queries must always add WHERE profileEmbedding IS NOT NULL
     index("user_profiles_embedding_idx").using("hnsw", t.profileEmbedding.op("vector_cosine_ops")),
   ],
@@ -163,6 +168,11 @@ export const jobs = pgTable(
     uniqueIndex("jobs_external_id_source_idx").on(t.externalId, t.source),
     index("jobs_contract_type_idx").on(t.contractType),
     index("jobs_is_active_idx").on(t.isActive),
+    // jobs.search filters isActive then orders by scrapedAt desc — without this it
+    // sorts the whole active set on every keystroke-driven search.
+    index("jobs_is_active_scraped_at_idx").on(t.isActive, t.scrapedAt.desc()),
+    // The stale-job deactivation sweep filters (source, scrapedAt).
+    index("jobs_source_scraped_at_idx").on(t.source, t.scrapedAt),
     // HNSW index only on non-NULL rows — queries must always add WHERE jobEmbedding IS NOT NULL
     index("jobs_embedding_idx").using("hnsw", t.jobEmbedding.op("vector_cosine_ops")),
   ],
@@ -250,6 +260,12 @@ export const applications = pgTable(
     index("applications_user_id_idx").on(t.userId),
     index("applications_status_idx").on(t.status),
     index("applications_generation_status_idx").on(t.generationStatus),
+    // One application per (user, job). deck.swipe and applications.create both insert,
+    // and the client fires them in parallel — without this, a right-swipe whose create
+    // lands before the swipe commits produces two rows for one job, one of them stuck
+    // in "Preparing…" forever. NULL jobId rows are exempt (Postgres treats NULLs as
+    // distinct), which is what we want: applications whose listing was later removed.
+    uniqueIndex("applications_user_id_job_id_idx").on(t.userId, t.jobId),
   ],
 )
 
@@ -363,12 +379,30 @@ export const resumes = pgTable(
     /** The one resume used as the starting point for new tailored versions. */
     isBase: boolean("is_base").default(false).notNull(),
 
-    content: jsonb("content").$type<ResumeContent>().notNull(),
+    /**
+     * Either the résumé object, or — when FIELD_ENCRYPTION_ENABLED is on — a KMS envelope
+     * string produced by `encryptField`. A JSON string is valid jsonb, so both shapes live
+     * in this column and no dual-column migration window is needed.
+     *
+     * Never read this field directly: go through `readContent`/`writeContent` in
+     * apps/web/src/server/routers/resumes.ts, which handle both shapes.
+     */
+    content: jsonb("content").$type<ResumeContent | string>().notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (t) => [index("resumes_user_id_idx").on(t.userId)],
+  (t) => [
+    index("resumes_user_id_idx").on(t.userId),
+    // "At most one base per user" enforced by the database, not by application
+    // sequencing: setBase runs over neon-http, which has no interactive
+    // transaction, so a race must be made impossible rather than unlikely.
+    // Partial — only the isBase rows are indexed, so a user may hold any number
+    // of non-base resumes.
+    uniqueIndex("resumes_user_id_is_base_idx")
+      .on(t.userId)
+      .where(sql`is_base`),
+  ],
 )
 
 export const resumesRelations = relations(resumes, ({ one }) => ({

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "resumes_user_id_is_base_idx" ON "resumes" USING btree ("user_id") WHERE is_base;

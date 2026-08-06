@@ -29,6 +29,34 @@
       "when": 1785707470842,
       "tag": "0003_black_forgotten_one",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1785799832087,
+      "tag": "0004_solid_wild_child",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785982374484,
+      "tag": "0005_keen_sharon_ventura",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785987882332,
+      "tag": "0006_rls_roles_stage1",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785987962200,
+      "tag": "0007_rls_tighten_stage2",
+      "breakpoints": true
     }
   ]
 }

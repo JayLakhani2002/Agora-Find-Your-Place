@@ -609,6 +609,80 @@
   }
 }
 
+/*
+ * The footer colophon — the four receipt lines print top-to-bottom, then the tower draws.
+ *
+ * This runs on a view() timeline instead of the IntersectionObserver in Motion.tsx for a
+ * structural reason: Colophon is a Server Component (it reads VERCEL_GIT_COMMIT_SHA at build
+ * time), so it can carry no ref and no effect. And `data-reveal` would not give a print
+ * anyway — Motion.tsx computes ONE delay per element from its sibling count, so four sibling
+ * lines all get 60ms and land simultaneously, which is the single thing a printer never does.
+ *
+ * Ranges are entry-only. `.stamp` above can use `cover` because it sits mid-page; the
+ * colophon is the last thing in the document, and once the page bottoms out there is no
+ * scroll left to reach a cover percentage with.
+ *
+ * Two fallbacks, both landing on "fully printed, tower fully drawn": without `.js-motion`
+ * (reduced motion, or no JS) nothing below is declared at all, and a browser with no
+ * scroll-driven animations runs a zero-duration animation whose `both` fill snaps to the end
+ * keyframe. The caret is the one exception — it is punctuation, not content, so its resting
+ * state is invisible on every path.
+ */
+[data-colophon-caret] {
+  opacity: 0;
+}
+.js-motion [data-colophon-line] {
+  animation: agora-colophon-print linear both;
+  animation-timeline: view();
+  animation-range: entry calc(2% + var(--i, 0) * 13%) entry calc(44% + var(--i, 0) * 13%);
+}
+.js-motion [data-colophon-draw] {
+  animation: agora-colophon-draw linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 62%;
+}
+.js-motion [data-colophon-caret] {
+  animation: agora-colophon-caret steps(1) both;
+  animation-timeline: view();
+  animation-range: entry 41% entry 96%;
+}
+/* A wipe, not a fade: the line arrives left to right the way a head lays down ink. */
+@keyframes agora-colophon-print {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 -0.4em 0 0);
+  }
+}
+/* Every stroke carries pathLength="1", so one offset draws the whole tower. */
+@keyframes agora-colophon-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes agora-colophon-caret {
+  0%,
+  24% {
+    opacity: 1;
+  }
+  25%,
+  49% {
+    opacity: 0;
+  }
+  50%,
+  74% {
+    opacity: 1;
+  }
+  75%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Odometer digit column: 0–9 stacked, translated to the target digit. */
 .odo-digit {
   display: inline-block;
@@ -665,4 +739,26 @@
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/*
+ * --scrub-p — the film's scene clock.
+ *
+ * FilmScrub.tsx runs one rAF loop for the whole film and writes each scene's local progress
+ * (0..1, 2dp) onto that scene's overlay container. Overlays that draw themselves read it back
+ * in calc() — components/film/Blueprint.tsx is the first. Registering it makes it a real
+ * <number> in the cascade rather than an unparsed token, so calc() and clamp() can use it
+ * without a fallback dance, and gives it a defined value before the loop's first tick.
+ *
+ * INITIAL VALUE 1, NEVER 0, and this is not a taste call. Blueprint is the roadmap scene: its
+ * dashed panels and its "DRAWN, NOT BUILT" title block are a UWG §5 control on features that
+ * do not exist. If the engine never runs — no JS, a hydration error, a future refactor that
+ * drops the setProperty — the sheet has to fail to FULLY DRAWN and fully labelled. An initial
+ * value of 0 would fail to a blank rectangle, silently taking the disclaimer off the page,
+ * which is a worse outcome than having no animation at all.
+ */
+@property --scrub-p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
 }

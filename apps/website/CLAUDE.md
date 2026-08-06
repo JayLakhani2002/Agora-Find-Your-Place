@@ -1,5 +1,12 @@
 # CLAUDE.md — Agora Marketing Website (Landing Page)
 
+> **⚠ DIRECTION SUPERSEDED (Jay, 2026-08-04): read [BUILD-GUIDE.md](BUILD-GUIDE.md) FIRST — it is
+> the binding spec.** The "Sunlit stoa" concept (§4), Marcellus serif, Ari-as-mascot/thread/labyrinth
+> motifs (§6) and the student-only positioning are replaced by the Modern-SaaS direction, broader
+> international-job-seeker positioning, and 5-page site defined there. Still binding from THIS file:
+> the brand facts (§2), honesty/legal guardrails, design tokens (§5 colors), and analytics events.
+> Where the two files conflict, BUILD-GUIDE.md wins.
+
 You are the frontend agent for the **Agora marketing website**. This file is your complete context.
 Read it fully before writing any code. Where this file makes a decision, follow it exactly.
 Where it leaves something open, propose 2–3 options and wait for approval before building.

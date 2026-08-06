@@ -3,219 +3,609 @@
 @tailwind utilities;
 
 :root {
-  /* Color — §5 */
-  --marble: #faf8f3;
-  --marble-deep: #f0ece3;
-  --ink: #14161b;
-  --ink-soft: #1e2128;
-  --laurel: #1f7a53;
-  --laurel-bright: #2ea06c;
-  --laurel-text: #176647; /* darkened laurel for small text on marble, a11y ≥4.5:1 */
-  --amber: #e8a33d;
-  --text: #1a1c21;
-  --text-mute: #5c6066;
-  --text-on-ink: #f2f0ea;
-  --skin: #e7c9a9;
+  /* Core — design tokens v5, "indigo & apricot on ivory". Ratios in tailwind.config.ts.
+     No green anywhere, and no black: `--ink` is a deep indigo, not a neutral. */
+  --ivory: #faf8f4;
+  --ivory-deep: #f3efe8;
+  --hairline: #e7e1d6;
+  --ink: #1e1b3a;
+  --ink-card: #272348;
+  --hairline-dark: #39345e;
+  --indigo: #4f46e5;
+  --indigo-deep: #4338ca;
+  --indigo-soft: #a9b2ff;
+  --apricot: #ff9f5a;
+  --apricot-soft: #ffc49a;
+  --apricot-ink: #9a4a12;
+  --text: #1a1830;
+  --text-mute: #514d6b;
+  --text-soft: #635f7c;
+  --text-on-dark: #edecf7;
+  --text-on-dark-mute: #a6a2c4;
 
-  /* Motion — §5 */
+  /* Shadow base — tinted to the indigo family, never neutral black */
+  --shadow-rgb: 30, 27, 58;
+
+  /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-fast: 200ms;
-  --dur-base: 450ms;
-  --dur-slow: 900ms;
-
-  /* Shape */
-  --radius: 16px;
-  --radius-pill: 999px;
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-reveal: 700ms;
 }
 
 @layer base {
-  * {
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 88px;
   }
 
   body {
-    background: var(--marble);
+    background: var(--ivory);
     color: var(--text);
     font-family: var(--font-body), system-ui, sans-serif;
     font-size: 1.0625rem;
     line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Sora carries every display line; DM Sans (on body) carries everything readable. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), system-ui, sans-serif;
   }
 
   ::selection {
-    background: var(--laurel);
-    color: var(--marble);
+    background: var(--indigo);
+    color: #fff;
   }
 
-  /* Visible keyboard focus — laurel ring (§10) */
   :focus-visible {
-    outline: 2px solid var(--laurel);
+    outline: 2px solid var(--indigo);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
+  }
+  .band-dark :focus-visible,
+  .on-ink :focus-visible {
+    outline-color: var(--indigo-soft);
   }
 }
 
 @layer components {
-  /* Eyebrow — §5 */
+  /* ---- Layout ---------------------------------------------------------- */
+  .shell {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .band {
+    position: relative;
+    width: 100%;
+    isolation: isolate;
+  }
+
+  /*
+   * The page is light-dominant (Jay, v5). `.band-dark` is reserved for the closing CTA and
+   * the footer — ONE dark moment at the end, not an alternating rhythm. Everywhere else,
+   * dark appears as a card (`.card-ink`) or the terminal, which is what both reference
+   * sites do and what keeps the page feeling modern rather than heavy.
+   */
+  .band-dark {
+    background: var(--ink);
+    color: var(--text-on-dark);
+  }
+
+  /* A dark card sitting on the light canvas. */
+  .card-ink {
+    background: var(--ink);
+    color: var(--text-on-dark);
+    border-radius: 20px;
+  }
+
+  /*
+   * `.on-ink` opts a subtree into dark-surface TEXT treatment — eyebrows, receipts, chips,
+   * focus rings — without painting anything. It must never set a background: the hero uses
+   * it over a photograph, and giving it `background: var(--ink)` stamped a solid rectangle
+   * across the image.
+   */
+  .on-ink {
+    color: var(--text-on-dark);
+  }
+
+  /* ---- Type ------------------------------------------------------------ */
   .eyebrow {
-    font-family: var(--font-data), monospace;
-    font-size: 0.8125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--laurel-text);
+    font-family: var(--font-data), ui-monospace, monospace;
+    font-size: 0.75rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-soft);
+  }
+  .band-dark .eyebrow,
+  .on-ink .eyebrow {
+    color: var(--indigo-soft);
   }
 
-  .eyebrow-on-ink {
-    color: var(--laurel-bright);
+  /*
+   * The mono receipt motif — the site's signature texture. Used in the terminal, the hero
+   * proof line, every pipeline step, the numbers band and the footer. Deliberately sparse:
+   * it only reads as "machine output" while it stays rare.
+   */
+  .receipt {
+    font-family: var(--font-data), ui-monospace, monospace;
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+    color: var(--text-soft);
+  }
+  .band-dark .receipt,
+  .on-ink .receipt {
+    color: var(--text-on-dark-mute);
   }
 
-  /* Eligibility chip — core product motif (§5) */
+  /* ---- Chips ----------------------------------------------------------- */
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.4em;
-    font-family: var(--font-data), monospace;
-    font-size: 0.8125rem;
-    letter-spacing: 0.01em;
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-pill);
-    border: 1px solid color-mix(in srgb, var(--laurel) 28%, transparent);
-    color: var(--laurel-text);
-    background: color-mix(in srgb, var(--laurel) 7%, transparent);
+    gap: 0.35em;
+    font-family: var(--font-data), ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
     white-space: nowrap;
+    background: var(--ivory-deep);
+    color: var(--text-mute);
+  }
+  .chip-brand {
+    background: #eeedfd;
+    color: var(--indigo-deep);
+  }
+  .chip-on-dark {
+    background: rgba(169, 178, 255, 0.16);
+    color: var(--indigo-soft);
+  }
+  /*
+   * `at launch` tags — always mono, always apricot, never dressed up as live. These are the
+   * honesty markers on the Apply step and the platform cards; they must stay visually
+   * distinct from anything describing shipped behaviour.
+   */
+  .chip-launch {
+    background: #fdf0e6;
+    color: var(--apricot-ink);
+    border: 1px solid rgba(255, 159, 90, 0.4);
+  }
+  .band-dark .chip-launch,
+  .on-ink .chip-launch {
+    background: rgba(255, 159, 90, 0.16);
+    color: var(--apricot-soft);
+    border-color: rgba(255, 159, 90, 0.32);
   }
 
-  .chip-on-ink {
-    color: var(--laurel-bright);
-    border-color: color-mix(in srgb, var(--laurel-bright) 35%, transparent);
-    background: color-mix(in srgb, var(--laurel-bright) 10%, transparent);
-  }
-
-  /* Primary action — laurel pill */
-  .btn-primary {
+  /* ---- Buttons --------------------------------------------------------- */
+  .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    font-weight: 500;
+    min-height: 44px; /* touch target floor */
+    font-weight: 600;
+    font-size: 0.9375rem;
     padding: 0.85rem 1.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--laurel);
-    color: var(--marble);
-    transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast)
-      var(--ease-out);
+    border-radius: 999px;
     cursor: pointer;
+    overflow: hidden;
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out), transform 400ms var(--ease-out);
+  }
+  .btn-primary {
+    background: var(--indigo);
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 10px 30px -12px rgba(79, 70, 229, 0.55);
   }
   .btn-primary:hover {
-    background: var(--laurel-bright);
+    background: var(--indigo-deep);
+    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.14), 0 16px 44px -12px rgba(79, 70, 229, 0.7);
   }
-  .btn-primary:active {
-    transform: translateY(1px);
+  /* Sheen sweep on hover — transform only */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 65%
+    );
+    transform: translateX(-120%);
+    transition: transform 700ms var(--ease-out);
+    pointer-events: none;
   }
-
-  /* Secondary / ghost action */
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    font-weight: 500;
-    padding: 0.85rem 1.4rem;
-    border-radius: var(--radius-pill);
+  .btn-primary:hover::after {
+    transform: translateX(120%);
+  }
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
     color: var(--text);
-    transition: color var(--dur-fast) var(--ease-out);
-    cursor: pointer;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 1px 2px rgba(var(--shadow-rgb), 0.04);
   }
-  .btn-ghost:hover {
-    color: var(--laurel-text);
+  .btn-secondary:hover {
+    border-color: #cfc7b7;
+    background: #fff;
   }
-  .btn-ghost.on-ink {
-    color: var(--text-on-ink);
+  .band-dark .btn-secondary,
+  .on-ink .btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-on-dark);
+    border-color: var(--hairline-dark);
   }
-  .btn-ghost.on-ink:hover {
-    color: var(--laurel-bright);
+  .band-dark .btn-secondary:hover,
+  .on-ink .btn-secondary:hover {
+    border-color: #4d477a;
+    background: rgba(255, 255, 255, 0.1);
   }
-
-  /* Section band shells */
-  .band {
-    position: relative;
-    width: 100%;
-    overflow: clip;
-  }
-  .band-light {
-    background: var(--marble);
-    color: var(--text);
-  }
-  .band-dark {
-    background: var(--ink);
-    color: var(--text-on-ink);
-  }
-  .band-inner {
-    max-width: 1200px;
-    margin-inline: auto;
-    padding-inline: clamp(1.25rem, 5vw, 4rem);
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
 
-  /* Amber chip variant — accessible dark-amber text on marble */
-  .chip-amber {
-    color: #a05c0a;
-    border-color: color-mix(in srgb, var(--amber) 38%, transparent);
-    background: color-mix(in srgb, var(--amber) 12%, transparent);
+  /* ---- Surfaces -------------------------------------------------------- */
+  .card {
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
   }
-  .chip-amber-on-ink {
-    color: var(--amber);
-    border-color: color-mix(in srgb, var(--amber) 38%, transparent);
-    background: color-mix(in srgb, var(--amber) 12%, transparent);
+  .card-dark {
+    background: var(--ink-card);
+    border: 1px solid var(--hairline-dark);
+    border-radius: 20px;
   }
 
-  /* FAQ accordion — grid-rows 0fr→1fr so height animates without JS measurement.
-     The global reduced-motion rule kills the transition automatically. */
-  .accordion-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--dur-base) var(--ease-out);
+  /* Glass — texture layer, backdrop-blur 12–16px */
+  .glass {
+    background: rgba(255, 255, 255, 0.74);
+    backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(var(--shadow-rgb), 0.05), 0
+      22px 50px -26px rgba(var(--shadow-rgb), 0.35);
+    border-radius: 20px;
   }
-  .accordion-panel[data-open="true"] {
-    grid-template-rows: 1fr;
+  .glass-dark {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
   }
-  .accordion-panel > div {
-    overflow: hidden;
+
+  /* Glow blooms behind the terminal and score moments */
+  .glow-indigo {
+    box-shadow: 0 0 70px -12px rgba(79, 70, 229, 0.45);
+  }
+  .glow-apricot {
+    box-shadow: 0 0 70px -16px rgba(255, 159, 90, 0.6);
+  }
+
+  .lift {
+    transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast)
+      var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+    border-color: rgba(79, 70, 229, 0.4);
+    box-shadow: 0 2px 6px rgba(var(--shadow-rgb), 0.05), 0 22px 48px -22px rgba(79, 70, 229, 0.32);
+  }
+  .lift.card-dark:hover {
+    border-color: rgba(169, 178, 255, 0.4);
+    box-shadow: 0 0 60px -18px rgba(79, 70, 229, 0.6);
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(circle at 1px 1px, rgba(30, 27, 58, 0.07) 1px, transparent 0);
+    background-size: 28px 28px;
   }
 }
 
-/* Scroll reveal — IntersectionObserver in useReveal.ts adds .is-revealed.
-   Elements start hidden so the entry transition can play. The reduced-motion
-   block below ensures content is always visible when motion is off. */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
-}
-[data-reveal].is-revealed {
-  opacity: 1;
-  transform: none;
-}
+/* ---- Texture layer ----------------------------------------------------- */
 
-/* Ari idle float — gentle bob so the figure feels alive (it's a flat image) */
-@keyframes ari-float {
-  0%,
-  100% {
-    transform: translateY(0);
+/* Aurora mesh: layered radial gradients, blurred, drifting 32–44s. Backgrounds only. */
+/* inset:0 + scale, never negative insets: a transform overflows ink, not layout, so the
+   mesh can bleed past the band without ever creating a horizontal scrollbar. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(90px);
+  opacity: 0.2;
+  transform: scale(1.4);
+  animation: agora-aurora 32s ease-in-out infinite alternate;
+}
+.aurora-dark {
+  opacity: 0.34;
+}
+/* Warm: the apricot aura at the top of the hero. */
+.aurora-warm {
+  background: radial-gradient(40% 44% at 24% 26%, var(--apricot), transparent 70%),
+    radial-gradient(34% 38% at 74% 22%, var(--indigo), transparent 70%),
+    radial-gradient(42% 46% at 55% 84%, var(--apricot-soft), transparent 72%);
+}
+/* Cool: indigo washes for the calmer light sections. */
+.aurora-cool {
+  background: radial-gradient(38% 42% at 18% 26%, var(--indigo), transparent 70%),
+    radial-gradient(36% 40% at 82% 34%, var(--indigo-soft), transparent 70%),
+    radial-gradient(44% 44% at 50% 88%, var(--indigo-deep), transparent 72%);
+}
+/* Ember: the warm close on the final CTA band. */
+.aurora-ember {
+  background: radial-gradient(40% 44% at 22% 30%, var(--apricot), transparent 70%),
+    radial-gradient(38% 42% at 78% 26%, var(--indigo-soft), transparent 70%),
+    radial-gradient(46% 48% at 52% 92%, var(--apricot-soft), transparent 74%);
+}
+.aurora-slow {
+  animation-duration: 44s;
+  animation-direction: alternate-reverse;
+}
+@keyframes agora-aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1.4);
   }
   50% {
-    transform: translateY(-3.5%);
+    transform: translate3d(3%, 2%, 0) scale(1.52);
+  }
+  100% {
+    transform: translate3d(-1%, 3%, 0) scale(1.44);
   }
 }
-.ari-float {
-  animation: ari-float 4.5s ease-in-out infinite;
+
+/* Film grain — inline SVG turbulence, no asset request, ≤5% opacity, fixed. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Reduced motion — hard requirement §10 */
+/* ---- Motion ------------------------------------------------------------ */
+
+/*
+ * `.js-motion` is added to <html> by an inline script in layout.tsx, before first paint,
+ * and ONLY when the visitor has not asked for reduced motion. Every hidden start-state
+ * below is scoped to it, so a reduced-motion visitor — or one with JS off — gets the
+ * finished layout with nothing invisible. This is a hard line, not a nice-to-have.
+ */
+.js-motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  will-change: transform, opacity;
+}
+.js-motion [data-reveal-card] {
+  opacity: 0;
+  transform: translateY(28px) rotate(0.4deg);
+}
+
+/* Split-text: words are wrapped server-side, so nothing reflows when GSAP takes over. */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.09em;
+  margin-bottom: -0.09em;
+}
+.split-inner {
+  display: inline-block;
+}
+.js-motion .split-inner {
+  transform: translateY(110%);
+}
+
+/*
+ * The pinned pipeline scene. The four step panels stack in one box and cross-fade as the
+ * rail scrubs; the rail pills light up in step. This applies ONLY where the pin runs —
+ * with JS motion, at ≥1024px. Everywhere else the panels are a plain horizontal snap
+ * carousel, which is the better interaction on a phone anyway, and reduced motion never
+ * sees a half-lit section.
+ */
+@media (min-width: 1024px) {
+  .js-motion [data-steps-stage] {
+    display: grid;
+  }
+  .js-motion [data-step] {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+    pointer-events: none;
+  }
+  .js-motion [data-step][data-active="true"] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .js-motion [data-progress-line] {
+    transform: scaleX(0);
+  }
+}
+[data-progress-line] {
+  transform-origin: left center;
+}
+
+/* Rail pills: dim by default, filled when active, settled once passed. */
+[data-rail] {
+  transition: color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+@media (min-width: 1024px) {
+  .js-motion [data-rail] {
+    opacity: 0.45;
+  }
+  .js-motion [data-rail][data-done="true"] {
+    opacity: 0.85;
+    border-color: rgba(79, 70, 229, 0.45);
+  }
+  .js-motion [data-rail][data-active="true"] {
+    opacity: 1;
+    background: var(--indigo);
+    border-color: var(--indigo);
+    color: #fff;
+  }
+}
+
+/* Hero load choreography — CSS only, so first paint never waits for JS. */
+@keyframes agora-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cue {
+  animation: agora-rise 0.7s var(--ease-out) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes agora-fly-left {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes agora-fly-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cue-left {
+  animation: agora-fly-left 0.9s var(--ease-out) both;
+  animation-delay: var(--d, 0.5s);
+}
+.cue-right {
+  animation: agora-fly-right 0.9s var(--ease-out) both;
+  animation-delay: var(--d, 0.5s);
+}
+
+/* 3D idle tilt for the floating frames — rotateX/Y ≤ 6°, 8s loops. */
+.tilt-stage {
+  perspective: 1000px;
+}
+@keyframes agora-tilt-a {
+  0%,
+  100% {
+    transform: rotateX(3deg) rotateY(-5deg) translateY(0);
+  }
+  50% {
+    transform: rotateX(-2deg) rotateY(4deg) translateY(-10px);
+  }
+}
+@keyframes agora-tilt-b {
+  0%,
+  100% {
+    transform: rotateX(-3deg) rotateY(5deg) translateY(-6px);
+  }
+  50% {
+    transform: rotateX(2deg) rotateY(-4deg) translateY(4px);
+  }
+}
+.tilt-a {
+  animation: agora-tilt-a 8s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.tilt-b {
+  animation: agora-tilt-b 9.5s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+/* Terminal caret */
+@keyframes agora-caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.caret {
+  animation: agora-caret 1.05s steps(1) infinite;
+}
+
+/* Ticker marquee — duplicated track translated by exactly -50%. */
+@keyframes agora-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: agora-marquee var(--marquee-duration, 52s) linear infinite;
+}
+.marquee-reverse .marquee-track {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Odometer digit column: 0–9 stacked, translated to the target digit. */
+.odo-digit {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.odo-col {
+  display: flex;
+  flex-direction: column;
+  transition: transform 1.2s var(--ease-out);
+  will-change: transform;
+}
+.odo-col > span {
+  height: 1em;
+  line-height: 1;
+}
+
+/* Accordion — grid-rows 0fr→1fr, no JS height measurement. */
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+.acc-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.acc-panel > div {
+  overflow: hidden;
+}
+
+/*
+ * Reduced motion — the hard line. Everything above collapses, content stays fully
+ * readable, and the terminal renders its complete transcript. `.js-motion` is never added,
+ * so no hidden start-states exist in the first place.
+ */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -224,7 +614,16 @@
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+  [data-reveal],
+  [data-reveal-card],
+  [data-step],
+  .split-inner {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

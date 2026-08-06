@@ -1,120 +1,133 @@
 "use client"
 
+import { Wordmark } from "@/components/Wordmark"
 import { en } from "@/content/en"
 import { cn } from "@/lib/cn"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
+/** Sticky top nav — transparent over the hero, shell + hairline once scrolled. */
 export function Nav() {
   const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 16)
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [open])
+
+  /**
+   * The hero is a full-bleed night photograph, so at the top of the page the nav sits on
+   * near-black and has to invert. Once it gains its ivory backing on scroll it goes back
+   * to the normal ink-on-light treatment. Without this the wordmark and links vanish.
+   */
+  const onDark = !scrolled && !open
+
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-colors duration-base ease-agora-out",
-        scrolled
-          ? "border-b border-marble-deep bg-marble/85 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent",
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-base ease-out",
+        scrolled || open
+          ? "border-b border-ivory-line bg-ivory/85 backdrop-blur-md"
+          : "border-b border-transparent",
       )}
     >
-      <nav className="mx-auto flex max-w-band items-center justify-between px-5 py-4 sm:px-8">
-        {/* Wordmark — Ari's face sits in the tiny nav O (the O motif) */}
-        <a href="#main" className="flex items-center font-display text-xl tracking-[0.08em]">
-          AG
-          <span className="mx-[0.05em] inline-flex h-[0.82em] w-[0.82em] translate-y-[0.08em] overflow-hidden rounded-full ring-1 ring-current/25">
-            <img
-              src="/ari/ari-head.png"
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="h-full w-full object-cover"
-              style={{ objectPosition: "50% 34%", transform: "scale(1.2)" }}
-            />
-          </span>
-          RA
-        </a>
+      <nav aria-label="Main" className="shell flex h-[68px] items-center justify-between">
+        <Link
+          href="/"
+          aria-label={en.a11y.homeLink}
+          className={cn(
+            "text-[1.35rem] transition-colors duration-base",
+            onDark ? "text-white" : "text-text",
+          )}
+        >
+          <Wordmark />
+        </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-9 md:flex">
           {en.nav.links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              data-ari-hint={`Jump to ${link.label.toLowerCase()}`}
-              className="text-[0.95rem] text-text-mute transition-colors duration-fast ease-agora-out hover:text-text"
+              className={cn(
+                "text-[0.9375rem] font-medium transition-colors duration-fast ease-out",
+                onDark ? "text-white/75 hover:text-white" : "text-text-mute hover:text-text",
+              )}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a href="#waitlist" className="btn-primary text-[0.95rem]">
+          <Link href={en.nav.ctaHref} className="btn btn-primary">
             {en.nav.cta}
-          </a>
+          </Link>
         </div>
 
-        {/* Mobile trigger */}
         <button
           type="button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center md:hidden"
+          aria-label={open ? en.nav.menuClose : en.nav.menuOpen}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          onClick={() => setOpen((v) => !v)}
+          className="-mr-2 flex h-11 w-11 cursor-pointer items-center justify-center md:hidden"
         >
           <span className="relative block h-4 w-6">
             <span
               className={cn(
-                "absolute left-0 block h-[2px] w-6 bg-text transition-all duration-fast ease-agora-out",
-                menuOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0",
+                "absolute left-0 block h-[2px] w-6 transition-all duration-fast ease-out",
+                onDark ? "bg-white" : "bg-text",
+                open ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0",
               )}
             />
             <span
               className={cn(
-                "absolute left-0 top-1/2 block h-[2px] w-6 -translate-y-1/2 bg-text transition-opacity duration-fast",
-                menuOpen && "opacity-0",
+                "absolute left-0 top-1/2 block h-[2px] w-6 -translate-y-1/2 transition-opacity duration-fast",
+                onDark ? "bg-white" : "bg-text",
+                open && "opacity-0",
               )}
             />
             <span
               className={cn(
-                "absolute left-0 block h-[2px] w-6 bg-text transition-all duration-fast ease-agora-out",
-                menuOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-0",
+                "absolute left-0 block h-[2px] w-6 transition-all duration-fast ease-out",
+                onDark ? "bg-white" : "bg-text",
+                open ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-0",
               )}
             />
           </span>
         </button>
       </nav>
 
-      {/* Mobile sheet — slide down + fade in */}
       <div
-        className={cn(
-          "border-t border-marble-deep bg-marble px-5 py-6 md:hidden",
-          "overflow-hidden transition-all duration-200 ease-agora-out",
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 pointer-events-none border-t-0",
-        )}
+        id="mobile-menu"
+        hidden={!open}
+        className="border-t border-ivory-line bg-ivory md:hidden"
       >
-        <div className="flex flex-col gap-5">
+        <div className="shell flex flex-col gap-1 py-4">
           {en.nav.links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="text-lg text-text"
+              onClick={() => setOpen(false)}
+              className="py-3 text-lg font-medium text-text"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          {/* biome-ignore lint/a11y/useValidAnchor: in-page nav link that also closes the mobile sheet */}
-          <a
-            href="#waitlist"
-            onClick={() => setMenuOpen(false)}
-            className="btn-primary mt-2 w-full"
+          <Link
+            href={en.nav.ctaHref}
+            onClick={() => setOpen(false)}
+            className="btn btn-primary mt-3 w-full"
           >
             {en.nav.cta}
-          </a>
+          </Link>
         </div>
       </div>
     </header>

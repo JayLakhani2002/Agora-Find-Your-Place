@@ -1,59 +1,50 @@
+import { Wordmark } from "@/components/Wordmark"
 import { en } from "@/content/en"
+import Link from "next/link"
 
+/** §4.10 — mega-footer. Anchors, sub-pages, the two legal pages, EU note, EN/DE stub. */
 export function Footer() {
   const { footer } = en
   return (
-    <footer id="footer" className="band band-dark">
-      <div className="band-inner py-20 sm:py-28">
-        <div className="flex flex-col items-start gap-6 border-b border-white/10 pb-16">
-          <p className="font-display text-h2 leading-tight">{footer.threadLine}</p>
-          <a href="#waitlist" className="btn-primary">
-            {footer.cta}
-          </a>
-        </div>
+    <footer className="band band-dark border-t border-ink-line">
+      <div className="shell py-16 sm:py-20">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1.6fr)_repeat(2,minmax(0,1fr))]">
+          <div className="max-w-sm">
+            <p className="text-[1.35rem] text-text-on-dark">
+              <Wordmark />
+            </p>
+            <p className="mt-4 text-[0.9375rem] leading-relaxed text-text-on-dark-mute">
+              {footer.blurb}
+            </p>
+          </div>
 
-        <div className="grid grid-cols-2 gap-10 pt-14 sm:grid-cols-4">
           {footer.columns.map((col) => (
             <div key={col.title}>
-              <p className="eyebrow eyebrow-on-ink mb-4">{col.title}</p>
-              <ul className="flex flex-col gap-3">
+              <p className="eyebrow">{col.title}</p>
+              <ul className="mt-4 flex flex-col gap-3">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <a
+                    <Link
                       href={link.href}
-                      className="text-[0.95rem] text-text-on-ink/70 transition-colors duration-fast hover:text-text-on-ink"
+                      className="text-[0.9375rem] text-text-on-dark-mute transition-colors duration-fast ease-out hover:text-text-on-dark"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
-          <div>
-            <p className="eyebrow eyebrow-on-ink mb-4">Social</p>
-            <a
-              href="https://instagram.com/joinagora"
-              className="text-[0.95rem] text-text-on-ink/70 transition-colors duration-fast hover:text-text-on-ink"
-            >
-              {footer.social}
-            </a>
-          </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
-          <p className="font-data text-[0.8rem] text-text-on-ink/55">{footer.smallPrint}</p>
-          <div
-            className="flex items-center gap-1 font-data text-[0.8rem] text-text-on-ink/55"
-            aria-label="Language"
-          >
-            <span className="text-text-on-ink">{footer.langs[0]}</span>
-            <span aria-hidden>·</span>
-            <button type="button" className="transition-colors hover:text-text-on-ink" disabled>
-              {footer.langs[1]}
-            </button>
-          </div>
-        </div>
+        <p className="mt-14 max-w-prose border-t border-ink-line pt-8 text-[0.875rem] text-text-on-dark-mute">
+          {footer.gdpr}
+        </p>
+
+        {/* No EN|DE switch until German copy exists — a toggle that does nothing is worse
+            than no toggle. All copy already lives in content/en.ts, so adding `de.ts` is a
+            file, not a refactor. */}
+        <p className="receipt mt-8">{footer.smallPrint}</p>
       </div>
     </footer>
   )

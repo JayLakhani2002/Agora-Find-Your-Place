@@ -1,0 +1,415 @@
+{
+  "generatedAt": "2026-08-06T15:34:27.321Z",
+  "totals": {
+    "activeJobs": 921,
+    "berlinJobs": 786,
+    "companies": 504,
+    "latestScrapedAt": "2026-08-04T00:29:58.314Z",
+    "latestBatch": 213
+  },
+  "sources": [
+    {
+      "source": "arbeitsagentur",
+      "count": 389,
+      "latestScrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "source": "arbeitnow",
+      "count": 319,
+      "latestScrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "source": "tu_berlin",
+      "count": 128,
+      "latestScrapedAt": "2026-08-04T00:29:58.314Z"
+    },
+    {
+      "source": "berlin_startup_jobs",
+      "count": 70,
+      "latestScrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "source": "jobicco",
+      "count": 15,
+      "latestScrapedAt": "2026-08-03T23:23:18.924Z"
+    }
+  ],
+  "feed": [
+    {
+      "title": "Working Student Finance Data & Analytics (m/w/d)",
+      "company": "Recare Deutschland GmbH",
+      "location": "Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 20,
+      "hourlyRate": null,
+      "germanLevel": "B2",
+      "source": "arbeitnow",
+      "scrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "title": "Küchenhelfer/innen im Speisenverteilzentrum (m/w/d)",
+      "company": "Vivantes Netzwerk für Gesundheit GmbH",
+      "location": "Berlin",
+      "contractType": "teilzeit",
+      "hoursPerWeek": 10,
+      "hourlyRate": 12.82,
+      "germanLevel": "none",
+      "source": "arbeitsagentur",
+      "scrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "title": "Team Lead, Product Engineering (hands-on)",
+      "company": "YGO",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": 40,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "berlin_startup_jobs",
+      "scrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "title": "Minijob im Verkauf",
+      "company": "Hunkemöller",
+      "location": "Berlin",
+      "contractType": "minijob",
+      "hoursPerWeek": 10,
+      "hourlyRate": 12.82,
+      "germanLevel": "B2",
+      "source": "jobicco",
+      "scrapedAt": "2026-08-03T23:23:18.924Z"
+    },
+    {
+      "title": "Werkstudent*in im Aufgabengebiet Politik",
+      "company": "Stromnetz Berlin GmbH",
+      "location": "Deutschland, Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 20,
+      "hourlyRate": null,
+      "germanLevel": "A2",
+      "source": "tu_berlin",
+      "scrapedAt": "2026-08-04T00:29:58.314Z"
+    },
+    {
+      "title": "Werkstudent*in Content Creator / Brandface (m/w/d)",
+      "company": "Neptuned GmbH",
+      "location": "Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 15,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "arbeitnow",
+      "scrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "title": "Küchenhilfe (m/w/d)",
+      "company": "Casualfood GmbH Standort Frankfurt",
+      "location": "Schönefeld bei Berlin 12529",
+      "contractType": "teilzeit",
+      "hoursPerWeek": 10,
+      "hourlyRate": 12.82,
+      "germanLevel": "none",
+      "source": "arbeitsagentur",
+      "scrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "title": "(Senior) Performance Marketing Manager – SEA",
+      "company": "sofatutor",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": 40,
+      "hourlyRate": null,
+      "germanLevel": "C2",
+      "source": "berlin_startup_jobs",
+      "scrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "title": "Aushilfe Frühstücksservice (m/w/d)",
+      "company": "Orania.Berlin",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "jobicco",
+      "scrapedAt": "2026-08-03T23:23:18.924Z"
+    },
+    {
+      "title": "Werkstudent*in: Sales & Operatios im online Bildungs-Startup",
+      "company": "IFDE - Institute for Digital Education",
+      "location": "Deutschland, Berlin, Friedrichshain-Kreuzberg",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 10,
+      "hourlyRate": 16,
+      "germanLevel": "B2",
+      "source": "tu_berlin",
+      "scrapedAt": "2026-08-04T00:29:58.314Z"
+    },
+    {
+      "title": "Recruiter:in / Talent Acquisition Lead (m/w/d)",
+      "company": "REP Revenue Excellence Partners",
+      "location": "Berlin",
+      "contractType": "teilzeit",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "arbeitnow",
+      "scrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "title": "Security für feste Eventlocation (m/w/d)",
+      "company": "flash-security GmbH",
+      "location": "Berlin 10178",
+      "contractType": "teilzeit",
+      "hoursPerWeek": 10,
+      "hourlyRate": 15.55,
+      "germanLevel": "B2",
+      "source": "arbeitsagentur",
+      "scrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "title": "Senior Fullstack Developer with Product Mindset",
+      "company": "Small Improvements",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": 32,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "berlin_startup_jobs",
+      "scrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "title": "Servicekraft / Servicemitarbeiter (m/w/d)",
+      "company": "CineStar",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "jobicco",
+      "scrapedAt": "2026-08-03T23:23:18.924Z"
+    },
+    {
+      "title": "Studentische:n Mitarbeiter:in Strom",
+      "company": "Agora Think Tanks gGmbH",
+      "location": "Deutschland, Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 20,
+      "hourlyRate": 14.75,
+      "germanLevel": "none",
+      "source": "tu_berlin",
+      "scrapedAt": "2026-08-04T00:29:58.314Z"
+    },
+    {
+      "title": "Content Creator",
+      "company": "Unfrämed Berlin",
+      "location": "Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "arbeitnow",
+      "scrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "title": "Pflegefachkraft Intensivpflege (m/w/d) – Minijob",
+      "company": "Brekstar Medical GmbH",
+      "location": "Berlin 10178",
+      "contractType": "minijob",
+      "hoursPerWeek": 10,
+      "hourlyRate": 32,
+      "germanLevel": "none",
+      "source": "arbeitsagentur",
+      "scrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "title": "Social Paid Manager (m/w/d) // Medior bis Senior",
+      "company": "Yellowgrape",
+      "location": "Berlin",
+      "contractType": "praktikum",
+      "hoursPerWeek": 40,
+      "hourlyRate": null,
+      "germanLevel": "C2",
+      "source": "berlin_startup_jobs",
+      "scrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "title": "Personal Trainer",
+      "company": "ME",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "jobicco",
+      "scrapedAt": "2026-08-03T23:23:18.924Z"
+    },
+    {
+      "title": "Werkstudent Controlling (m/w/d)",
+      "company": "ODEG - Ostdeutsche Eisenbahn GmbH",
+      "location": "Belgien, Berlin, Lichtenberg",
+      "contractType": "werkstudent",
+      "hoursPerWeek": 20,
+      "hourlyRate": null,
+      "germanLevel": "B2",
+      "source": "tu_berlin",
+      "scrapedAt": "2026-08-04T00:29:58.314Z"
+    },
+    {
+      "title": "Werkstudent:in im Headhunting",
+      "company": "Recruitment Circle GmbH",
+      "location": "Berlin",
+      "contractType": "werkstudent",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "arbeitnow",
+      "scrapedAt": "2026-07-12T18:11:13.346Z"
+    },
+    {
+      "title": "Hotel Reinigung - Housekeeping Helfer Reinigung (m/w/d)",
+      "company": "AK24 GmbH",
+      "location": "Berlin 12355",
+      "contractType": "teilzeit",
+      "hoursPerWeek": 10,
+      "hourlyRate": 12.82,
+      "germanLevel": "A2",
+      "source": "arbeitsagentur",
+      "scrapedAt": "2026-07-12T17:40:57.599Z"
+    },
+    {
+      "title": "(Senior) Marketing Manager:in (m/w/d) – Teilzeit",
+      "company": "NEOmeter",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": 20,
+      "hourlyRate": null,
+      "germanLevel": "C1",
+      "source": "berlin_startup_jobs",
+      "scrapedAt": "2026-08-03T23:36:44.316Z"
+    },
+    {
+      "title": "Studentische Unterstützung für Social Media (m/w/d) – Berlin",
+      "company": "Leonie Hagmeyer",
+      "location": "Berlin",
+      "contractType": "vollzeit",
+      "hoursPerWeek": null,
+      "hourlyRate": null,
+      "germanLevel": "none",
+      "source": "jobicco",
+      "scrapedAt": "2026-08-03T23:23:18.924Z"
+    }
+  ],
+  "companies": [
+    {
+      "name": "Deutsche Post AG",
+      "roles": 11,
+      "logo": "/img/logos/deutschepost-de.png"
+    },
+    {
+      "name": "Stromnetz Berlin GmbH",
+      "roles": 6,
+      "logo": "/img/logos/stromnetz-berlin.png"
+    },
+    {
+      "name": "Speechify",
+      "roles": 5,
+      "logo": "/img/logos/speechify-com.png"
+    },
+    {
+      "name": "Flix",
+      "roles": 4,
+      "logo": "/img/logos/flix-com.png"
+    },
+    {
+      "name": "K-tronik GmbH",
+      "roles": 4,
+      "logo": "/img/logos/k-tronik-de.png"
+    },
+    {
+      "name": "Wolt",
+      "roles": 4,
+      "logo": "/img/logos/wolt-com.png"
+    },
+    {
+      "name": "1KOMMA5˚",
+      "roles": 3,
+      "logo": "/img/logos/1komma5grad-com.png"
+    },
+    {
+      "name": "Buena",
+      "roles": 3,
+      "logo": "/img/logos/buena-com.png"
+    },
+    {
+      "name": "Distribusion Technologies",
+      "roles": 3,
+      "logo": "/img/logos/distribusion-com.png"
+    },
+    {
+      "name": "HELLWEG Die Profi-Bau-& Gartenmärkte GmbH & Co. KG",
+      "roles": 3,
+      "logo": "/img/logos/hellweg-de.png"
+    },
+    {
+      "name": "Lassie",
+      "roles": 3,
+      "logo": "/img/logos/lassie-co.png"
+    },
+    {
+      "name": "SumUp",
+      "roles": 3,
+      "logo": "/img/logos/sumup-com.png"
+    },
+    {
+      "name": "Zalando SE",
+      "roles": 3,
+      "logo": "/img/logos/zalando-de.png"
+    },
+    {
+      "name": "Adfinis AG",
+      "roles": 2,
+      "logo": "/img/logos/adfinis-com.png"
+    },
+    {
+      "name": "Berliner Verkehrsbetriebe (BVG)",
+      "roles": 2,
+      "logo": "/img/logos/bvg-de.png"
+    },
+    {
+      "name": "CGI",
+      "roles": 2,
+      "logo": "/img/logos/cgi-com.png"
+    },
+    {
+      "name": "Consultport",
+      "roles": 2,
+      "logo": "/img/logos/consultport-com.png"
+    },
+    {
+      "name": "IONOS SE",
+      "roles": 2,
+      "logo": null
+    },
+    {
+      "name": "KoRo Handels GmbH",
+      "roles": 2,
+      "logo": "/img/logos/korodrogerie-de.png"
+    },
+    {
+      "name": "Lidl Dienstleistung GmbH & Co. KG",
+      "roles": 2,
+      "logo": "/img/logos/lidl-de.png"
+    },
+    {
+      "name": "Lumiform",
+      "roles": 2,
+      "logo": "/img/logos/lumiform-com.png"
+    },
+    {
+      "name": "Max-Planck-Institute for Human Development",
+      "roles": 2,
+      "logo": null
+    }
+  ]
+}

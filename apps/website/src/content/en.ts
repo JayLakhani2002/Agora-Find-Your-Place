@@ -1,275 +1,489 @@
-// All site copy lives here so a German translation is a sibling file, not a refactor (§8.9).
-// Real copy provided in the spec is used; placeholder slots use {{TOKENS}} and never invent stats.
+import { claims } from "./claims"
+
+/**
+ * All site copy. One file, typed — a German translation is a sibling file, not a refactor.
+ * No copy lives in JSX.
+ *
+ * Approved by Jay 2026-08-04 as COPY-v4.md. Voice: sentence case with full stops, plain
+ * verbs, real numbers, clear B2 English. Every number comes from ./claims.ts, which reads
+ * ./live-data.json, which is regenerated from the production database on every build.
+ *
+ * Honesty (legally binding under UWG §5):
+ *  - No user counts, hires, ratings or testimonials. The reviews section ships behind
+ *    `enabled: false` until real beta quotes exist with named consent.
+ *  - The full agent story is told in the present tense ONLY under the visible early-access
+ *    frame: the hero badge, every CTA, and the FAQ anchor below.
+ *  - Anything not running yet carries a mono `at launch` tag — the Apply step and four of
+ *    the five platform cards.
+ *  - `faq.items[0]` is the honesty anchor. Its meaning is never softened, never trimmed,
+ *    and never moved out of first position.
+ */
 
 export const en = {
-  brand: {
-    name: "AGORA",
-    tagline: "Find your place.",
-    subline:
-      "The job app for international students in Berlin — visa-aware, German-level-aware, ATS-tested.",
-  },
+  brand: { name: "agora", suffix: ".jobs" },
 
   nav: {
     links: [
-      { label: "How it works", href: "#how-it-works" },
-      { label: "Story", href: "#story" },
-      { label: "FAQ", href: "#faq" },
+      { label: "How it works", href: "/#how-it-works" },
+      { label: "Germany", href: "/#germany" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "FAQ", href: "/faq" },
     ],
-    cta: "Join the waitlist",
+    cta: "Get early access",
+    ctaHref: "/#early-access",
+    menuOpen: "Open menu",
+    menuClose: "Close menu",
   },
 
+  // 1 — Hero
   hero: {
-    primaryCta: "Join the waitlist",
-    secondaryCta: "Meet Ari",
-    chips: ["✓ Visa eligible", "✓ B1 OK", "✓ 20h/week"],
+    badge: "Early access — Berlin first",
+    headline: "An agent that job-hunts while you get on with your life.",
+    /** Words from here on render in the brand colour: the half about you, not the machine. */
+    headlineAccent: 4,
+    sub: "Agora watches every major job source in Germany, tailors your CV and cover letter to each role, and files the application. You just approve. Works in English. Built for how German hiring actually works.",
+    ctaPrimary: "Get early access",
+    ctaSecondary: "See how it works",
+    ctaSecondaryHref: "/#how-it-works",
+    imageAlt:
+      "A Berlin apartment at 2am: an empty chair pushed back from a desk, a laptop open and glowing, the sleeping city and the Fernsehturm through the window.",
+    // Deliberately does NOT repeat the listing count — the terminal footer directly above
+    // already carries it. This line adds what that one doesn't: breadth and cadence.
+    receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value}, Berlin time`,
   },
 
-  story: {
-    eyebrow: "The story",
+  /** The engine terminal — labelled a replay, because that is exactly what it is. */
+  theater: {
+    eyebrow: "That screen, last night",
+    title: "agora.engine",
+    status: "live",
+    caption: "Real rows from the latest scrape, replayed. Times are the nightly run, Berlin time.",
+    footer: `${claims.activeListings.value} live listings · ${claims.latestBatch.value} added last night`,
+    alt: "Terminal panel replaying the engine's nightly scan and the real Berlin listings it found.",
+  },
+
+  // 2 — Real-data proof wall
+  proof: {
+    eyebrow: "In the index right now",
+    headline: "Real roles, from real companies, today.",
+    micro:
+      "Pulled live from our index when this page was built. These are companies whose roles we index — not partners, and not a claim about who hires our users.",
+  },
+
+  // 3 — The problem
+  problem: {
+    eyebrow: "Why this exists",
+    headline: "Job hunting became a full-time job.",
     beats: [
-      {
-        id: "arrive",
-        quote: "I arrived in Berlin with a CV and no idea what I was legally allowed to do.",
-        caption: "Day one. A degree, a visa, and a wall of question marks.",
-      },
-      {
-        id: "boards",
-        quote:
-          "Every job board showed me jobs I couldn't take. Every application vanished into an ATS.",
-        caption: "Two hundred tabs later: still guessing, still silent inboxes.",
-      },
-      {
-        id: "agora",
-        quote:
-          "So we built the app we needed: it knows your visa, your hours, your German — and only shows you what fits.",
-        caption: "No guessing. No noise. Just jobs you can actually take.",
-      },
-    ] as const,
-    origin: {
-      title: "Why “Agora”?",
-      body: "The agora was the heart of the Greek city — the marketplace where strangers found their people and their work. A name like “JobApp” tells you what a product is. Agora tells you what it's for: belonging somewhere new. Jobs names a feature. Agora names the feeling.",
-    },
+      "You check the same five sites every night and see the same roles you saw last night.",
+      "Every application wants your CV rewritten for its keywords, its form, its screening questions.",
+      "And in Germany there's a second layer nobody explains: which contract you're allowed to take, how many hours you may work, whether that “B2 required” is real.",
+    ],
+    /**
+     * The running tally above the beats. It climbs as each beat lands, so the reader feels
+     * the pile-up rather than reading about it. These are descriptions of the ritual, not
+     * measured claims about users — there is no user data behind them, and there must not
+     * be anything here that reads as a statistic we collected.
+     */
+    tally: [
+      { value: "5", label: "job sites, checked again tonight" },
+      { value: "1×", label: "CV rewritten, per application" },
+      { value: "?", label: "and nobody explains the German rules" },
+    ],
+    close: "So most people apply to fewer jobs, more slowly, worse — and call it bad luck.",
   },
 
-  labyrinth: {
-    eyebrow: "The problem, named",
-    headline: "The German system is a labyrinth.",
-    body: "The 140-day rule. The 20-hour cap. Minijob thresholds, BAföG limits, Werkstudent contracts — and behind every application, an ATS portal silently filtering you out. Nobody hands you the map. Agora models the rules, so you don't have to learn them the hard way.",
-    chips: ["140-day rule ✓ modeled", "§ Chancenkarte ✓", "Werkstudent ✓", "Minijob ✓"],
-  },
-
-  howItWorks: {
+  // 4 — The pipeline, four steps, pinned scroll scene
+  pipeline: {
     eyebrow: "How it works",
-    headline: "Swipe. Draft. You apply.",
+    headline: "Four things, done for you, on a loop.",
+    launchTag: "at launch",
     steps: [
       {
-        id: "profile",
-        kicker: "01 · Profile",
-        title: "One CV in, a real profile out",
-        body: "Upload your CV once. Agora reads your skills, your visa type, your German level and your hours — and builds the profile every match is checked against.",
+        n: "01",
+        key: "Find",
+        title: "Your agent watches. You don't.",
+        body: "Every source, every night. Each new role is scored against your profile with a plain-English reason attached — so you know why it surfaced before you open it.",
+        detail: [
+          "Re-scans all 5 sources nightly, so a role posted at midnight is on your list by morning",
+          "Filters against your permit BEFORE scoring — you never see a contract you can't legally take",
+          "Scores on skills, seniority, language requirement and location, and shows its reasoning",
+          "Learns from what you skip: dismiss three warehouse roles and it stops surfacing them",
+        ],
+        receipt: `[${claims.lastScan.value}] nightly scan · ${claims.sourcesIndexed.value} sources · ${claims.latestBatch.value} new roles`,
       },
       {
-        id: "discover",
-        kicker: "02 · Discover",
-        title: "A deck that knows your visa",
-        body: "A daily swipe deck of jobs you're legally eligible for — each card scored against your profile. If it's in the deck, you can take it. Try the cards →",
+        n: "02",
+        key: "Prep",
+        title: "Tailored per role. Every change shown.",
+        body: `Your CV and cover letter rewritten for the specific role, drawn from your real background — never invented. Graded on ${claims.scoreDimensions.value} dimensions before the draft reaches you.`,
+        detail: [
+          "Reads the job ad first: pulls out keywords, must-haves and quiet disqualifiers",
+          "Rewrites your bullets against those specifics, using only experience you actually have",
+          "Grades six ways — ATS parse, keywords, factual accuracy, format, tone, language",
+          "Shows a line-by-line diff, so nothing reaches an employer that you haven't seen",
+          "Writes German natively when a role needs it, rather than translating your English",
+        ],
+        receipt: `draft scored 92/100 · ${claims.scoreDimensions.value} checks passed`,
       },
       {
-        id: "apply",
-        kicker: "03 · Apply",
-        title: "German documents, scored",
-        body: "Agora drafts your German CV and Anschreiben, then scores them across six dimensions before you ever see them. Smart autofill saves you the typing — and you always click the company's own Submit button.",
+        n: "03",
+        key: "Apply",
+        title: "You approve. The agent types.",
+        body: "It fills in the company's own application form, answers the screening questions in your voice, and sends you a receipt for every submission.",
+        detail: [
+          "Fills the employer's real form on their real careers page — no back channel, no scraping around it",
+          "Answers screening questions from your profile, in your voice, and flags any it can't answer",
+          "Nothing is submitted until you approve it, one application at a time",
+          "Auto-approve is opt-in, off by default, and revocable at any moment",
+          "Every submission produces a receipt: what was sent, where, and when",
+        ],
+        receipt: "submitted · 47 fields · receipt saved",
+        atLaunch: true,
       },
       {
-        id: "track",
-        kicker: "04 · Track",
-        title: "Your pipeline, with follow-ups",
-        body: "Every application in one board — with polite German follow-up drafts ready when an employer goes quiet, and interview prep when they don't.",
+        n: "04",
+        key: "Track",
+        title: "The pipeline runs itself.",
+        body: "Replies land on the right application. Statuses move on their own. When a company goes quiet, a polite follow-up is drafted and waiting for you.",
+        detail: [
+          "Threads employer replies back to the application they belong to",
+          "Advances status automatically — applied, screening, interview, offer, closed",
+          "Notices silence: after two weeks with no reply, drafts a follow-up for your approval",
+          "Keeps every version of every document you sent, so you can see exactly what they read",
+        ],
+        receipt: "status → interview · follow-up drafted",
       },
-    ] as const,
-    demoJobs: [
-      {
-        title: "Werkstudent Frontend",
-        company: "Zalando SE · Berlin",
-        score: "9.1",
-        chips: ["✓ Visa", "✓ B1 OK", "✓ 20h"],
-      },
-      {
-        title: "Working Student Data",
-        company: "N26 · Berlin",
-        score: "8.7",
-        chips: ["✓ Visa", "✓ English OK", "✓ 16h"],
-      },
-      {
-        title: "Werkstudent Marketing",
-        company: "HelloFresh · Berlin",
-        score: "8.4",
-        chips: ["✓ Visa", "✓ B2", "✓ 20h"],
-      },
-      {
-        title: "Working Student Design",
-        company: "Contentful · Berlin",
-        score: "8.9",
-        chips: ["✓ Visa", "✓ English OK", "✓ 18h"],
-      },
-    ] as const,
-    swipeHint: "Drag a card — left to skip, right to save.",
-    quality: {
-      score: "9.3",
-      label: "Application quality",
-      dimensions: [
-        { label: "Role fit", value: 9.5 },
-        { label: "ATS parse", value: 9.4 },
-        { label: "German quality", value: 9.1 },
-        { label: "Truthfulness", value: 9.8 },
-        { label: "Tone", value: 9.0 },
-        { label: "Completeness", value: 9.2 },
-      ] as const,
-    },
+    ],
   },
 
-  why: {
-    eyebrow: "Why it wins",
-    headline: "Built for your situation, not just your skills.",
-    columns: [
-      {
-        title: "Visa-aware by design",
-        body: "Your work-hour limits, your permit type, your 140 days — modeled in the matching itself. Agora never shows you a job you can't legally take.",
-      },
-      {
-        title: "Tested against real German ATS",
-        body: "Your documents are tested against the ATS platforms German companies actually use — Softgarden, Personio, d.vinci — so your CV reaches a human, not a filter.",
-      },
-      {
-        title: "From first Minijob to first full-time",
-        body: "Agora grows with you: the Werkstudent job that fits your semester, the follow-up that lands the interview, the full-time role after graduation.",
-      },
-    ] as const,
-    // Rendered ONLY when SHOW_STATS=true. Values stay placeholders until real numbers exist.
-    stats: [
-      { value: "{{N}}", label: "beta users" },
-      { value: "{{N}}", label: "applications generated" },
-      { value: "{{N}}%", label: "ATS parse rate" },
-    ] as const,
+  // 5 — Numbers band
+  numbers: {
+    eyebrow: "Measured, not claimed",
+    headline: "Real numbers from the engine.",
+    tiles: [
+      { value: claims.activeListings.value, label: "live listings" },
+      { value: claims.companiesIndexed.value, label: "companies indexed" },
+      { value: claims.sourcesIndexed.value, label: "sources scanned nightly" },
+      { value: claims.legalTests.value, label: "legal checks passing" },
+    ],
+    receipt: `Read from the live database every time this page is deployed. Last scan: ${claims.lastScanDate.value}, ${claims.lastScan.value}.`,
   },
 
-  employers: {
-    eyebrow: "Where the jobs come from",
-    headline: "Jobs you'll find on Agora come from companies like these.",
-    // Honesty note rendered in the band — these are examples, not partnerships.
-    note: "Examples of employers whose Werkstudent and working-student roles appear on the German job boards Agora draws from — not partnerships or endorsements.",
-    logos: ["Zalando", "N26", "HelloFresh", "Personio", "Delivery Hero", "Contentful"] as const,
-    domainsTitle: "Across the fields students actually work in",
-    // Dummy counts — swap with live portal numbers at launch.
-    domains: [
-      { label: "Software", count: 142 },
-      { label: "Data", count: 87 },
-      { label: "Marketing", count: 64 },
-      { label: "Design", count: 41 },
-      { label: "Finance", count: 38 },
-      { label: "Operations", count: 33 },
-      { label: "Logistics", count: 29 },
-      { label: "Research", count: 24 },
-    ] as const,
-  },
-
-  voices: {
-    eyebrow: "Voices",
-    headline: "Students who found their place.",
-    disclaimer: "Placeholder quotes while we're in beta — real student voices land here soon.",
-  },
-
-  meetAri: {
-    eyebrow: "Meet Ari",
-    headline: "Meet Ari — your guide through the labyrinth.",
-    values: [
+  /**
+   * 6 — Germany. The moat section.
+   *
+   * Every figure below is copied from `packages/legal/src/constraints.ts`, the same table
+   * the product's SQL hard filter and per-card eligibility checks read from, and the one
+   * covered by the 374 passing tests. If that table changes, this changes with it — do not
+   * edit these numbers here in isolation.
+   */
+  germany: {
+    eyebrow: "The part other tools skip",
+    headline: "It knows the German rules. All of them.",
+    body: "Most job boards show you everything and let you find out later that you were never allowed to take it. Agora models the permit rules first, then filters — so what you see is what you can actually accept.",
+    /** Source: VISA_CONSTRAINTS in packages/legal/src/constraints.ts */
+    permits: [
       {
-        title: "Knows the rules",
-        body: "The 140-day rule, Werkstudent vs Minijob, the 20-hour cap — Ari keeps track so you don't have to.",
+        code: "§16b",
+        name: "Student visa",
+        hours: "20 h/week in term",
+        detail: "140 full days (or 280 half days) a year. Enrolment required.",
+        contracts: "Werkstudent · Minijob · Praktikum",
       },
       {
-        title: "Preps your interviews",
-        body: "From “tell me about yourself” to salary questions, in English or German — practice with someone who's seen it before.",
+        code: "§20a",
+        name: "Chancenkarte",
+        hours: "20 h/week",
+        detail: "No annual day limit, no enrolment requirement, while you job-hunt.",
+        contracts: "Werkstudent · Minijob · Teilzeit",
       },
       {
-        title: "Remembers your journey",
-        body: "Your profile, your applications, your prep — Ari picks up every conversation where you left off.",
+        code: "EU",
+        name: "EU citizen",
+        hours: "Full access",
+        detail: "No permit restrictions on hours, days or contract type.",
+        contracts: "Every contract type",
       },
-    ] as const,
-    memoryNote:
-      "In the app, Ari remembers your profile, your applications and your interview prep — like a guide who actually knows you.",
-    chat: {
-      starters: ["What's the 140-day rule?", "Werkstudent vs Minijob?", "What is Agora?"],
-      placeholder: "Ask Ari anything about working in Germany…",
-      clearLabel: "Ari remembers this chat on your device — clear",
-      capMessage: "I'd love to keep talking — that's what the app is for. Join the waitlist?",
-      comingSoon: "Ari goes live here soon — join the waitlist to meet them first.",
-    },
+      {
+        code: "Blue Card",
+        name: "Skilled worker",
+        hours: "Full-time",
+        detail: "Tied to qualified employment. Minijob is not permitted on this permit.",
+        contracts: "Vollzeit · Teilzeit · Werkstudent",
+      },
+    ],
+    facts: [
+      {
+        value: "€556",
+        label: "Minijob ceiling, per month",
+        note: "Earn above it and you leave Minijob rules — the deductions change.",
+      },
+      {
+        value: "140",
+        label: "Days a year on a student visa",
+        note: "Or 280 half days. We count what a role would actually cost you.",
+      },
+      {
+        value: "20",
+        label: "Hours a week during term",
+        note: "Cross it and the Werkstudent social-insurance privilege falls away.",
+      },
+      {
+        value: claims.legalTests.value,
+        label: "Automated tests on these rules",
+        note: "Run on every change. The number comes from the suite, not from marketing.",
+      },
+    ],
+    micro:
+      "Guidance, not legal advice. Genuine edge cases belong with the Ausländerbehörde — and we tell you when you've hit one instead of guessing.",
   },
 
+  // 7 — Platforms
+  platforms: {
+    eyebrow: "Wherever you already are",
+    headline: "One agent. Five front doors.",
+    cards: [
+      {
+        id: "web",
+        icon: "window" as const,
+        title: "Web app",
+        body: "The full workspace — matches, drafts, tracker.",
+        tag: "first",
+      },
+      {
+        id: "whatsapp",
+        icon: "message" as const,
+        title: "WhatsApp",
+        body: "“Anything good today?” — and it answers.",
+        tag: "at launch",
+      },
+      {
+        id: "imessage",
+        icon: "bubble" as const,
+        title: "iMessage",
+        body: "Same agent, blue bubbles.",
+        tag: "at launch",
+      },
+      {
+        id: "claude",
+        icon: "terminal" as const,
+        title: "Claude / MCP",
+        body: "Run your job hunt from inside Claude.",
+        tag: "at launch",
+      },
+      {
+        id: "chrome",
+        icon: "puzzle" as const,
+        title: "Chrome extension",
+        body: "On any job page: score it, draft for it, save it.",
+        tag: "at launch",
+      },
+    ],
+    cta: "Get early access",
+  },
+
+  /**
+   * Reviews. BUILT, SHIPPED DARK. `enabled` stays false until real beta quotes exist with
+   * named consent; the component renders nothing at all while it is false, so there is no
+   * placeholder quote anywhere in the DOM. Never flip this to seed content.
+   */
+  reviews: {
+    enabled: false,
+    eyebrow: "From the beta",
+    headline: "What early users say.",
+    quotes: [] as { quote: string; name: string; role: string; outcome: string }[],
+  },
+
+  // 8 — Early-access offer + pricing preview
+  offer: {
+    eyebrow: "Early access",
+    headline: "Free while we build. Founding price when we launch.",
+    body: "Early users get the full product free through the beta, help decide what ships next, and lock the lowest price we will ever offer.",
+    cta: "Get early access",
+  },
+
+  pricing: {
+    eyebrow: "Pricing",
+    headline: "Pay per application. Never per month.",
+    sub: "Credits, not a subscription. You buy them once, they don't expire, and you spend them only when the agent does work for you. No billing clock running while you're not looking.",
+    priceSlot: "Locks at launch",
+    tiers: [
+      { name: "Starter", for: "Testing the water" },
+      { name: "Focus", for: "Actively hunting", featured: true },
+      { name: "All-in", for: "Hunting hard" },
+    ],
+    note: "During beta: free.",
+    link: { label: "See the pricing detail", href: "/pricing" },
+  },
+
+  /**
+   * 9 — FAQ. Grouped, and deliberately long: this is where a sceptical reader goes, and a
+   * short list reads as having something to hide.
+   *
+   * `groups[0].items[0]` is THE HONESTY ANCHOR. It is the reason the rest of the page is
+   * allowed to speak in the present tense. Never softened, never trimmed, never moved out
+   * of first position, and never collapsed by default.
+   */
   faq: {
-    eyebrow: "FAQ",
-    headline: "Fair questions.",
-    items: [
+    eyebrow: "Fair questions",
+    headline: "The questions everyone asks first.",
+    sub: "If something here reads like a dodge, tell us and we'll rewrite it.",
+    link: { label: "All questions", href: "/faq" },
+    groups: [
       {
-        q: "What does “Agora” mean?",
-        a: "The agora was the central square of the Greek city — the marketplace where people found work, traded, and belonged. That's the point: not another job board, but the place where you find your footing somewhere new.",
+        title: "The agent",
+        items: [
+          {
+            q: "What works today, and what arrives at launch?",
+            a: `Today: the matching engine across ${claims.sourcesIndexed.value} sources, tailored CV and cover letter drafts with six-dimension scoring, and application tracking — you click Apply yourself, on the company's own site. At launch: the agent submits for you with per-application approval, plus WhatsApp, iMessage, Claude and the Chrome extension.`,
+          },
+          {
+            q: "Is an agent applying for me even allowed?",
+            a: "You approve every single application before it goes anywhere, and we fill in the company's own form rather than routing around it. Nothing is sent without your say-so, and your data stays in the EU.",
+          },
+          {
+            q: "Will employers know an AI helped?",
+            a: "Your documents are built from your real experience, in your own voice — nothing invented. That is the same help a sharp friend or a career coach gives you, and it isn't something you have to declare.",
+          },
+          {
+            q: "Can it invent experience to make me look better?",
+            a: "No, and that is enforced rather than promised. Factual accuracy is one of the six dimensions every draft is graded on, and a draft that asserts something your profile doesn't support gets marked down before you ever see it. You can also read every change as a diff.",
+          },
+          {
+            q: "What if it applies to something I'd never want?",
+            a: "It can't, today — you press Apply. When submission arrives, approval is per-application by default. Auto-approve exists, it is off unless you switch it on, and you can revoke it at any time.",
+          },
+          {
+            q: "How many applications will it actually send?",
+            a: "As many as you approve. We are not going to promise a number: volume without fit is how people end up ignored, and a hundred bad applications is worse than ten good ones.",
+          },
+          {
+            q: "Does it work for senior roles, or just entry level?",
+            a: "Both. The index runs from Minijob and Werkstudent through to full-time senior positions — the current index skews Berlin and early-career because that is where we started scraping, not because of a product limit.",
+          },
+        ],
       },
       {
-        q: "Why not a name that just says “jobs”?",
-        a: "A name like “JobApp” tells you what a product is, not what it's for. Our differentiator isn't listing jobs — dozens of platforms do that. It's helping you belong somewhere new: the right role, your community, your footing in a foreign system. Jobs names a feature. Agora names the feeling.",
+        title: "Germany and permits",
+        items: [
+          {
+            q: "I don't speak German. Does it work?",
+            a: "The whole product is in English. It reads German job ads for you, tells you honestly when a role genuinely needs German, and writes your German documents when a role calls for them.",
+          },
+          {
+            q: "How do you know what my visa lets me do?",
+            a: "We model the rules rather than guessing at them. The permit table covers the §16b student visa, the §20a Chancenkarte, EU citizenship, the Blue Card and the post-graduation transition — hours, annual day limits, enrolment requirements and which contract types each one permits. It is covered by 374 automated tests.",
+          },
+          {
+            q: "What is the 140-day rule?",
+            a: "On a §16b student visa you may work 140 full days or 280 half days per calendar year without additional permission. It is easy to burn through it without noticing, so we count what a role would cost you before you apply.",
+          },
+          {
+            q: "Werkstudent or Minijob — what's the difference?",
+            a: "A Minijob is capped at €556 a month, above which the deductions change. Werkstudent lets you earn more but caps you at 20 hours a week during term; cross that and you lose the Werkstudent social-insurance privilege. Which one suits you depends on your permit and your enrolment status, and we check both.",
+          },
+          {
+            q: "Is this legal advice?",
+            a: "No. It is a model of published rules, applied to your situation, and it is right often enough to save you a lot of wasted evenings. Genuine edge cases belong with the Ausländerbehörde — and we tell you when you have hit one rather than bluffing.",
+          },
+          {
+            q: "Is it Berlin only?",
+            a: "Berlin first, because that is where the index is deepest and where we can be most useful on day one. The permit engine is nationwide already; the listing coverage follows city by city.",
+          },
+        ],
       },
       {
-        q: "How do you pronounce it?",
-        a: "AH-gor-ah. The Greek stresses the last syllable — ah-go-RAH — and English speakers often say uh-GOR-uh. Either is fine; we say AH-gor-ah.",
+        title: "Your data",
+        items: [
+          {
+            q: "Where does my data live?",
+            a: "On EU servers, under GDPR. Your CV, your applications and your documents never leave the EU.",
+          },
+          {
+            q: "Can I delete everything?",
+            a: "Yes, at any time, and deletion means deletion — profile, documents, application history, the lot. You can export it all first.",
+          },
+          {
+            q: "Do you sell my data or show it to employers?",
+            a: "No. Employers see an application when you send them one. That is the only time your information leaves the product, and it goes to them the same way it would if you had typed it yourself.",
+          },
+          {
+            q: "Do you train models on my CV?",
+            a: "No. Your documents are used to do your work, not to improve a model for someone else.",
+          },
+        ],
       },
       {
-        q: "Is Agora free?",
-        a: "Yes — swiping, matching and your first application drafts are free. A premium plan with higher limits is coming later; the free plan stays.",
+        title: "Early access and pricing",
+        items: [
+          {
+            q: "What does early access cost?",
+            a: "Nothing. You get the full product free through the beta, and you lock the lowest price we will ever offer when we launch.",
+          },
+          {
+            q: "What will it cost later?",
+            a: "Credits, not a subscription. You buy them once, they don't expire, and you spend them only when the agent does work for you. Pack sizes and prices are set before launch — we would rather say that than invent a number now.",
+          },
+          {
+            q: "Why should I trust a product that isn't finished?",
+            a: "You shouldn't, entirely — which is why the first FAQ answer here spells out exactly what runs today and what doesn't. Everything on this page marked `at launch` is not built yet, and every number is read from the live system rather than typed in by us.",
+          },
+        ],
       },
-      {
-        q: "Does the AI apply to jobs for me?",
-        a: "No — and that's deliberate. Agora drafts your German CV and cover letter and pre-fills application forms to save you the typing, but you review everything and you always click the company's own Submit button. Nothing is ever sent in your name without your finger on the button.",
-      },
-      {
-        q: "Is my data safe?",
-        a: "Your data lives on EU servers only, handled under GDPR. You can export it or delete your account — and everything with it — anytime, in one tap. We're asking you to trust us with sensitive things; we built the system so you don't have to take our word for it.",
-      },
-      {
-        q: "Who is Ari?",
-        a: "Ari is your guide through the German job-and-visa labyrinth — named for Ariadne, who handed Theseus the thread. Ari knows the rules, preps your interviews, and remembers your journey. A peer who's been through it, not a chatbot reading a script.",
-      },
-    ] as const,
+    ],
   },
 
-  waitlist: {
-    eyebrow: "The waitlist",
-    headline: "Find your place first.",
-    body: "Agora launches in Berlin first. Join the waitlist and Ari will write to you the moment your spot opens.",
-    placeholder: "you@university.de",
-    cta: "Join the waitlist",
-    success: "You're on the list — Ari will write first.",
-    error: "That didn't go through — mind trying again?",
-    smallPrint: "No spam. EU-hosted. Delete anytime.",
+  // 10 — Final CTA band, over the dawn endposter
+  cta: {
+    eyebrow: "Early access",
+    headline: "Your job hunt, off your plate.",
+    body: "Berlin first, then the rest of Germany. Get in before the doors open.",
+    imageAlt:
+      "The same Berlin apartment at 7am: the laptop closed, papers stacked, the Fernsehturm against a sunrise over the rooftops.",
+    /** What signing up actually gets you. Concrete, checkable, no invented numbers. */
+    points: [
+      {
+        title: "The full product, free",
+        body: "Everything that runs today, for the whole beta. No card, no trial countdown.",
+      },
+      {
+        title: "Founding price, locked",
+        body: "When pricing lands, early-access members keep the lowest rate we ever offer.",
+      },
+      {
+        title: "You shape what ships",
+        body: "Small group, short feedback loop. What you tell us moves the roadmap.",
+      },
+      {
+        title: "One email, then silence",
+        body: "We write when your spot opens. No drip campaign, unsubscribe in one click.",
+      },
+    ],
+    label: "Email address",
+    placeholder: "you@email.com",
+    submit: "Get early access",
+    submitting: "Joining…",
+    successTitle: "You're in.",
+    successBody: "We'll email you the moment Berlin opens.",
+    copyLink: "Copy the link",
+    copied: "Link copied",
+    error: "That didn't go through. Mind trying again?",
+    retry: "Try again",
+    smallPrint: "No spam. One email when your access is ready. Unsubscribe in one click.",
   },
 
   footer: {
-    threadLine: "You found your place.",
-    cta: "Join the waitlist",
+    blurb:
+      "Agora is an agent for the job hunt: it watches the sources, writes the documents, and keeps the pipeline moving. Built for Germany, in English.",
     columns: [
       {
         title: "Product",
         links: [
-          { label: "How it works", href: "#how-it-works" },
-          { label: "Meet Ari", href: "#meet-ari" },
-          { label: "FAQ", href: "#faq" },
-        ],
-      },
-      {
-        title: "Story",
-        links: [
-          { label: "Why Agora exists", href: "#story" },
-          { label: "The labyrinth", href: "#labyrinth" },
+          { label: "How it works", href: "/#how-it-works" },
+          { label: "Germany", href: "/#germany" },
+          { label: "Pricing", href: "/pricing" },
+          { label: "FAQ", href: "/faq" },
         ],
       },
       {
@@ -280,10 +494,96 @@ export const en = {
         ],
       },
     ],
-    social: "@joinagora",
-    smallPrint: "Made in Berlin · Hosted in the EU.",
-    langs: ["EN", "DE"],
+    gdpr: "EU-hosted · GDPR-first. Export or delete your data at any time, documents included.",
+    smallPrint: "Made in Berlin · Hosted in the EU · GDPR-first",
   },
+
+  comingSoon: {
+    note: "This page lands before launch. In the meantime, join early access and we'll tell you when it's live.",
+    back: "Back to the home page",
+    pages: {
+      pricing: {
+        title: "Pricing",
+        sub: "Credits you buy once, that never expire. Pack sizes and prices lock at launch — early access keeps the founding rate.",
+      },
+      faq: {
+        title: "FAQ",
+        sub: "The agent, Germany and work permits, your data, and what early access actually gets you.",
+      },
+      impressum: {
+        title: "Impressum",
+        sub: "Provider identification under § 5 TMG. Published before launch.",
+      },
+      datenschutz: {
+        title: "Datenschutz",
+        sub: "Our GDPR privacy notice. Published before launch.",
+      },
+    },
+  },
+
+  frames: {
+    scoreTitle: "Quality score",
+    scoreOutOf: "/100",
+    scoreDimensions: [
+      { label: "ATS parse", value: 94 },
+      { label: "Keywords", value: 90 },
+      { label: "Factual", value: 96 },
+      { label: "Format", value: 89 },
+      { label: "Tone", value: 91 },
+      { label: "Language", value: 93 },
+    ],
+    scoreAlt: "Example quality score card: a document graded 92 out of 100 across six dimensions.",
+    diffAlt:
+      "Example diff view: two CV bullet points, the generic original struck through and the tailored rewrite added below.",
+    diffTitle: "Every change shown",
+    diffRows: [
+      { kind: "del" as const, text: "Worked on the web app front end using React." },
+      {
+        kind: "add" as const,
+        text: "Shipped a React + TypeScript surface used by 4M monthly users; cut p95 render time 38%.",
+      },
+      { kind: "del" as const, text: "Helped the product team with improvements." },
+      { kind: "add" as const, text: "Drove the roadmap with PMs across three product pods." },
+    ],
+    trackerAlt:
+      "Example application tracker showing three applications and the status of each one.",
+    trackerRows: [
+      { role: "Senior Frontend Engineer", status: "Interview", tone: "good" as const },
+      { role: "Product Engineer", status: "Follow-up drafted", tone: "warm" as const },
+      { role: "Full-stack Developer", status: "Submitted", tone: "neutral" as const },
+    ],
+    applyAlt:
+      "Example card showing an application filled in on the company's own careers page, waiting for approval.",
+    applyTitle: "Ready to send",
+    applyRole: "Senior Frontend Engineer",
+    applyFields: [
+      { label: "Cover letter", value: "tailored" },
+      { label: "Screening questions", value: "answered" },
+      { label: "Salary expectation", value: "your range" },
+    ],
+    applyCta: "Approve and submit",
+    applyNote: "Nothing is sent until you approve it.",
+    matchTitle: "Why this matched",
+    matchAlt: "Example match explanation card listing three reasons a role fits.",
+    matchReasons: [
+      "5 of 6 must-have skills present in your CV",
+      "Seniority and salary band line up",
+      "No work-permit conflict for this contract type",
+    ],
+    jobCard: {
+      company: "Product engineering · Berlin",
+      title: "Senior Frontend Engineer",
+      chips: ["match 94", "full time", "permit-checked"],
+      alt: "Example job card: a senior frontend engineering role in Berlin, matched at 94, full time, permit-checked.",
+    },
+    draftCard: {
+      title: "Draft ready",
+      body: `CV + cover letter · scored 92/100 · ${claims.scoreDimensions.value} checks passed`,
+      alt: "Example notification card: a tailored CV and cover letter are ready, scored 92 out of 100, six checks passed.",
+    },
+  },
+
+  a11y: { skipToContent: "Skip to content", homeLink: "Agora home" },
 } as const
 
 export type SiteContent = typeof en

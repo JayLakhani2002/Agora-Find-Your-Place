@@ -32,7 +32,11 @@ function inScope(j: AnJob): boolean {
  */
 function anContractType(title: string, jobTypes: string[]): ContractType {
   const hay = `${title} ${jobTypes.join(" ")}`.toLowerCase()
-  if (/werkstudent|working student|studentenjob|student \(college\)|hilfst[äa]tigkeit \/ student/.test(hay))
+  if (
+    /werkstudent|working student|studentenjob|student \(college\)|hilfst[äa]tigkeit \/ student/.test(
+      hay,
+    )
+  )
     return "werkstudent"
   if (/minijob|mini-?job|geringf[üu]gig/.test(hay)) return "minijob"
   if (/praktik|internship|\bintern\b/.test(hay)) return "praktikum"

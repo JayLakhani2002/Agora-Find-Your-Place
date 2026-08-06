@@ -4,8 +4,10 @@ import { normalizeJob } from "../scrapers/normalizer"
 
 const SOURCE = "jobicco" as const
 
-// Student / short-term Berlin jobs (static HTML).
-const START_URLS = ["https://jobicco.berlin/jobs/"]
+// Student / short-term Berlin jobs (static HTML). The listing lives on the site root —
+// /jobs/ is 404, and /jobs/<uuid> are the detail pages. Use the www host: the apex
+// redirects there, and enqueueLinks' same-hostname default needs the final host.
+const START_URLS = ["https://www.jobicco.berlin/"]
 
 /**
  * Scrapes jobicco Berlin (static HTML → Cheerio). LIST → DETAIL. Returns normalized JobRecord[].
@@ -22,9 +24,11 @@ export async function scrapeJobicco(): Promise<JobRecord[]> {
     ...baseCrawlerConfig,
     async requestHandler({ $, request, enqueueLinks }) {
       if (request.label === "DETAIL") {
-        const title = $("h1").first().text()
-        const company = $(".job-company, .company").first().text()
-        const description = $(".job-description, .entry-content, article").html() || ""
+        // Everything lives inside the #vacancy turbo-frame — the page-level h1 is the
+        // site logo and .trix-content also matches two footer blocks, so scope to it.
+        const title = $("#vacancy h1").first().text()
+        const company = $("#vacancy h2").first().text()
+        const description = $("#vacancy .trix-content").first().html() || ""
 
         const record = normalizeJob({
           title,
@@ -38,11 +42,8 @@ export async function scrapeJobicco(): Promise<JobRecord[]> {
           collected.push(record)
         }
       } else {
-        await enqueueLinks({
-          selector: ".job-listing a, .job-item a, article h2 a",
-          label: "DETAIL",
-        })
-        await enqueueLinks({ selector: "a.next.page-numbers, a[rel='next']", label: "LIST" })
+        // Single-page board (pagy nav renders one page), so no LIST pagination to follow.
+        await enqueueLinks({ selector: 'a[href^="/jobs/"]', label: "DETAIL" })
       }
       await sleep(RATE_LIMIT_MS)
     },

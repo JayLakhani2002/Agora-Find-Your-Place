@@ -24,15 +24,28 @@ export async function embedPendingJobs(): Promise<number> {
   if (pending.length === 0) return 0
 
   let embeddedCount = 0
+  let failedBatches = 0
   for (let i = 0; i < pending.length; i += COHERE_BATCH_LIMIT) {
     const batch = pending.slice(i, i + COHERE_BATCH_LIMIT)
     // Cohere on Bedrock caps each text at 2048 chars — title+company+lead of the
     // description carries the match signal; the tail rarely adds ranking value.
     const texts = batch.map((j) => `${j.title}\n${j.company}\n${j.description}`.slice(0, 2048))
 
-    const vectors = await embedJobsBatch(texts)
+    // One throttled batch used to abort the whole pass, stranding every later job with
+    // a NULL embedding. Batches are independent and the query is `IS NULL`, so skipping
+    // a bad one and continuing is safe — the next run retries exactly what's left.
+    let vectors: number[][]
+    try {
+      vectors = await embedJobsBatch(texts)
+    } catch (err) {
+      failedBatches++
+      console.error(`embedPendingJobs: batch at offset ${i} failed, continuing:`, err)
+      continue
+    }
     if (vectors.length !== batch.length) {
-      throw new Error(`embedPendingJobs: got ${vectors.length} vectors for ${batch.length} jobs`)
+      failedBatches++
+      console.error(`embedPendingJobs: got ${vectors.length} vectors for ${batch.length} jobs`)
+      continue
     }
 
     // Update each row with its 1024-dim vector. Per-row update keyed by id.
@@ -43,6 +56,15 @@ export async function embedPendingJobs(): Promise<number> {
       await db.update(jobs).set({ jobEmbedding: vector }).where(eq(jobs.id, row.id))
       embeddedCount++
     }
+  }
+
+  // Surface a partial pass so BullMQ's retry (attempts: 3) picks up the remainder
+  // instead of the cycle reporting success with jobs still unembedded.
+  if (failedBatches > 0 && embeddedCount === 0) {
+    throw new Error(`embedPendingJobs: all ${failedBatches} batches failed`)
+  }
+  if (failedBatches > 0) {
+    console.warn(`embedPendingJobs: embedded ${embeddedCount}, ${failedBatches} batch(es) deferred`)
   }
 
   return embeddedCount

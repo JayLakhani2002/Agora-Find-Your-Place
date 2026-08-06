@@ -37,13 +37,6 @@ interface SearchHit {
   location: string
 }
 
-interface BaDetail {
-  description: string
-  hourlyRate: number | null
-  contractType: ContractType
-  externalUrl: string | null
-}
-
 /** One BA search page → list rows (no description yet). */
 async function baSearch(params: { arbeitszeit?: string; was?: string; size?: number }): Promise<
   SearchHit[]
@@ -158,7 +151,9 @@ export async function scrapeArbeitsagentur(): Promise<JobRecord[]> {
       hits.push(h)
     }
   }
-  console.log(`[${SOURCE}] ${hits.length} unique search hits → fetching up to ${DETAIL_CAP} details`)
+  console.log(
+    `[${SOURCE}] ${hits.length} unique search hits → fetching up to ${DETAIL_CAP} details`,
+  )
 
   // ── Stage 2: fetch descriptions, normalize, dedup by content hash ──
   const detailed = await mapBounded(hits.slice(0, DETAIL_CAP), baDetail, DETAIL_CONCURRENCY)

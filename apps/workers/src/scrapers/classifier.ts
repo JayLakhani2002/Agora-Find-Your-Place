@@ -1,11 +1,11 @@
-import type { ContractType, GermanLevel, SourceName, VisaRequirement } from "./base"
+import type { ContractType, GermanLevel, VisaRequirement } from "./base"
 
 /**
  * All classification is keyword + regex — never an LLM (too slow/costly for bulk).
  * Inputs are matched case-insensitively against the combined title + description.
  */
 
-export function classifyContractType(text: string, source: SourceName): ContractType {
+export function classifyContractType(text: string): ContractType {
   const t = text.toLowerCase()
   // Order matters — check most specific first.
   if (/werkstudent|working student/.test(t)) return "werkstudent"
@@ -14,9 +14,16 @@ export function classifyContractType(text: string, source: SourceName): Contract
   if (/kurzfristig|temporary|befristet/.test(t)) return "teilzeit"
   if (/vollzeit|full[-\s]?time/.test(t)) return "vollzeit"
   if (/freelance|freiberuflich|contractor/.test(t)) return "freelance"
-  // High prior: Berlin Startup Jobs listings are overwhelmingly werkstudent-eligible.
-  if (source === "berlin_startup_jobs") return "werkstudent"
-  return "werkstudent"
+  // Unlabelled postings default to vollzeit on EVERY source, not just corporate ATS.
+  //
+  // contractType is not a display field — inferRequiresEnrollment() derives the legal
+  // filter straight from it, so guessing "werkstudent" tells a §16b student that a
+  // full-time role fits inside their 20h/120-day limit. Berlin Startup Jobs and jobicco
+  // previously fell through to werkstudent and are in fact mostly full-time startup
+  // roles; production had 40h/week postings labelled werkstudent because of this.
+  // Guessing wrong toward vollzeit only hides an eligible job; guessing wrong toward
+  // werkstudent surfaces one the user cannot lawfully take. Fail in the safe direction.
+  return "vollzeit"
 }
 
 export function classifyGermanLevel(text: string): GermanLevel {
@@ -33,10 +40,23 @@ export function classifyGermanLevel(text: string): GermanLevel {
 
 export function classifyVisaRequirement(text: string): VisaRequirement {
   const t = text.toLowerCase()
-  if (/eu citizens only|eu-?b[üu]rger|arbeitserlaubnis erforderlich|eu nationals only/.test(t))
-    return "eu_only"
-  if (/visa sponsorship|non-?eu welcome|alle nationalit[äa]ten|all nationalities/.test(t))
+  // Explicitly open first — "we sponsor visas" must not be caught by the restriction
+  // patterns below ("no visa sponsorship" vs "visa sponsorship available").
+  if (
+    /visa sponsorship (?:available|provided|offered)|we sponsor|sponsorship provided|non-?eu welcome|alle nationalit[äa]ten|all nationalities/.test(
+      t,
+    )
+  )
     return "any"
+  // Restriction phrasings. "arbeitserlaubnis erforderlich" is deliberately NOT here:
+  // a non-EU student on a §16b visa *has* an Arbeitserlaubnis, so treating it as
+  // EU-only over-hides jobs they are entitled to apply for.
+  if (
+    /eu citizens only|eu-?b[üu]rger|eu nationals only|no visa sponsorship|without visa sponsorship|cannot sponsor|unable to sponsor|unrestricted right to work|unbeschr[äa]nkte arbeitserlaubnis|eu work permit required/.test(
+      t,
+    )
+  )
+    return "eu_only"
   return "none"
 }
 
@@ -125,8 +145,34 @@ const SKILL_KEYWORDS = [
   "git",
 ]
 
+/**
+ * Substring matching turned "goals" into Go and "trust" into Rust on every long corporate
+ * posting, so skills are matched at token boundaries. \b can't be used — it would break
+ * "c++" and "c#", whose trailing chars are non-word.
+ */
+const SKILL_MATCHERS = SKILL_KEYWORDS.map((skill) => ({
+  skill,
+  re: new RegExp(`(?<![a-z0-9+#])${skill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![a-z0-9])`, "i"),
+}))
+
+/**
+ * Business phrases that contain a skill name but do not mention the technology.
+ * "go" is the only two-letter entry in the dictionary and so the only one that collides
+ * with ordinary prose — "focused go-to-market strategy" was tagging marketing roles as
+ * Go engineering. A hyphen can't simply be excluded wholesale: German compounds like
+ * "React-Entwickler" are genuine skill mentions.
+ */
+const SKILL_FALSE_POSITIVES: Record<string, RegExp> = {
+  go: /go-to-market|go-live|go\s?getter|go-ahead/i,
+}
+
 export function extractSkills(text: string): string[] {
-  const t = text.toLowerCase()
-  const found = SKILL_KEYWORDS.filter((skill) => t.includes(skill))
+  const found = SKILL_MATCHERS.filter(({ skill, re }) => {
+    if (!re.test(text)) return false
+    const blocklist = SKILL_FALSE_POSITIVES[skill]
+    if (!blocklist) return true
+    // Only reject when EVERY occurrence is inside a false-positive phrase.
+    return text.replace(new RegExp(blocklist.source, "gi"), " ").match(re) !== null
+  }).map(({ skill }) => skill)
   return Array.from(new Set(found))
 }

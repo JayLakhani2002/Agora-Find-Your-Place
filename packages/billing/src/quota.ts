@@ -6,7 +6,7 @@
 
 import { getDb } from "@agora/db"
 import { applications, users } from "@agora/db/schema"
-import { and, count, eq, gte } from "drizzle-orm"
+import { and, count, eq, gte, ne } from "drizzle-orm"
 import { FREE_APPLICATIONS_PER_MONTH, billingEnabled } from "./stripe"
 
 export interface QuotaResult {
@@ -27,7 +27,15 @@ function startOfCurrentMonthUtc(): Date {
  * Pre-BSS (BILLING_ENABLED ≠ "true"): everyone is allowed, no limit enforced,
  * and no Stripe call is made anywhere in this path (it's pure DB).
  */
-export async function checkApplicationQuota(userId: string): Promise<QuotaResult> {
+export async function checkApplicationQuota(
+  userId: string,
+  /**
+   * Application row to leave out of the count. The swipe creates the row before
+   * generation is requested, so by the time the gate runs the pending application is
+   * already in the table — counting it would reject the Nth request at N-1.
+   */
+  excludeApplicationId?: string,
+): Promise<QuotaResult> {
   if (!billingEnabled()) return { allowed: true }
 
   const db = getDb()
@@ -40,7 +48,11 @@ export async function checkApplicationQuota(userId: string): Promise<QuotaResult
     .select({ used: count() })
     .from(applications)
     .where(
-      and(eq(applications.userId, userId), gte(applications.createdAt, startOfCurrentMonthUtc())),
+      and(
+        eq(applications.userId, userId),
+        gte(applications.createdAt, startOfCurrentMonthUtc()),
+        ...(excludeApplicationId ? [ne(applications.id, excludeApplicationId)] : []),
+      ),
     )
   const used = row?.used ?? 0
 

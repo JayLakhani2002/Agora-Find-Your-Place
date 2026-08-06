@@ -7,17 +7,20 @@ import { type GenerateFollowUpJob, generateFollowUpDraft } from "./jobs/generate
 import { type GenerateQuestionsJob, generateQuestions } from "./jobs/generate-questions"
 import { scrapeArbeitnow } from "./jobs/scrape-arbeitnow"
 import { scrapeArbeitsagentur } from "./jobs/scrape-arbeitsagentur"
+import { scrapeAts } from "./jobs/scrape-ats"
 import { scrapeBerlinStartupJobs } from "./jobs/scrape-berlin-startup-jobs"
 import { scrapeJobicco } from "./jobs/scrape-jobicco"
-import { scrapeStellenticket } from "./jobs/scrape-stellenticket"
+import { scrapeTuBerlin } from "./jobs/scrape-tu-berlin"
 import { getConnection, getEmbeddingQueue, getScraperQueue } from "./queues"
+import { deactivateStaleJobs } from "./scrapers/base"
 
 const SCRAPERS = {
   arbeitsagentur: scrapeArbeitsagentur,
   arbeitnow: scrapeArbeitnow,
   berlin_startup_jobs: scrapeBerlinStartupJobs,
-  stellenticket: scrapeStellenticket,
+  tu_berlin: scrapeTuBerlin,
   jobicco: scrapeJobicco,
+  company_ats: scrapeAts,
 } as const
 
 type SourceKey = keyof typeof SCRAPERS
@@ -44,7 +47,13 @@ async function main() {
         try {
           const records = await scrape()
           totalNew += records.length
-          console.log(`[${source}] scraped ${records.length} jobs`)
+          // Retire postings this source no longer returns. Runs only inside the try,
+          // and only when the scrape actually produced rows, so a failed or empty
+          // fetch can never mass-deactivate a healthy source.
+          const retired = await deactivateStaleJobs(source, records.length)
+          console.log(
+            `[${source}] scraped ${records.length} jobs${retired > 0 ? `, retired ${retired} stale` : ""}`,
+          )
         } catch (err) {
           // Skip a failing source — never abort the whole cycle (spec: capture + continue).
           console.error(`[${source}] scrape failed:`, err)
@@ -57,7 +66,19 @@ async function main() {
       }
 
       // Chain embedding after the full scrape cycle (never per-job inline).
-      await getEmbeddingQueue().add("embed-new-jobs", {}, { removeOnComplete: 5, removeOnFail: 10 })
+      // attempts/backoff matter: a single Bedrock throttle used to fail the job with no
+      // retry, leaving the newest jobs unembedded — and therefore invisible to matching —
+      // until the next nightly cycle.
+      await getEmbeddingQueue().add(
+        "embed-new-jobs",
+        {},
+        {
+          removeOnComplete: 5,
+          removeOnFail: 10,
+          attempts: 3,
+          backoff: { type: "exponential", delay: 30_000 },
+        },
+      )
       return { totalNew }
     },
     { connection: getConnection(), concurrency: 1 },
@@ -133,9 +154,10 @@ async function main() {
   workers.push(followUpWorker)
 
   // ── Nightly repeat: 02:00 Europe/Berlin (tz CRITICAL — UTC breaks on DST) ───
+  const nightlySources = (Object.keys(SCRAPERS) as SourceKey[]).filter((s) => s !== "company_ats")
   await getScraperQueue().add(
     "nightly-scrape",
-    { sources: Object.keys(SCRAPERS) },
+    { sources: nightlySources },
     {
       jobId: "nightly-scrape", // idempotent — one scheduled instance
       repeat: { pattern: "0 2 * * *", tz: "Europe/Berlin" },
@@ -144,9 +166,22 @@ async function main() {
     },
   )
 
+  // Career-page feeds run hourly, not nightly — being first to a new posting is the
+  // whole point of reading company ATSes directly. Cost is one cheap API call per company.
+  await getScraperQueue().add(
+    "ats-scrape",
+    { sources: ["company_ats"] },
+    {
+      jobId: "ats-scrape",
+      repeat: { pattern: "7 * * * *", tz: "Europe/Berlin" },
+      removeOnComplete: 5,
+      removeOnFail: 10,
+    },
+  )
+
   console.log(
     "Workers ready (scraper + embedding + profile-extract + generation + follow-up). " +
-      "Nightly scrape scheduled 02:00 Europe/Berlin.",
+      "Nightly scrape 02:00 Europe/Berlin; company career-page (ATS) scrape hourly.",
   )
 }
 

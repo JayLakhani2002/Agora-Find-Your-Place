@@ -173,6 +173,17 @@ const SAMPLE_JOBS: Omit<JobRecord, "externalId">[] = [
 ]
 
 async function main() {
+  // These are fabricated postings attributed to REAL companies (Zalando, N26, SumUp…)
+  // with invented URLs. Nothing in the read path filters source='seed', so once inserted
+  // they enter the swipe deck and get embedded like real jobs — a user can generate a CV
+  // for, and try to apply to, a listing that never existed. Never let this touch prod.
+  if (process.env.NODE_ENV === "production" && !process.argv.includes("--force")) {
+    console.error(
+      "Refusing to seed fabricated jobs with NODE_ENV=production. Use --force if you truly mean it.",
+    )
+    process.exit(1)
+  }
+
   const records: JobRecord[] = SAMPLE_JOBS.map((j) => ({
     ...j,
     externalId: computeDedupHash(j.company, j.title, j.description),

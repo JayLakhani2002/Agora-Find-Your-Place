@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 import { type contractTypeEnum, type germanLevelEnum, getDb, jobs } from "@agora/db"
-import { sql } from "drizzle-orm"
+import { and, eq, lt, sql } from "drizzle-orm"
 
 // Enum union types derived from Agent 2's pgEnums — NEVER redefine the values here.
 export type ContractType = (typeof contractTypeEnum.enumValues)[number]
@@ -11,10 +11,13 @@ export type VisaRequirement = "none" | "eu_only" | "any"
 
 export type SourceName =
   | "berlin_startup_jobs"
-  | "stellenticket"
+  | "tu_berlin"
   | "jobicco"
   | "arbeitsagentur"
   | "arbeitnow"
+  // Direct company career-page feeds (ATS). One source name for all of them — the ATS
+  // is an implementation detail, and sourceUrl already identifies it.
+  | "company_ats"
 
 /**
  * Normalized job, shaped to Agent 2's `jobs` table columns (NOT the old spec's
@@ -113,5 +116,38 @@ export async function saveJobs(records: JobRecord[]): Promise<number> {
       },
     })
 
+  return rows.length
+}
+
+/**
+ * Retire postings this source stopped returning.
+ *
+ * Nothing else in the codebase ever writes `is_active = false`, so every reader's
+ * `WHERE is_active` filter was decorative: a job pulled from its source stayed
+ * matchable forever, and users generated CVs for listings that closed months ago.
+ * The upsert above refreshes `scraped_at = now()` on every re-sighting, which makes
+ * "not seen in the last few days" a reliable liveness signal.
+ *
+ * `savedCount` is the number of rows the run just wrote. A failed or empty scrape
+ * must NOT retire the whole source, so 0 is a no-op — pass the return value of
+ * saveJobs straight through.
+ */
+export async function deactivateStaleJobs(
+  source: SourceName,
+  savedCount: number,
+  staleAfterDays = 3,
+): Promise<number> {
+  if (savedCount === 0) return 0
+  const rows = await getDb()
+    .update(jobs)
+    .set({ isActive: false })
+    .where(
+      and(
+        eq(jobs.source, source),
+        eq(jobs.isActive, true),
+        lt(jobs.scrapedAt, sql`now() - make_interval(days => ${staleAfterDays})`),
+      ),
+    )
+    .returning({ id: jobs.id })
   return rows.length
 }

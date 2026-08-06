@@ -62,20 +62,41 @@ describe("extractHoursPerWeek", () => {
 
 describe("classifyContractType", () => {
   it("matches the most specific contract first", () => {
-    expect(classifyContractType("Werkstudent (m/w/d)", "stellenticket")).toBe("werkstudent")
-    expect(classifyContractType("Minijob 556€ basis", "jobicco")).toBe("minijob")
-    expect(classifyContractType("Praktikum / internship", "jobicco")).toBe("praktikum")
-    expect(classifyContractType("Vollzeit full-time role", "jobicco")).toBe("vollzeit")
+    expect(classifyContractType("Werkstudent (m/w/d)")).toBe("werkstudent")
+    expect(classifyContractType("Minijob 556€ basis")).toBe("minijob")
+    expect(classifyContractType("Praktikum / internship")).toBe("praktikum")
+    expect(classifyContractType("Vollzeit full-time role")).toBe("vollzeit")
   })
 
   it("does not misfire 'intern' inside 'international'", () => {
-    expect(classifyContractType("international sales associate, full-time", "jobicco")).toBe(
-      "vollzeit",
-    )
+    expect(classifyContractType("international sales associate, full-time")).toBe("vollzeit")
   })
 
-  it("defaults Berlin Startup Jobs listings to werkstudent", () => {
-    expect(classifyContractType("Backend Engineer", "berlin_startup_jobs")).toBe("werkstudent")
+  // requiresEnrollment is derived from contractType, so an unlabelled full-time role
+  // guessed as werkstudent tells a §16b student it fits their 20h limit. Default to
+  // the contract that hides a job rather than the one that mis-states its legality.
+  it("defaults an unlabelled listing to vollzeit, not werkstudent", () => {
+    expect(classifyContractType("Backend Engineer")).toBe("vollzeit")
+    expect(inferRequiresEnrollment(classifyContractType("Backend Engineer"))).toBe(false)
+  })
+})
+
+describe("extractSkills false positives", () => {
+  it("does not read Go out of business prose", () => {
+    expect(extractSkills("Own our focused go-to-market strategy")).not.toContain("go")
+    expect(extractSkills("planning the go-live")).not.toContain("go")
+  })
+
+  it("still finds Go when it is genuinely the language", () => {
+    expect(extractSkills("We write services in Go and Rust")).toContain("go")
+    // Present both ways: the false-positive phrase must not mask a real mention.
+    expect(extractSkills("go-to-market tooling, written in Go")).toContain("go")
+  })
+
+  it("does not read skills out of unrelated substrings", () => {
+    // The original defect: 233 jobs tagged "git" from "digital", 48 "rust" from "trust".
+    expect(extractSkills("digital transformation")).not.toContain("git")
+    expect(extractSkills("we build trust with customers")).not.toContain("rust")
   })
 })
 
@@ -122,5 +143,15 @@ describe("extractSkills", () => {
 
   it("returns an empty array when nothing matches", () => {
     expect(extractSkills("a friendly team and free snacks")).toEqual([])
+  })
+
+  // Regression: substring matching tagged every corporate posting with Go and Rust.
+  it("does not match skills inside longer words", () => {
+    expect(extractSkills("Own our goals, build trust, and drive content")).toEqual(["content"])
+  })
+
+  it("still matches skills whose names end in punctuation", () => {
+    const skills = extractSkills("Strong C++ and C# background, some Node.js, Go and Rust")
+    expect(skills).toEqual(expect.arrayContaining(["c++", "c#", "node", "go", "rust"]))
   })
 })

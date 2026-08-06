@@ -5,10 +5,13 @@ import { normalizeJob } from "../scrapers/normalizer"
 const SOURCE = "berlin_startup_jobs" as const
 
 // Category listing pages — engineering is the densest student-eligible category for v1.
+// The site split /sales-marketing/ into /sales/ + /marketing/ and renamed /other-jobs/
+// to /other/; the old slugs now 404, which is why only engineering was ever reachable.
 const START_URLS = [
   "https://berlinstartupjobs.com/engineering/",
-  "https://berlinstartupjobs.com/sales-marketing/",
-  "https://berlinstartupjobs.com/other-jobs/",
+  "https://berlinstartupjobs.com/sales/",
+  "https://berlinstartupjobs.com/marketing/",
+  "https://berlinstartupjobs.com/other/",
 ]
 
 /**
@@ -29,9 +32,12 @@ export async function scrapeBerlinStartupJobs(): Promise<JobRecord[]> {
     ...baseCrawlerConfig,
     async requestHandler({ $, request, enqueueLinks }) {
       if (request.label === "DETAIL") {
-        const title = $("h1.bjs-jlid__h").first().text() || $("h1").first().text()
-        const company = $(".bjs-jlid__top a").first().text() || $(".company-title").first().text()
-        const description = $(".bjs-jlid__description").html() || $("article").html() || ""
+        // Detail pages use a different class family than the list cards (bjs-jlis__* /
+        // bsj-template__*, not bjs-jlid__*) — the old bjs-jlid__ selectors matched nothing
+        // here, so company+description came back empty and normalizeJob dropped every row.
+        const title = $("h1.title").first().text() || $("h1").first().text()
+        const company = $(".ci__name").first().text()
+        const description = $(".bsj-template__content").html() || ""
 
         const record = normalizeJob({
           title,
@@ -46,8 +52,9 @@ export async function scrapeBerlinStartupJobs(): Promise<JobRecord[]> {
         }
       } else {
         // LIST page: enqueue every job link, then the next page.
+        // Only the h4 anchor is the job link — a.bjs-jlid__b points at the company page.
         await enqueueLinks({
-          selector: "a.bjs-jlid__b, h4.bjs-jlid__h a",
+          selector: "h4.bjs-jlid__h a",
           label: "DETAIL",
         })
         await enqueueLinks({

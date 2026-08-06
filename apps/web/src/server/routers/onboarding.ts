@@ -5,26 +5,32 @@ import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 import { weeklyHoursForVisa } from "../lib/visa"
 import { getProfileQueue } from "../queue"
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { aiProcedure, createTRPCRouter, protectedProcedure } from "../trpc"
 
 const visaEnum = z.enum(visaTypeEnum.enumValues)
 const germanEnum = z.enum(germanLevelEnum.enumValues)
 
 type ProfileValues = Partial<typeof userProfiles.$inferInsert>
 
-/** Insert-or-update the caller's single profile row (no unique index on user_id → manual upsert). */
+/**
+ * Insert-or-update the caller's single profile row.
+ *
+ * One statement, not check-then-insert: neon-http has no interactive transaction, so
+ * the old read-then-branch let two concurrent calls (double-click, client retry) both
+ * observe "no row" and both insert. Every later findFirst then read a coin-flip profile.
+ * Backed by the unique index on user_profiles.user_id.
+ *
+ * Only saveVisaStep supplies visaType (the one NOT NULL column without a default), so an
+ * insert from any other caller still fails loudly rather than writing a half-built row.
+ */
 async function upsertProfile(db: DB, userId: string, values: ProfileValues) {
-  const existing = await db.query.userProfiles.findFirst({ where: eq(userProfiles.userId, userId) })
-  if (existing) {
-    await db
-      .update(userProfiles)
-      .set({ ...values, updatedAt: new Date() })
-      .where(eq(userProfiles.userId, userId))
-  } else {
-    // Row is only ever created by saveVisaStep, which always supplies visaType
-    // (the one NOT NULL column without a default). Other callers update an existing row.
-    await db.insert(userProfiles).values({ userId, ...values } as typeof userProfiles.$inferInsert)
-  }
+  await db
+    .insert(userProfiles)
+    .values({ userId, ...values } as typeof userProfiles.$inferInsert)
+    .onConflictDoUpdate({
+      target: userProfiles.userId,
+      set: { ...values, updatedAt: new Date() },
+    })
 }
 
 export const onboardingRouter = createTRPCRouter({
@@ -87,7 +93,7 @@ export const onboardingRouter = createTRPCRouter({
 
   // Step 3 — record the uploaded doc and enqueue PII-free extraction.
   // Upload itself goes through /api/upload/cv (server-side S3 proxy, no CORS).
-  confirmUpload: protectedProcedure
+  confirmUpload: aiProcedure
     .input(
       z.object({
         storageKey: z.string().min(1),
@@ -96,6 +102,14 @@ export const onboardingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // The key must live under the caller's own prefix (/api/upload/cv writes
+      // `cv/${clerkId}/…`). Without this check a caller who learns someone else's key
+      // can register the victim's CV as their own document — the extraction worker then
+      // reads it into the attacker's profile, and the attacker's later account deletion
+      // collects that key and deletes the victim's file.
+      if (!input.storageKey.startsWith(`cv/${ctx.user.clerkId}/`)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid storage key" })
+      }
       await ctx.db.insert(userDocuments).values({
         userId: ctx.user.id,
         storageKey: input.storageKey,
@@ -106,7 +120,15 @@ export const onboardingRouter = createTRPCRouter({
       await getProfileQueue().add(
         "extract-profile",
         { userId: ctx.user.id, storageKey: input.storageKey },
-        { jobId: `extract_profile_${ctx.user.id}`, removeOnComplete: 10, removeOnFail: 20 },
+        // jobId keyed on the storage key, not just the user: BullMQ silently drops an
+        // add() whose jobId already exists, and removeOnComplete:10 retains completed
+        // jobs — so a per-user id meant the SECOND CV upload was discarded and the
+        // profile kept reflecting the first one, with no error anywhere.
+        {
+          jobId: `extract_profile_${input.storageKey}`,
+          removeOnComplete: 10,
+          removeOnFail: 20,
+        },
       )
       return { ok: true }
     }),

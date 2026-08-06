@@ -1,5 +1,6 @@
 "use client"
 
+import { safeHttpUrl } from "@/lib/safe-url"
 import { formatHours, formatRate } from "@/lib/ui"
 import { Badge, Button, Card } from "@agora/ui"
 import { Bookmark, BookmarkCheck, ExternalLink } from "lucide-react"
@@ -64,7 +65,7 @@ export function JobListCard({
           {job.saved ? "Saved" : "Save"}
         </Button>
         <a
-          href={job.sourceUrl}
+          href={safeHttpUrl(job.sourceUrl) ?? undefined}
           target="_blank"
           rel="noreferrer noopener"
           className="inline-flex min-h-11 items-center gap-2 rounded-lg px-4 text-sm font-semibold text-primary hover:bg-primary/10"

@@ -1,5 +1,6 @@
 "use client"
 
+import { safeHttpUrl } from "@/lib/safe-url"
 import { trpc } from "@/lib/trpc/client"
 import { Button, Card, Spinner, cn } from "@agora/ui"
 import { Check, Download, ExternalLink, Send } from "lucide-react"
@@ -18,9 +19,16 @@ export default function SubmitPage() {
   const [downloaded, setDownloaded] = useState(false)
   const [opened, setOpened] = useState(false)
 
+  const utils = trpc.useUtils()
   const app = trpc.applications.getWithDocuments.useQuery({ applicationId: id })
   const markSubmitted = trpc.applications.markSubmitted.useMutation({
-    onSuccess: () => router.push("/tracker"),
+    // Invalidate before navigating, or the tracker renders this application from a
+    // cached pre-submission row for up to the 60s staleTime.
+    onSuccess: async () => {
+      await utils.applications.getWithDocuments.invalidate({ applicationId: id })
+      utils.applications.list.invalidate()
+      router.push("/tracker")
+    },
   })
 
   if (app.isLoading) {
@@ -77,8 +85,11 @@ export default function SubmitPage() {
   }
 
   function openEmployerPage() {
-    if (data?.employerUrl) {
-      window.open(data.employerUrl, "_blank", "noopener,noreferrer")
+    // Scheme-guarded: employerUrl comes from a scraped listing, and window.open honours
+    // javascript: just as readily as https:.
+    const url = safeHttpUrl(data?.employerUrl)
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer")
       setOpened(true)
     }
   }
@@ -132,10 +143,10 @@ export default function SubmitPage() {
           variant="primary"
           className="w-full"
           onClick={openEmployerPage}
-          disabled={!data.employerUrl}
+          disabled={!safeHttpUrl(data.employerUrl)}
         >
           <ExternalLink size={16} aria-hidden />
-          {data.employerUrl ? "Open employer page" : "No employer link available"}
+          {safeHttpUrl(data.employerUrl) ? "Open employer page" : "No employer link available"}
         </Button>
       </StepCard>
 

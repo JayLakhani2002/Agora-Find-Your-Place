@@ -31,8 +31,17 @@ export default function ReviewPage() {
       },
     },
   )
+  const utils = trpc.useUtils()
   const approve = trpc.applications.approve.useMutation({
-    onSuccess: () => router.push(`/applications/${id}/submit`),
+    // Invalidate BEFORE navigating. The submit page mounts the same query key, and the
+    // 60s global staleTime meant it re-used this page's cached row (status "generated")
+    // and told the user "Review comes first" — a dead end, since coming back and
+    // approving again fails with `Cannot approve from status "approved"`.
+    onSuccess: async () => {
+      await utils.applications.getWithDocuments.invalidate({ applicationId: id })
+      utils.applications.list.invalidate()
+      router.push(`/applications/${id}/submit`)
+    },
   })
 
   if (app.isLoading) {
@@ -179,15 +188,18 @@ function DocumentPanel({
   }, [doc.data, text])
 
   if (!url) return <Card className="text-sm text-muted">Document not available yet.</Card>
+  // isError FIRST: on a failed download isLoading goes false but `text` stays null, so
+  // the loading branch below matched forever and the error state was unreachable —
+  // a storage outage rendered "Loading CV…" indefinitely.
+  if (doc.isError) {
+    return <Card className="text-sm text-red-600">Couldn't load the document — try again.</Card>
+  }
   if (doc.isLoading || text === null) {
     return (
       <Card className="flex items-center gap-3">
         <Spinner /> <span className="text-sm text-muted">Loading {docLabel}…</span>
       </Card>
     )
-  }
-  if (doc.isError) {
-    return <Card className="text-sm text-red-600">Couldn't load the document — try again.</Card>
   }
 
   function download() {

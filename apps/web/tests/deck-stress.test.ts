@@ -30,6 +30,7 @@ const baseProfile = {
   germanLevel: "B2" as const,
   minHourlyRate: 13,
   skills: ["Python", "SQL", "Docker", "React"],
+  visaType: "student_visa_16b" as const,
 }
 
 const noOpinionJob: {
@@ -37,11 +38,15 @@ const noOpinionJob: {
   hourlyRate: number | null
   germanLevelRequired: GermanLevel | null
   requiredSkills: string[]
+  allowedVisaTypes: string[] | null
 } = {
   hoursPerWeek: null,
   hourlyRate: null,
   germanLevelRequired: null,
   requiredSkills: [],
+  // The ad declared a visa allow-list containing this user's visa — so the visa tick is
+  // genuinely verified and these fixtures keep testing the dimension they mean to.
+  allowedVisaTypes: ["student_visa_16b"],
 }
 
 // ── combineSignals — weight invariants ────────────────────────────────────────
@@ -211,7 +216,11 @@ describe("buildTicks — salary tick boundary cases", () => {
 describe("buildTicks — skills tick edge cases", () => {
   it("partial match (≥1 skill overlap) → true", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: ["Python", "Java", "Go"] },
+      {
+        ...noOpinionJob,
+        requiredSkills: ["Python", "Java", "Go"],
+        allowedVisaTypes: ["student_visa_16b"],
+      },
       { ...baseProfile, skills: ["Python"] },
       eligibleResult,
     )
@@ -220,7 +229,11 @@ describe("buildTicks — skills tick edge cases", () => {
 
   it("zero overlap → false", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: ["Java", "Kotlin"] },
+      {
+        ...noOpinionJob,
+        requiredSkills: ["Java", "Kotlin"],
+        allowedVisaTypes: ["student_visa_16b"],
+      },
       { ...baseProfile, skills: ["Python", "SQL"] },
       eligibleResult,
     )
@@ -229,7 +242,11 @@ describe("buildTicks — skills tick edge cases", () => {
 
   it("all-uppercase required skills match lowercase profile skills", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: ["PYTHON", "SQL"] },
+      {
+        ...noOpinionJob,
+        requiredSkills: ["PYTHON", "SQL"],
+        allowedVisaTypes: ["student_visa_16b"],
+      },
       { ...baseProfile, skills: ["python", "sql"] },
       eligibleResult,
     )
@@ -238,7 +255,7 @@ describe("buildTicks — skills tick edge cases", () => {
 
   it("skills with leading/trailing whitespace normalised correctly", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: [" Python "] },
+      { ...noOpinionJob, requiredSkills: [" Python "], allowedVisaTypes: ["student_visa_16b"] },
       { ...baseProfile, skills: ["Python"] },
       eligibleResult,
     )
@@ -246,13 +263,17 @@ describe("buildTicks — skills tick edge cases", () => {
   })
 
   it("empty required skills → null (nothing to verify)", () => {
-    const ticks = buildTicks({ ...noOpinionJob, requiredSkills: [] }, baseProfile, eligibleResult)
+    const ticks = buildTicks(
+      { ...noOpinionJob, requiredSkills: [], allowedVisaTypes: ["student_visa_16b"] },
+      baseProfile,
+      eligibleResult,
+    )
     expect(ticks.skills).toBeNull()
   })
 
   it("null profile skills with required skills → false (not a crash)", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: ["Python"] },
+      { ...noOpinionJob, requiredSkills: ["Python"], allowedVisaTypes: ["student_visa_16b"] },
       { ...baseProfile, skills: null },
       eligibleResult,
     )
@@ -261,7 +282,7 @@ describe("buildTicks — skills tick edge cases", () => {
 
   it("empty profile skills array with required skills → false", () => {
     const ticks = buildTicks(
-      { ...noOpinionJob, requiredSkills: ["Python"] },
+      { ...noOpinionJob, requiredSkills: ["Python"], allowedVisaTypes: ["student_visa_16b"] },
       { ...baseProfile, skills: [] },
       eligibleResult,
     )
@@ -315,7 +336,13 @@ describe("buildTicks — german tick edge cases", () => {
 describe("buildTicks — ticks are independent of each other", () => {
   it("a failed salary tick does not affect the german tick", () => {
     const ticks = buildTicks(
-      { hoursPerWeek: 10, hourlyRate: 5, germanLevelRequired: "A1", requiredSkills: [] },
+      {
+        hoursPerWeek: 10,
+        hourlyRate: 5,
+        germanLevelRequired: "A1",
+        requiredSkills: [],
+        allowedVisaTypes: ["student_visa_16b"],
+      },
       { ...baseProfile, minHourlyRate: 20 },
       eligibleResult,
     )
@@ -330,6 +357,7 @@ describe("buildTicks — ticks are independent of each other", () => {
         hourlyRate: 15,
         germanLevelRequired: "native",
         requiredSkills: ["Python"],
+        allowedVisaTypes: ["student_visa_16b"],
       },
       { ...baseProfile, germanLevel: "B1", skills: ["Python"] },
       eligibleResult,

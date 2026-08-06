@@ -5,7 +5,12 @@ import { Check, Minus, X } from "lucide-react"
 
 /** Mirrors CardTicks from the deck router (true / false / null = not stated). */
 export interface Ticks {
-  visa: boolean
+  /**
+   * `null` when the posting declared no visa restriction at all. That is NOT the same as
+   * "this visa is permitted" — it means we could not verify, and it must never render as
+   * a green tick to a §16b student.
+   */
+  visa: boolean | null
   hours: boolean | null
   german: boolean
   salary: boolean | null

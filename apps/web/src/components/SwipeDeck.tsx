@@ -1,5 +1,6 @@
 "use client"
 
+import { safeHttpUrl } from "@/lib/safe-url"
 import { Button } from "@agora/ui"
 import {
   AnimatePresence,
@@ -176,7 +177,7 @@ function TopCard({
             </ul>
           </div>
           <a
-            href={card.sourceUrl}
+            href={safeHttpUrl(card.sourceUrl) ?? undefined}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

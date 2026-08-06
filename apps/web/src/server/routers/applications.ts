@@ -17,7 +17,7 @@ import { TRPCError } from "@trpc/server"
 import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
 import { getFollowUpQueue, getGenerationQueue, getQueueRedis } from "../queue"
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { aiProcedure, createTRPCRouter, protectedProcedure } from "../trpc"
 
 // ── Pure state machine (exported for unit tests) ──────────────────────────────
 
@@ -73,7 +73,7 @@ export const applicationsRouter = createTRPCRouter({
    * 4 role-specific questions (HAIKU, Redis-cached per job). Asked right after
    * the right-swipe, before generation starts.
    */
-  getRoleQuestions: protectedProcedure
+  getRoleQuestions: aiProcedure
     .input(z.object({ jobId: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
       const redis = getQueueRedis()
@@ -107,7 +107,9 @@ export const applicationsRouter = createTRPCRouter({
    * roleAnswers travel in the queue payload only — they are generation input,
    * not stored PII.
    */
-  create: protectedProcedure
+  // aiProcedure: enqueues CV + cover-letter generation (Opus/Sonnet). checkApplicationQuota
+  // below is a no-op while BILLING_ENABLED is unset, so this limit is the only cost gate.
+  create: aiProcedure
     .input(
       z.object({
         jobId: z.string().min(1),
@@ -125,6 +127,18 @@ export const applicationsRouter = createTRPCRouter({
         if (existing.generationStatus === "complete") {
           // Already generated — nothing to enqueue (idempotent re-tap).
           return { applicationId: existing.id, enqueued: false }
+        }
+        // The entitlement gate USED to live only in the else-branch below. But
+        // deck.swipe creates the application shell on every right-swipe, so on the
+        // product's main path `existing` is always set and the gate never ran — a free
+        // user could right-swipe 100 jobs and get 100 generations. Exclude this row from
+        // the count: it already exists, and counting it would reject the Nth at N-1.
+        const quota = await checkApplicationQuota(ctx.user.id, existing.id)
+        if (!quota.allowed) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: quota.reason ?? "Application quota exceeded.",
+          })
         }
         applicationId = existing.id
         await ctx.db
@@ -155,11 +169,29 @@ export const applicationsRouter = createTRPCRouter({
             jobId: input.jobId,
             auditLog: appendAuditEntry(null, { action: "created", actor: "user" }),
           })
+          // A concurrent deck.swipe may have inserted the shell between our findFirst
+          // and here; the unique (user_id, job_id) index turns that into a no-op
+          // instead of a second row stuck in "Preparing…".
+          .onConflictDoNothing({ target: [applications.userId, applications.jobId] })
           .returning({ id: applications.id })
-        const row = inserted[0]
+        let row = inserted[0]
+        if (!row) {
+          // Lost the race — the other writer's row is the one to generate for.
+          row = await ctx.db.query.applications.findFirst({
+            where: and(eq(applications.userId, ctx.user.id), eq(applications.jobId, input.jobId)),
+            columns: { id: true },
+          })
+        }
         if (!row) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
         applicationId = row.id
       }
+
+      // BullMQ silently drops an add() whose jobId already exists, and removeOnFail
+      // RETAINS failed jobs — so once the 3 attempts were exhausted every later retry
+      // was a no-op while this router still returned enqueued:true. The application sat
+      // at "failed" forever with the UI insisting generation had started. Clearing the
+      // old job first makes a re-tap actually re-run. No-op when nothing is stored.
+      await getGenerationQueue().remove(`gen_${applicationId}`)
 
       await getGenerationQueue().add(
         "generate_documents",

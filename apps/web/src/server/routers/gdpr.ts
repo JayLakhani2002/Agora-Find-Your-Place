@@ -1,8 +1,6 @@
-import { deleteObject } from "@agora/ai"
-import { applications, userDocuments, users } from "@agora/db/schema"
 import { clerkClient } from "@clerk/nextjs/server"
-import { eq } from "drizzle-orm"
-import { collectErasureKeys } from "../lib/erasure"
+import { TRPCError } from "@trpc/server"
+import { eraseUserAndStorage } from "../lib/erasure"
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 /**
@@ -17,30 +15,25 @@ export const gdprRouter = createTRPCRouter({
     const userId = ctx.user.id
     const clerkId = ctx.user.clerkId
 
-    // 1. Gather every Scaleway object owned by this user.
-    const docs = await ctx.db
-      .select({ key: userDocuments.storageKey })
-      .from(userDocuments)
-      .where(eq(userDocuments.userId, userId))
-    const apps = await ctx.db
-      .select({ cv: applications.cvStorageKey, cl: applications.coverLetterStorageKey })
-      .from(applications)
-      .where(eq(applications.userId, userId))
+    // 1+2. Storage objects, then the DB row — FK cascades remove all user-linked rows.
+    // Throws (before touching the DB) if any object failed to delete.
+    await eraseUserAndStorage(ctx.db, userId)
 
-    const keys = collectErasureKeys(docs, apps)
-
-    // 2. Delete storage objects (best-effort — a missing object must not block erasure).
-    await Promise.allSettled(keys.map((k) => deleteObject(k)))
-
-    // 3. Delete the DB row — FK cascades remove all user-linked rows.
-    await ctx.db.delete(users).where(eq(users.id, userId))
-
-    // 4. Delete the Clerk user last (its webhook becomes a no-op — row already gone).
+    // 3. Delete the Clerk user last (its webhook becomes a no-op — row already gone).
+    // This MUST NOT be swallowed: a surviving Clerk user still holds the person's email,
+    // their session stays valid, and protectedProcedure's JIT provisioning re-creates the
+    // row on their very next request — resurrecting an account we reported as erased.
     try {
       const cc = await clerkClient()
       await cc.users.deleteUser(clerkId)
     } catch (err) {
-      console.error("GDPR: Clerk user deletion failed (DB + storage already erased):", err)
+      console.error("GDPR: Clerk user deletion failed after DB + storage erasure:", err)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "Your data was erased but the sign-in account could not be closed. Please retry — contact support if this repeats.",
+        cause: err,
+      })
     }
 
     console.log(

@@ -1,3 +1,4 @@
+import { SessionHygiene } from "@/components/SessionHygiene"
 import { ClerkProvider } from "@clerk/nextjs"
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
@@ -17,9 +18,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    // `dynamic` is required by the strict CSP in src/middleware.ts: the policy carries a
+    // per-request nonce, so the shell cannot be statically prerendered. Dropping it
+    // silently breaks every Clerk script under the policy.
+    <ClerkProvider dynamic>
       <html lang="en">
-        <body>{children}</body>
+        <body>
+          <SessionHygiene />
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   )

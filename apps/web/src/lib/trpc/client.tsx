@@ -3,12 +3,16 @@
 import type { AppRouter } from "@/server/routers/_app"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { httpBatchLink } from "@trpc/client"
-import { createTRPCReact } from "@trpc/react-query"
+import { type CreateTRPCReact, createTRPCReact } from "@trpc/react-query"
 import { type ReactNode, useState } from "react"
 
 // App-wide typed tRPC + React Query client (Agent 7 owns this file).
 // All reads via useQuery, writes via useMutation — never raw fetch to our API.
-export const trpc = createTRPCReact<AppRouter>()
+//
+// The explicit annotation is required, not decorative: without it tsc infers a type
+// that references @trpc/react-query's internal `getQueryKey.d-*.mjs` chunk by relative
+// path into node_modules, which is not portable under pnpm's symlinked store (TS2742).
+export const trpc: CreateTRPCReact<AppRouter, unknown> = createTRPCReact<AppRouter>()
 
 function makeQueryClient() {
   return new QueryClient({

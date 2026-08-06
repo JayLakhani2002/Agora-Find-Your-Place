@@ -45,7 +45,14 @@ export async function GET(req: Request) {
   return new Response(buffer, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      "Cache-Control": "private, max-age=300",
+      // `private, max-age=300` let the browser (and any intermediary honouring it) keep
+      // a generated CV on disk for 5 minutes past sign-out, and survive GDPR erasure.
+      // These documents are the most sensitive bytes we serve — never store them.
+      "Cache-Control": "no-store, no-cache, must-revalidate, private",
+      // The body is model-generated text. Without nosniff a browser may sniff it as
+      // HTML and execute anything the generator was talked into emitting.
+      "X-Content-Type-Options": "nosniff",
+      "Content-Disposition": "attachment",
     },
   })
 }

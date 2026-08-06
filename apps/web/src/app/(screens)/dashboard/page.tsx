@@ -10,7 +10,7 @@ import { Button, Card, Spinner, Tabs } from "@agora/ui"
 import { RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 const FILTERS: { value: TableFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -56,14 +56,34 @@ function QuickReview() {
   const deck = trpc.deck.getDeck.useQuery(undefined, {
     retry: (count, error) => error.data?.code !== "PRECONDITION_FAILED" && count < 2,
   })
-  const swipe = trpc.deck.swipe.useMutation()
-  const createApplication = trpc.applications.create.useMutation()
+  const utils = trpc.useUtils()
+  const swipe = trpc.deck.swipe.useMutation({
+    // Drop the swiped card from the cached deck. Without this, navigating away and
+    // back inside the 60s staleTime re-serves the same cards and the user swipes
+    // jobs they already decided on (the server no-ops, so the action is just lost).
+    onSuccess: (_res, vars) => {
+      utils.deck.getDeck.setData(undefined, (d) =>
+        d ? { ...d, cards: d.cards.filter((c) => c.jobId !== vars.jobId) } : d,
+      )
+      utils.applications.list.invalidate()
+    },
+  })
+  const createApplication = trpc.applications.create.useMutation({
+    onSuccess: () => utils.applications.list.invalidate(),
+  })
+
+  // The in-flight swipe write. deck.swipe inserts the application shell, so anything
+  // that later looks that row up must wait for it — racing the two let create's lookup
+  // miss the row and insert a duplicate.
+  const swipeInFlight = useRef<Promise<unknown>>(Promise.resolve())
 
   function handleSwipe(card: DeckCard, action: SwipeAction) {
     // Optimistic: the card has already left the deck. Server side is
     // idempotent (unique user+job index), so a retry can never double-count.
     const swipeAction = action === "save" ? "save" : action
-    swipe.mutate({ jobId: card.jobId, action: swipeAction, matchScore: card.matchScore })
+    swipeInFlight.current = swipe
+      .mutateAsync({ jobId: card.jobId, action: swipeAction, matchScore: card.matchScore })
+      .catch(() => undefined)
     if (action === "right") setAsking({ jobId: card.jobId, title: card.title })
   }
 
@@ -139,7 +159,22 @@ function QuickReview() {
           onClose={() => {
             // Closing without answering = skip: enqueue generation with no answers
             // so the application doesn't stay stuck in "pending" forever.
-            createApplication.mutate({ jobId: asking.jobId, roleAnswers: {} })
+            // Waits for the swipe write, rather than racing it: the swipe inserts the
+            // application shell, and firing both in parallel let create's lookup miss
+            // the row and insert a second one. onError surfaces a quota rejection or
+            // network failure instead of silently leaving a row in "Preparing…".
+            const jobId = asking.jobId
+            swipeInFlight.current.then(() =>
+              createApplication.mutate(
+                { jobId, roleAnswers: {} },
+                {
+                  onError: (err) =>
+                    window.alert(
+                      err.message || "Couldn't start drafting — try again from Your Jobs.",
+                    ),
+                },
+              ),
+            )
             setAsking(null)
           }}
           onSubmitted={(applicationId) => {

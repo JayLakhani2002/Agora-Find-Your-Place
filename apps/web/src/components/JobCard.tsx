@@ -2,7 +2,7 @@
 
 import { formatHours, formatMatchScore, formatRate } from "@/lib/ui"
 import { Badge } from "@agora/ui"
-import { Banknote, Clock, MapPin } from "lucide-react"
+import { AlertTriangle, Banknote, Clock, MapPin } from "lucide-react"
 import { TickRow, type Ticks } from "./TickRow"
 
 export interface DeckCard {
@@ -71,7 +71,22 @@ export function JobCard({ card }: { card: DeckCard }) {
       )}
 
       <div className="mt-auto">
-        <p className="mb-1 text-xs font-medium text-muted">Legal eligibility — verified for you</p>
+        {/* The heading used to read "verified for you" unconditionally. When the ad never
+            declared its visa rules we have verified nothing, and saying otherwise is the
+            single most consequential thing we could get wrong for a §16b student. */}
+        <p className="mb-1 text-xs font-medium text-muted">
+          {card.ticks.visa === null
+            ? "Legal eligibility — partly unverified"
+            : "Legal eligibility — verified for you"}
+        </p>
+        {card.ticks.visa === null && (
+          <p className="mb-1.5 flex items-start gap-1 text-xs text-amber-700">
+            <AlertTriangle size={13} aria-hidden className="mt-px shrink-0" />
+            <span>
+              This ad doesn't state its visa requirements — check with the employer before applying.
+            </span>
+          </p>
+        )}
         <TickRow ticks={card.ticks} />
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { eraseUserAndStorage } from "@/server/lib/erasure"
 import { getDb, users } from "@agora/db"
 import { eq, sql } from "drizzle-orm"
 import type { NextRequest } from "next/server"
@@ -67,7 +68,15 @@ export async function POST(req: NextRequest) {
           },
         })
     } else if (evt.type === "user.deleted" && evt.data.id) {
-      await db.delete(users).where(eq(users.clerkId, evt.data.id))
+      // A deletion started on the Clerk side (dashboard, account portal, admin API)
+      // never passes through gdpr.deleteAccount, so it must erase storage here too —
+      // a bare row delete cascades away the storage keys and orphans the user's CVs
+      // in the bucket forever. Already-gone user → nothing to do.
+      const [row] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.clerkId, evt.data.id))
+      if (row) await eraseUserAndStorage(db, row.id)
     }
     return new Response("Webhook received", { status: 200 })
   } catch (err) {

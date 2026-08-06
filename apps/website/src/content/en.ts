@@ -53,8 +53,16 @@ export const en = {
     ctaPrimary: "Get early access",
     ctaSecondary: "See how it works",
     ctaSecondaryHref: "/#how-it-works",
+    // ⚠ This describes the image that is ACTUALLY there, which is still the v5 Berlin-at-night
+    // shot. It briefly described three shift workers instead — aspirational, and wrong: alt
+    // text describes the image on the page, never the image we intend to commission. A screen
+    // reader user must get the same picture a sighted user gets.
+    //
+    // The image itself is the remaining mismatch with the new positioning — a lone laptop in a
+    // flat above the Berlin skyline reads office-worker and reads Berlin, and the page now
+    // promises neither. Replace it (Higgsfield) and update this line in the same commit.
     imageAlt:
-      "Early morning: a kitchen porter, a warehouse picker and an office worker starting their shifts, lit by the same low sun.",
+      "A darkened flat at night, seen from behind a desk: an open laptop glowing by the window, with the Berlin skyline and television tower beyond.",
     // Deliberately does NOT repeat the listing count — the terminal footer directly above
     // already carries it. This line adds what that one doesn't: breadth and cadence.
     receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value} CET`,

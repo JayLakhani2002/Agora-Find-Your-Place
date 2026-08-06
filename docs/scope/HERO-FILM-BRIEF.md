@@ -108,11 +108,95 @@ In order. Nothing below the first unmet line can start.
 2. **Site deployed to joinagora.eu.** *(Jay)*
 3. **Anthropic use-case form resubmitted and approved** — `infrastructure/bedrock-use-case.json`. *(Jay)*
 4. **Bedrock verified working** — a real `generateCV` call returning a real document.
-5. **Demo flow polished and defect-free** — see the recordability audit; anything a camera would
-   catch has to be gone before the first take, because the screen content in Act 1 is the real
-   product, not a mockup.
+5. **Demo flow polished and defect-free** — see §6; anything a camera would catch has to be gone
+   before the first take, because the screen content in Act 1 is the real product, not a mockup.
 6. **A seeded demo account** — profile, saved roles, applications in several states, documents.
+   Does not exist today and cannot be produced without either Bedrock or a new direct-write
+   fixture; see §6.
 7. **MCP/CLI built** *(Act 2)* and **WhatsApp built** *(Act 3)* — or those acts get rewritten
    around features that do exist.
 
 Only after 1–7 does the shoot itself make sense.
+
+---
+
+## 6. Recordability audit — 2026-08-07
+
+Every finding below is cited to source. Corrects an earlier assumption: the swipe deck does
+**not** die without Bedrock.
+
+### Recordable today (real DB content, no AI)
+
+`/jobs` search and filters · `/saved` · `/tracker` with its status state machine · `/settings` ·
+`/pricing` (fully static) · `/resumes` and the standalone résumé builder with autosave and
+print-to-PDF · and the **swipe deck mechanics** on `/dashboard`.
+
+The deck survives because the Haiku rerank is the last of four ranking stages and is wrapped in
+a try/catch that returns `null` (`apps/web/src/server/routers/deck.ts:178-181`), falling back to
+the pgvector + pg_trgm combined score. Role questions degrade the same way — four hardcoded
+questions replace the generated ones (`applications.ts:93-100`). Right-swiping genuinely creates
+an `applications` row.
+
+### Dead without Bedrock
+
+Everything downstream of `applications.create`. The `generate_documents` worker calls
+`generateCV`/`generateCoverLetter` (`apps/workers/src/jobs/generate-documents.ts:109-115`), which
+throw; the row goes to `generationStatus: "failed"` and `/applications/[id]/review` renders
+"Generation failed" (`review/page.tsx:66-81`). `evalScoreOverall` is 100% Haiku-derived — there
+is no non-Bedrock path to a real document score, so it stays `null` and the column is simply
+omitted.
+
+### The brief conflicts with the shipped product in two places
+
+- **"ATS score: 87% Match" does not exist.** The product shows a decimal out of 10 — the badge is
+  literally titled "Match score out of 10" (`apps/web/src/components/JobCard.tsx:31-35`,
+  `apps/web/src/lib/ui.ts:113-115`). There is no percentage anywhere in the UI.
+- **"uploads or pastes their CV" — there is no paste.** Onboarding accepts PDF upload only
+  (`apps/web/src/app/onboarding/OnboardingWizard.tsx:255-268`).
+
+### Defects a camera would catch
+
+1. **Fabricated job postings attributed to real companies.** `apps/workers/src/seed-jobs.ts`
+   inserts 10 invented Werkstudent/Minijob roles under Zalando, Delivery Hero, SumUp, Personio,
+   N26, HelloFresh, Contentful, Tier, Babbel and Flixbus, with **invented URLs** like
+   `https://jobs.zalando.com/werkstudent-swe` (`:12-173`). The script's own comment says "never
+   let this touch prod" and it refuses to run under `NODE_ENV=production` without `--force`
+   (`:180-185`). It is the obvious way to fill a demo database — and putting it on camera would
+   show real employers' names against listings that do not exist. All ten are also tech/office
+   roles, which contradicts the all-professions positioning.
+2. **Onboarding silently swallows CV-extraction failure.** The wizard routes to `/dashboard`
+   regardless of whether extraction succeeded (`OnboardingWizard.tsx:114-116`). With Bedrock
+   down the worker dies and `skills` / `experienceSummary` / `profileEmbedding` stay null
+   forever, with nothing on screen saying so — a recording would show a smooth onboarding that
+   is a lie about what data landed.
+3. **Indefinite "Drafting your application…" spinner.** If the worker never picks the job up at
+   all, the review screen polls every 2.5s with no timeout and no failure state
+   (`review/page.tsx:83-96`).
+4. **The match badge disappears at zero.** `formatMatchScore` returns `null` when the score is
+   `<= 0` (`apps/web/src/lib/ui.ts:113-115`), so with no seeded profile the deck cards render
+   with an empty corner where the score should be.
+
+No rendered TODOs, lorem text or console errors on load — that worry was unfounded.
+
+### Seeding and access
+
+There is a working jobs seeder (`apps/workers/src/seed-jobs.ts`, subject to the caveat above).
+There is **no** seeder for a user profile: `skills` and `profileEmbedding` are populated only by
+the Bedrock-dependent `extract-profile` worker, so without either Bedrock or a new direct-write
+fixture, the deck's match score is 0 and the badge vanishes. Auth has no bypass — every screen is
+behind `auth.protect()` (`apps/web/src/middleware.ts:8-22`) and a recording session needs a real
+Clerk sign-in. User rows are provisioned JIT (`apps/web/src/server/trpc.ts:23-34`), so the Clerk
+webhook does not need wiring for local work.
+
+### RLS landmine — confirmed, and inert for now
+
+`packages/db/drizzle/0007_rls_tighten_stage2.sql` exists and **is registered as migration 7 in
+`meta/_journal.json`**, so a plain `db:migrate` applies it in sequence; the only guard is a
+comment telling a human not to. `withUserContext` (`packages/db/src/rls.ts:85-95`) has **zero
+call sites in any router** — every router uses the stateless `neon-http` driver.
+
+It does not bite today only because Postgres exempts a table owner from its own RLS unless
+`FORCE ROW LEVEL SECURITY` is set, and 0007 does not set it. The trap springs the moment someone
+completes the Stage-1 credential switch to the `agora_web` role and then runs `db:migrate`:
+every user-scoped query returns empty. `docs/Security/RLS-ROLLOUT.md:35` says it plainly —
+"Total if applied early. Every screen goes empty."

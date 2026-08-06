@@ -38,3 +38,13 @@ graphify-out/
 
 # pnpm
 .pnpm-store/
+
+# Local agent/tooling artifacts — regenerable, not project source
+.agents/
+graphify-out/
+skills-lock.json
+
+# Generation scratch — large binaries, keep out of git history.
+# Shipped site assets live in apps/website/public/ and ARE tracked.
+apps/website/hero-options/
+screenshots-website-w1/

@@ -36,11 +36,14 @@ Never rely on training-data knowledge for library APIs — versions change and p
 
 ## Architecture Decisions
 - **8-agent decomposition** — see `docs/Agents/` for each agent's spec
-- **Mode 3 permanently prohibited** — no server-side automated job submission on behalf of users (GDPR constraint)
+- **Mode 3 REPEALED (Jay, 2026-08-04)** — server-side automated job submission with per-application user approval (Tsenta-class agent) is now the product strategy; see `docs/scope/PROJECT-SCOPE.md` §3.3. NOT YET BUILT: the shipped product remains review-first until the application-worker phase lands, and auto-submission launches only after a German legal review (UWG/ToS/GDPR — see TSENTA-KEY-FINDINGS §10). Marketing may describe auto-apply only as clearly-labeled roadmap, never as an existing feature.
 - **EU-only data residency** — all infra must stay in EU regions
+- **Positioning (Jay, 2026-08-06)** — Agora is a **global, all-professions** job platform: trades, hospitality, logistics, retail, tech, management, sales. The legal-eligibility engine (`allowedVisaTypes` filtering, `@agora/legal`, visa ticks) is **kept and preserved** but **demoted from headline moat to conditional capability** — it activates when a user's situation makes it relevant, and is never the site's primary frame. Do not reintroduce student/Werkstudent/§16b/Berlin-first framing as the default surface. See `docs/scope/DECISIONS-NEEDED.md` Q1.
+- **Bedrock access is gated on the Anthropic use-case form** (confirmed 2026-08-06), which is reviewed against the live website — this is why the website blocks AI. Model ids MUST be `eu.`-prefixed inference profiles; bare `anthropic.*` ids are rejected by Bedrock and now throw at resolve time.
 - **Model routing** — Opus 4.8 for CV + cover-letter generation; Sonnet 4.6 for Ari's advanced tasks (interview prep, profile analysis); Haiku 4.5 for Ari's normal chat and high-volume eval/classification. Model IDs from env, never hardcoded. (Opus 4.8 is $5/$25 per Mtok input/output — affordable for generation; the earlier "no Opus" rule assumed the old ~$75/Mtok Opus output price.)
-- **Submission model**: users always click "Apply" themselves; agents draft, never submit
+- **Submission model**: today, users always click "Apply" themselves — agents draft, never submit. Target model after the application-worker phase: agent submits with per-application approval (or user-enabled auto-approve), with a full receipt per submission.
 - **Pricing model**: credit-based is the **primary, chosen model** (per-action credits — CV, cover letter, and Ari tasks each consume credits). **Pay-as-you-go: you only pay for what you use, and credits don't expire** — no subscription, no billing clock; top up via one-time packs. Credit price (€/credit), pack sizes, and the Free allowance are **TBD — not finalized**. Live model: `docs/Investor Package/Agora-Credit-Calculator.xlsx`.
+  - **Reconfirmed by Jay 2026-08-06.** ⚠️ `packages/billing` still ships the **superseded** Free/Pro €9-per-month subscription (`stripe.ts` `PLANS`) — it predates this decision and must be rewritten to credits. `docs/scope/PROJECT-SCOPE.md:199`'s "decided" €19/100 · €39/250 · €79/600 is **not** confirmed; treat pack pricing as TBD and do not hardcode it.
 
 ## Key Constraints
 - GDPR cascade delete must be implemented on all user-linked tables
@@ -70,7 +73,7 @@ docs/
   Investor Package/ # Business plan, financial projections, pitch deck
   Product Design/   # Screen flow document
   CV Optimization Research/  # ATS rules, psychology, CV structure
-  DataMining Info/  # Job API docs, data sources
+  Job Data/         # ALL job-source docs: APIs, legal posture, plan, source registry
   Branding & Marketing/  # Brand playbook
   Competitor Data/  # Competitor analysis
   Founder Visa & Funding Guidelines/  # BSS, visa roadmap

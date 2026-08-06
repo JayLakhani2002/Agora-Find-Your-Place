@@ -30,8 +30,27 @@ function getBucket() {
   return bucket
 }
 
+/**
+ * Server-side encryption at rest, applied to every write path in this file.
+ *
+ * The bucket holds uploaded CVs and generated application documents — the highest-value
+ * personal data we store outside Postgres. `AES256` is SSE-S3 (provider-managed keys),
+ * which Scaleway Object Storage supports via the same header as AWS.
+ *
+ * What this does and does not buy: it protects against physical-media and
+ * storage-layer compromise at the provider, not against a leaked S3 credential — a valid
+ * key still reads plaintext through the API. Keeping the bucket private and the
+ * credential least-privilege remains the load-bearing control.
+ */
+const SSE = "AES256" as const
+
 export async function presignUpload(key: string, contentType: string, expiresIn = 300) {
-  const command = new PutObjectCommand({ Bucket: getBucket(), Key: key, ContentType: contentType })
+  const command = new PutObjectCommand({
+    Bucket: getBucket(),
+    Key: key,
+    ContentType: contentType,
+    ServerSideEncryption: SSE,
+  })
   return getSignedUrl(getS3Client(), command, { expiresIn })
 }
 
@@ -46,7 +65,13 @@ export async function deleteObject(key: string) {
 
 export async function uploadBuffer(key: string, body: Buffer, contentType: string) {
   await getS3Client().send(
-    new PutObjectCommand({ Bucket: getBucket(), Key: key, Body: body, ContentType: contentType }),
+    new PutObjectCommand({
+      Bucket: getBucket(),
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+      ServerSideEncryption: SSE,
+    }),
   )
 }
 

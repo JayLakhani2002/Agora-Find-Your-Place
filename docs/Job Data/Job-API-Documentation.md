@@ -2,7 +2,7 @@
 **Document type:** Technical Reference  
 **Covers:** All 7 job data sources integrated in the Job Explorer  
 **Last updated:** June 2026  
-**Explorer location:** `Business Planning/DataMining Info/job-explorer/`
+**Explorer location:** `docs/Job Data/job-explorer/`
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```bash
 # Navigate to the folder
-cd "Business Planning/DataMining Info/job-explorer"
+cd "docs/Job Data/job-explorer"
 
 # Start the server (Node.js v18+ required)
 node server.js

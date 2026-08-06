@@ -1,0 +1,8 @@
+{
+  "_note": "Values submitted to the Bedrock 'Submit use case details for Anthropic' form. The console caps useCases at 500 characters — the string below is 499. Kept here so a resubmission says exactly the same thing.",
+  "companyName": "Agora Jobs",
+  "companyWebsite": "https://joinagora.eu",
+  "industryOption": "Software / Technology (pick nearest available; Staffing & Recruiting also fits)",
+  "intendedUsers": "External users (customers, clients, public users)",
+  "useCases": "Agora helps international students in Germany find part-time work. We use Claude to draft tailored CVs and cover letters from a student's own profile and a chosen job ad, summarise CVs into structured skills, explain why a job matched, and generate interview practice questions. Output is shown only to the student who requested it. They review and edit every document and click apply themselves - we never auto-submit applications, and we never train models on user data. EU-hosted, GDPR compliant."
+}

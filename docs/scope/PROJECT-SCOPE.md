@@ -235,7 +235,7 @@ Our real exposure isn't user data (EU hosting, export/delete, zero training alre
 
 ### 8.4 Verified source inventory (summary)
 
-Full source-by-source verification (endpoints, costs, robots.txt verdicts, legal case-law citations) lives in [research/RESEARCH-VERIFIED-SOURCE-INVENTORY.md](research/RESEARCH-VERIFIED-SOURCE-INVENTORY.md) and [research/RESEARCH-JOB-DATA-SOURCES.md](research/RESEARCH-JOB-DATA-SOURCES.md). Verified 2026-08-03. Bottom line:
+Full source-by-source verification (endpoints, costs, robots.txt verdicts, legal case-law citations) lives in [Job Data/RESEARCH-VERIFIED-SOURCE-INVENTORY.md](../Job%20Data/RESEARCH-VERIFIED-SOURCE-INVENTORY.md) and [Job Data/RESEARCH-JOB-DATA-SOURCES.md](../Job%20Data/RESEARCH-JOB-DATA-SOURCES.md). Verified 2026-08-03. Bottom line:
 
 - **Anchor source:** BA Jobsuche API (free, open, spans student → senior; no published commercial terms, so email BA and don't architect around a single key surviving forever).
 - **Best free German source:** Arbeitnow (open REST, visa-sponsorship tags match our launch persona).

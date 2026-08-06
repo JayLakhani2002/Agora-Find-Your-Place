@@ -35,7 +35,7 @@ This matches what's already in the repo: DB schema and scrapers exist (Phase 1 d
 
 ### Phase 1 — Job data pipeline (finish what's started)
 - BA Jobsuche + Arbeitnow scrapers: already running — verify they're populating `packages/db` with real, current Berlin postings (count them — this answers "do we have enough jobs").
-- Port the Greenhouse/Ashby/Recruitee prototype (`docs/DataMining Info/job-explorer/`) into `apps/workers` as real scheduled jobs, not a one-off script.
+- Port the Greenhouse/Ashby/Recruitee prototype (`docs/Job Data/job-explorer/`) into `apps/workers` as real scheduled jobs, not a one-off script.
 - Add Adzuna/Jooble/Talent.com as backfill (self-serve API keys, low effort).
 - **Exit test:** query the database, get a real number of live Berlin jobs across student → senior roles. That number is the actual "are we launch-ready on volume" answer — not a guess.
 

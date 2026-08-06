@@ -1,7 +1,7 @@
 You are helping me build "Agora Jobs" — an AI job-application agent for international/English-speaking job seekers in Berlin, Germany. I already have:
 
 - A full project scope document (attach/paste PROJECT-SCOPE.md)
-- Verified research on legal job data sources (attach/paste research/RESEARCH-VERIFIED-SOURCE-INVENTORY.md and research/RESEARCH-JOB-DATA-SOURCES.md)
+- Verified research on legal job data sources (attach/paste docs/Job Data/RESEARCH-VERIFIED-SOURCE-INVENTORY.md and docs/Job Data/RESEARCH-JOB-DATA-SOURCES.md)
 - An existing GitHub repo with real, working code already built: a Next.js web app (résumé builder, CV generation, applications tracker, Stripe billing scaffolding), a Postgres schema with migrations (users, jobs, applications, resumes, subscriptions), and working scrapers for the BA Jobsuche API and Arbeitnow already pulling real German job postings.
 - A build plan document (attach/paste BUILD-PLAN.md) that lays out the phase order: (1) finish the job-data pipeline, (2) backend matching logic, (3) frontend screens auth-through-payment, (4) AI features (résumé tailoring, scoring, interview coach), (5) payments + security hardening + launch.
 

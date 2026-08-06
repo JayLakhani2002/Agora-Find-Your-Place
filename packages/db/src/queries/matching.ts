@@ -26,7 +26,32 @@ import { jobs, userJobActions } from "../schema"
 
 type ContractTypeValue = (typeof jobs.contractType.enumValues)[number]
 
-export type EligibleJobRow = typeof jobs.$inferSelect
+/**
+ * Every jobs column EXCEPT jobEmbedding. A bare `select()` shipped 500 × 1024 float
+ * vectors over the neon-http driver on every deck build — megabytes of payload on the
+ * sub-3s critical path, for a column no caller of this function reads.
+ */
+const ELIGIBLE_JOB_COLUMNS = {
+  id: jobs.id,
+  externalId: jobs.externalId,
+  source: jobs.source,
+  sourceUrl: jobs.sourceUrl,
+  title: jobs.title,
+  company: jobs.company,
+  location: jobs.location,
+  contractType: jobs.contractType,
+  hourlyRate: jobs.hourlyRate,
+  hoursPerWeek: jobs.hoursPerWeek,
+  germanLevelRequired: jobs.germanLevelRequired,
+  requiredSkills: jobs.requiredSkills,
+  requiresEnrollment: jobs.requiresEnrollment,
+  allowedVisaTypes: jobs.allowedVisaTypes,
+  description: jobs.description,
+  scrapedAt: jobs.scrapedAt,
+  isActive: jobs.isActive,
+} as const
+
+export type EligibleJobRow = Omit<typeof jobs.$inferSelect, "jobEmbedding">
 
 /**
  * Step 1 — SQL hard filter. Returns only jobs the user is legally allowed to
@@ -45,28 +70,34 @@ export async function getLegallyEligibleUnseenJobs(
   const { userId, visaType, maxWeeklyHours, allowedContractTypes, limit = 500 } = params
   if (allowedContractTypes.length === 0) return []
 
-  return db
-    .select()
-    .from(jobs)
-    .where(
-      and(
-        eq(jobs.isActive, true),
-        inArray(jobs.contractType, allowedContractTypes as ContractTypeValue[]),
-        // Hours cap: unknown hours pass the SQL gate; the per-card eligibility
-        // ticks surface "hours unverified" to the user.
-        or(isNull(jobs.hoursPerWeek), lte(jobs.hoursPerWeek, maxWeeklyHours)),
-        // Visa allow-list: NULL means the posting declared no restriction.
-        or(isNull(jobs.allowedVisaTypes), arrayContains(jobs.allowedVisaTypes, [visaType])),
-        // Unseen only: anything in user_job_actions is excluded at the source.
-        notExists(
-          db
-            .select({ one: sql`1` })
-            .from(userJobActions)
-            .where(and(eq(userJobActions.userId, userId), eq(userJobActions.jobId, jobs.id))),
+  return (
+    db
+      .select(ELIGIBLE_JOB_COLUMNS)
+      .from(jobs)
+      .where(
+        and(
+          eq(jobs.isActive, true),
+          inArray(jobs.contractType, allowedContractTypes as ContractTypeValue[]),
+          // Hours cap: unknown hours pass the SQL gate; the per-card eligibility
+          // ticks surface "hours unverified" to the user.
+          or(isNull(jobs.hoursPerWeek), lte(jobs.hoursPerWeek, maxWeeklyHours)),
+          // Visa allow-list: NULL means the posting declared no restriction.
+          or(isNull(jobs.allowedVisaTypes), arrayContains(jobs.allowedVisaTypes, [visaType])),
+          // Unseen only: anything in user_job_actions is excluded at the source.
+          notExists(
+            db
+              .select({ one: sql`1` })
+              .from(userJobActions)
+              .where(and(eq(userJobActions.userId, userId), eq(userJobActions.jobId, jobs.id))),
+          ),
         ),
-      ),
-    )
-    .limit(limit)
+      )
+      // Newest first. Without an ORDER BY, LIMIT 500 over a growing table returns an
+      // arbitrary planner-chosen slice — once the eligible pool exceeds 500, freshly
+      // scraped jobs can stay permanently invisible to a given user.
+      .orderBy(desc(jobs.scrapedAt))
+      .limit(limit)
+  )
 }
 
 export type VectorRankedJob = { id: string; similarity: number }

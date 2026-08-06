@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main]
 
+# Least privilege for the whole workflow. Without an explicit block, GITHUB_TOKEN gets the
+# repository default, which is often write — a compromised action step could then push
+# commits or publish releases. Nothing here needs more than reading the checkout.
+permissions:
+  contents: read
+
 env:
   AWS_BEDROCK_REGION: eu-central-1
 
@@ -14,11 +20,11 @@ jobs:
     name: Typecheck + Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -49,11 +55,11 @@ jobs:
       # so the job passes even when the DATABASE_URL secret isn't configured.
       DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://placeholder:placeholder@localhost:5432/placeholder' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 22
           cache: pnpm
@@ -62,3 +68,50 @@ jobs:
 
       - name: Check migrations are up to date
         run: pnpm --filter=@agora/db db:check
+
+  security:
+    name: Secret scan + dependency audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # fetch-depth: 0 — gitleaks scans history, not just the tip commit. The 2026-08-06
+      # review confirmed history is clean; this keeps it that way.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Scan git history for secrets
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Fails the build on a new critical advisory. Highs are reported but not blocking:
+      # the remaining ones are build-toolchain only (see docs/Security/SECURITY-REPORT.md
+      # §4), and blocking on them would make the pipeline red for reasons nobody can act on.
+      - name: Audit dependencies (critical blocks the build)
+        run: pnpm audit --audit-level critical
+
+      - name: Report high advisories (non-blocking)
+        run: pnpm audit --audit-level high || true
+
+      # The codebase has zero sql.raw today and every query goes through Drizzle's
+      # parameterising builder. This keeps the injection surface at zero rather than
+      # trusting review to catch the first reintroduction.
+      - name: Forbid sql.raw
+        run: |
+          if grep -rn --include='*.ts' --include='*.tsx' 'sql\.raw' apps packages; then
+            echo "::error::sql.raw is banned — it does not parameterise. Use the sql tag or the query builder."
+            exit 1
+          fi
+          echo "No sql.raw found."
+

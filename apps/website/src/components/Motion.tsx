@@ -102,10 +102,48 @@ export function Motion() {
       },
       { rootMargin: "0px 0px -8% 0px", threshold: 0 },
     )
-    for (const el of document.querySelectorAll("[data-split],[data-reveal],[data-reveal-card]")) {
-      io.observe(el)
+    const REVEALABLE = "[data-split],[data-reveal],[data-reveal-card]"
+    const observeIn = (root: ParentNode) => {
+      if (root instanceof Element && root.matches(REVEALABLE)) io.observe(root)
+      for (const el of root.querySelectorAll(REVEALABLE)) io.observe(el)
     }
-    cleanups.push(() => io.disconnect())
+    observeIn(document)
+
+    /**
+     * Elements that mount AFTER this effect have to be picked up too.
+     *
+     * The query above runs once. Anything React mounts later is never observed, and because
+     * `.js-motion` has already applied the hidden start-states, "never observed" means
+     * "permanently invisible" — not "un-animated". FilmScrub is exactly this shape: it
+     * server-renders a static stack and then swaps in the sticky scrub subtree on mount, and
+     * the swap silently ate the hero headline and every card reveal inside the film.
+     *
+     * Fixed here rather than in FilmScrub because the trap belongs to this runtime: any
+     * component that mounts content late hits it, and a fix inside one component leaves the
+     * next one to rediscover it the hard way.
+     *
+     * childList + subtree only, batched into one rAF, and each added subtree is queried once
+     * — the observer never reads layout, so it cannot become a scroll cost.
+     */
+    let pending: Node[] = []
+    let queued = 0
+    const mo = new MutationObserver((records) => {
+      for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) pending.push(n)
+      if (pending.length === 0 || queued) return
+      queued = requestAnimationFrame(() => {
+        queued = 0
+        const batch = pending
+        pending = []
+        for (const n of batch) if (n.isConnected) observeIn(n as Element)
+      })
+    })
+    mo.observe(document.body, { childList: true, subtree: true })
+
+    cleanups.push(() => {
+      if (queued) cancelAnimationFrame(queued)
+      mo.disconnect()
+      io.disconnect()
+    })
 
     const ctx = gsap.context(() => {
       // ---- Pinned scenes: desktop only, so small screens never fight a pin ----
@@ -160,6 +198,38 @@ export function Motion() {
       })
     })
     cleanups.push(() => ctx.revert())
+
+    /**
+     * Re-measure the pins when the document's height changes after load.
+     *
+     * ScrollTrigger records absolute scroll positions for each pin at creation time. Anything
+     * that changes the page height afterwards leaves those numbers pointing at the wrong
+     * place — and the film does exactly that: FilmScrub server-renders a short static stack
+     * and then swaps in a ~9,000px sticky stage on mount. The pipeline's pin kept its
+     * pre-swap coordinates and fired thousands of pixels early, so the pinned section drew
+     * itself on top of the still-running film.
+     *
+     * ScrollTrigger refreshes itself on viewport resize, but not on a content-driven height
+     * change, so it has to be told. Guarded three ways because `refresh()` itself resizes pin
+     * spacers and would otherwise re-trigger this observer forever: compare against the last
+     * height we acted on, ignore changes under 4px, and coalesce into one rAF.
+     */
+    let lastH = document.documentElement.scrollHeight
+    let refreshQueued = 0
+    const ro = new ResizeObserver(() => {
+      const h = document.documentElement.scrollHeight
+      if (Math.abs(h - lastH) < 4 || refreshQueued) return
+      refreshQueued = requestAnimationFrame(() => {
+        refreshQueued = 0
+        lastH = document.documentElement.scrollHeight
+        ScrollTrigger.refresh()
+      })
+    })
+    ro.observe(document.body)
+    cleanups.push(() => {
+      if (refreshQueued) cancelAnimationFrame(refreshQueued)
+      ro.disconnect()
+    })
 
     // Pins insert spacers, which moves every trigger measured before them. Refresh once
     // the layout has settled (and again after webfonts land, which changes text heights).

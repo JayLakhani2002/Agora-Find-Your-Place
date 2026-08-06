@@ -8,7 +8,8 @@
     "start": "next start --port 3001",
     "typecheck": "tsc --noEmit",
     "prebuild": "tsx scripts/fetch-live-data.mts",
-    "fetch-data": "tsx scripts/fetch-live-data.mts"
+    "fetch-data": "tsx scripts/fetch-live-data.mts",
+    "check:legal": "node scripts/check-legal-placeholders.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",

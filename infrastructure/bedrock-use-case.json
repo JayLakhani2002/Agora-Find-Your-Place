@@ -1,8 +1,15 @@
 {
-  "_note": "Values submitted to the Bedrock 'Submit use case details for Anthropic' form. The console caps useCases at 500 characters — the string below is 499. Kept here so a resubmission says exactly the same thing.",
+  "_note": "Values for the Bedrock 'Submit use case details for Anthropic' form. The console caps useCases at 500 characters - the string below is 497. Kept here so a resubmission says exactly the same thing.",
+  "_supersedes": "The 2026-08-04 version described Agora as helping 'international students in Germany find part-time work'. That no longer matches the product or the website: the audience is every kind of work — kitchen, warehouse, delivery, care, retail, trades, office — and students are not the framing. The reviewer visits joinagora.eu, so submitting the old text against the new site would be a mismatch, which is itself a rejection risk.",
+  "_beforeSubmitting": [
+    "The live site must already match this text. The reviewer opens the URL and reads it.",
+    "/impressum and /datenschutz must be real pages. Until 2026-08-06 they were 'coming soon' placeholders while the footer promised 'GDPR-first, your data never leaves the EU' — a reviewer assessing an AI use case would have seen that contradiction immediately.",
+    "Every [[PLACEHOLDER]] in apps/website/src/content/legal.ts must be filled with real details first. Shipping the Impressum with placeholders is worse than not shipping it.",
+    "Do not claim global coverage. 786 of 921 indexed roles are Berlin and all five sources are German; the site says 'starting in Germany' and this text agrees with it."
+  ],
   "companyName": "Agora Jobs",
   "companyWebsite": "https://joinagora.eu",
   "industryOption": "Software / Technology (pick nearest available; Staffing & Recruiting also fits)",
   "intendedUsers": "External users (customers, clients, public users)",
-  "useCases": "Agora helps international students in Germany find part-time work. We use Claude to draft tailored CVs and cover letters from a student's own profile and a chosen job ad, summarise CVs into structured skills, explain why a job matched, and generate interview practice questions. Output is shown only to the student who requested it. They review and edit every document and click apply themselves - we never auto-submit applications, and we never train models on user data. EU-hosted, GDPR compliant."
+  "useCases": "Agora helps people find work - from kitchen and warehouse to office roles - starting in Germany. We use Claude to draft tailored CVs and cover letters from a user's own profile and a chosen job ad, summarise CVs into structured skills, explain why a job matched, and generate interview practice questions. Output goes only to the user who asked for it. They review every document and click apply themselves - we never auto-submit, and never train models on user data. EU-hosted and GDPR compliant."
 }

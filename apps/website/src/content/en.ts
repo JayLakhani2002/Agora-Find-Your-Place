@@ -65,9 +65,9 @@ export const en = {
     eyebrow: "That screen, last night",
     title: "agora.engine",
     status: "live",
-    caption: "Real rows from the latest scrape, replayed. Times are the nightly run, Berlin time.",
+    caption: "Real rows from the latest scrape, replayed. Times are the nightly run, CET.",
     footer: `${claims.activeListings.value} live listings · ${claims.latestBatch.value} added last night`,
-    alt: "Terminal panel replaying the engine's nightly scan and the real Berlin listings it found.",
+    alt: "Terminal panel replaying the engine's nightly scan and the real listings it found.",
   },
 
   // 2 — Real-data proof wall
@@ -99,7 +99,7 @@ export const en = {
     tally: [
       { value: "5", label: "job sites, checked again tonight" },
       { value: "1×", label: "CV rewritten, per application" },
-      { value: "?", label: "and nobody explains the German rules" },
+      { value: "?", label: "and nobody explains the rules you're working under" },
     ],
     close: "So most people apply to fewer jobs, more slowly, worse — and call it bad luck.",
   },
@@ -322,6 +322,52 @@ export const en = {
     cta: "Get early access",
   },
 
+  /**
+   * The /pricing page.
+   *
+   * Two honesty constraints, both load-bearing. First: the credit model is decided but the
+   * numbers are NOT (docs/scope/DECISIONS-NEEDED.md Q2) — so this page explains the shape and
+   * refuses to print a price it might have to walk back. Second: every competitor surveyed
+   * hides pricing behind a separate click or omits numbers entirely, so saying plainly "we
+   * have not set it yet" is more trustworthy here than a confident invented figure.
+   */
+  pricingPage: {
+    title: "Pricing",
+    updated: "Founding pricing is not final. This page changes before launch, not after.",
+    intro:
+      "Agora is free through the beta. When it launches you pay for what you use — no subscription, and no monthly clock running whether you job-hunt or not.",
+    model: {
+      heading: "How it will work",
+      points: [
+        {
+          title: "Credits, not a subscription",
+          body: "You buy credits once and spend them on the things that cost us money to run: a tailored CV, a cover letter, an in-depth conversation with the agent. Matching, browsing and tracking do not consume credits.",
+        },
+        {
+          title: "Credits do not expire",
+          body: "If you find a job in three weeks and stop, whatever you did not spend is still there a year later when you next need it. You are not renting access to your own job hunt.",
+        },
+        {
+          title: "There is a free allowance",
+          body: "Enough to apply properly to real roles and judge whether the output is any good, without a card. We have not fixed the size of it yet.",
+        },
+        {
+          title: "You will see the price before you spend",
+          body: "Every action that costs credits says so, and how many, before you confirm it. No silent drawdown.",
+        },
+      ],
+    },
+    tbd: {
+      heading: "What we have not decided",
+      body: "The price per credit, the size of the packs, and how big the free allowance is. We would rather leave this blank than print a number and change it after people have planned around it. Join the waitlist and you will get the founding price, which will be the lowest we ever offer.",
+    },
+    beta: {
+      heading: "During the beta",
+      body: "Everything is free. There is no card, no trial timer, and no feature held back to force an upgrade. In exchange we ask for the occasional blunt opinion about what is not working.",
+    },
+    cta: "Get early access",
+  },
+
   pricing: {
     eyebrow: "Pricing",
     headline: "Pay per application. Never per month.",
@@ -523,28 +569,6 @@ export const en = {
     smallPrint: "Made in Berlin · Hosted in the EU · GDPR-first",
   },
 
-  comingSoon: {
-    note: "This page lands before launch. In the meantime, join early access and we'll tell you when it's live.",
-    back: "Back to the home page",
-    pages: {
-      pricing: {
-        title: "Pricing",
-        sub: "Credits you buy once, that never expire. Pack sizes and prices lock at launch — early access keeps the founding rate.",
-      },
-      faq: {
-        title: "FAQ",
-        sub: "The agent, Germany and work permits, your data, and what early access actually gets you.",
-      },
-      impressum: {
-        title: "Impressum",
-        sub: "Provider identification under § 5 TMG. Published before launch.",
-      },
-      datenschutz: {
-        title: "Datenschutz",
-        sub: "Our GDPR privacy notice. Published before launch.",
-      },
-    },
-  },
 
   frames: {
     scoreTitle: "Quality score",

@@ -1,3 +1,4 @@
+import { Colophon } from "@/components/Colophon"
 import { Wordmark } from "@/components/Wordmark"
 import { en } from "@/content/en"
 import Link from "next/link"
@@ -44,7 +45,14 @@ export function Footer() {
         {/* No EN|DE switch until German copy exists — a toggle that does nothing is worse
             than no toggle. All copy already lives in content/en.ts, so adding `de.ts` is a
             file, not a refactor. */}
-        <p className="receipt mt-8">{footer.smallPrint}</p>
+        {/*
+         * Was a one-line "Made in Berlin · Hosted in the EU · GDPR-first". It is now a
+         * printed deploy receipt, because those three words are checkable facts and the
+         * whole site's argument is that it shows its receipts. Only labels come from copy —
+         * the sha, build date and scan clock are read from the environment inside the
+         * component, so this file cannot hand-type a value.
+         */}
+        <Colophon {...footer.colophon} className="mt-12" />
       </div>
     </footer>
   )

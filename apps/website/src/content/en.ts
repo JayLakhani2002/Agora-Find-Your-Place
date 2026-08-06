@@ -43,25 +43,108 @@ export const en = {
     // sources are German — "global" would be a false claim under UWG §5 until the index
     // actually expands. The ambition is global; the badge tells the truth about today.
     badge: "Early access — starting in Germany",
-    headline: "Every kind of work. Not just desk jobs.",
-    /** Words from here on render in the brand colour: the half about you, not the machine. */
-    headlineAccent: 3,
-    // All-professions is TRUE today and it is the category's blind spot: a scan of twelve AI
-    // job platforms found every one of them built solely around office/tech roles. The kitchen,
-    // warehouse and delivery roles named here are really in the index — see live-data.json.
-    sub: "Kitchen, warehouse, delivery, care, retail, trades, office — Agora reads every job source we index, tailors your CV and cover letter to each role, and files the application. You just approve. Works in English.",
+    // v7: leads with the machine, in the vocabulary of the audience that arrives first —
+    // people who already run agents and read terminals. "Background process" is a technical
+    // term used precisely: the scan genuinely runs nightly, unattended, and the film's first
+    // scene is literally that — a lit screen in an empty room. The claim and the picture are
+    // the same claim.
+    //
+    // The all-professions list that used to live in this sub has moved to `proof`, where it
+    // is not a promise but a printout of the index. It left the hero on Jay's instruction
+    // (2026-08-06): the opening frame reads professional/tech, breadth arrives further down.
+    // Breadth is NOT dropped — see `proof.breadth`, `cta.body` and `footer.blurb`.
+    headline: "The job hunt is now a background process.",
+    /** Words from here on render in the brand colour: the half about the machine. */
+    headlineAccent: 5,
+    sub: "Overnight it reads every source we index, scores each role against your profile with the reason attached, and drafts your CV and cover letter — every change shown as a diff. You review in the morning. Works in English.",
     ctaPrimary: "Get early access",
     ctaSecondary: "See how it works",
     ctaSecondaryHref: "/#how-it-works",
-    // Describes the FOOTAGE, and specifically its opening/poster frame — that is what a
-    // sighted visitor sees first and what anyone with the sequence disabled sees throughout.
-    // Naming the individual garments matters: they are the entire argument of the hero, so a
-    // screen reader user who only gets this sentence still receives the point.
-    imageAlt:
-      "A row of iron coat hooks on a warm plaster wall in a dim staff corridor before dawn, hung with work clothes for six different trades: a chef's white jacket, an orange hi-vis vest, a pale care-worker tunic with a lanyard, a courier's rain jacket, a canvas shop apron and a wool blazer. Warm light spills from an open doorway at the end of the corridor.",
     // Deliberately does NOT repeat the listing count — the terminal footer directly above
     // already carries it. This line adds what that one doesn't: breadth and cadence.
     receipt: `${claims.companiesIndexed.value} companies indexed · ${claims.sourcesIndexed.value} sources · last scan ${claims.lastScan.value} CET`,
+  },
+
+  /**
+   * The hero film — four scroll-scrubbed scenes, told without narration.
+   *
+   * TWO REGISTERS, AND THE REGISTER IS THE LEGAL MARKING.
+   *
+   * Scenes 01–03 are RECORDED: real footage of hands and devices, every screen shot blank
+   * and the real product UI composited over it as live DOM reading from live-data.json.
+   * Nothing on a recorded screen can be false, because it is the shipped interface printing
+   * real rows.
+   *
+   * Scene 04 is DRAWN: dashed wireframes on ivory, the same drawing language `platforms`
+   * already uses for its four closed doors. WhatsApp, Claude/MCP and agent submission are
+   * NOT BUILT, and a drawing cannot be mistaken for a recording the way a polished mockup
+   * with a small label can. See components/film/Blueprint.tsx — the reasoning is written at
+   * the top of that file and must not be "upgraded" to video.
+   *
+   * `rail` is the third marking, alongside the sheet title block and the per-panel chips.
+   * It is real text in the DOM, never fades, and is announced to screen readers — so the
+   * shipped/unshipped status arrives in the same breath as the picture, for everyone.
+   *
+   * The order of the scenes is the order of the product: it finds, it explains why, it
+   * drafts — and then you apply. Step 03 of `pipeline` (the agent filling the form itself)
+   * carries `atLaunch: true`, so this film must NOT show it happening in a recorded scene.
+   * It appears exactly once, in the drawing.
+   */
+  film: {
+    rail: [
+      { label: "01 · Find", status: "running tonight", shipped: true },
+      { label: "02 · Match", status: "running tonight", shipped: true },
+      { label: "03 · Draft", status: "today, you apply", shipped: true },
+      { label: "04 · At launch", status: "drawn, not built", shipped: false },
+    ],
+    /**
+     * Each `alt` describes that scene's POSTER — the still a mobile visitor sees, and the
+     * only thing anyone with the sequence disabled ever gets. Written so the four of them
+     * read in sequence as the story itself, because for a screen-reader user that is
+     * precisely what they are.
+     */
+    alts: [
+      "A dark Berlin kitchen after midnight. A laptop stands open on a worn wooden table, its screen the only light in the room, spilling warm amber across a mug and a set of keys. A hand at the edge of frame sets a phone down and withdraws. Nobody is at the keyboard.",
+      "The same table in morning light. Two hands hold a phone above it; beside them sit a coffee cup, keys and the folded orange sleeve of a hi-vis jacket. The phone screen is lit and waiting.",
+      "A laptop on a desk in daylight, a notebook and a mug beside it. One hand rests on the trackpad, index finger poised over it.",
+      "An architectural plan sheet drawn in dashed terracotta lines on pale paper: a wireframe phone showing a chat, a wireframe terminal window, and a wireframe application form with a dimension line pointing at its approval button. Every panel is marked as not yet built.",
+    ],
+    /**
+     * Mono receipt lines under the composited UI. The 92/100 figure is the same EXAMPLE
+     * document graded in `frames`, and is labelled as an example here for the same reason
+     * it is there — it is a demonstration of the grader, not a measured result from a user.
+     */
+    receipts: [
+      "",
+      "scored against your profile · reason attached to every match",
+      "example draft · scored 92/100 · every change shown before you send it",
+      "",
+    ],
+    blueprint: {
+      titleBlock: "Sheet 2/2 · At launch · Drawn, not built",
+      launchTag: "at launch",
+      chat: {
+        title: "In your chat apps",
+        question: "Anything good today?",
+        answer: "Ask in the app you already use. The agent answers from your index.",
+      },
+      terminal: {
+        title: "Claude / MCP",
+        prompt: "search my index and draft the applications",
+        response: [
+          "Runs inside the agent you already use.",
+          "Same index, same drafts, no new tool to learn.",
+        ],
+      },
+      form: {
+        title: "Filed for you",
+        fields: ["Cover letter", "Screening questions", "Salary expectation"],
+        button: "Approve",
+        annotation: "your approval, per application",
+      },
+      alt: "An architectural plan sheet, drawn rather than photographed because none of it is built yet: a wireframe phone showing a chat with the agent, a wireframe terminal window labelled Claude and MCP, and a wireframe application form whose approval button is called out with a dimension line reading 'your approval, per application'. Each panel is tagged 'at launch', and the sheet's title block reads 'drawn, not built'.",
+    },
+    close: "The rest is drawn. You'll know the day each line ships.",
   },
 
   /** The engine terminal — labelled a replay, because that is exactly what it is. */
@@ -77,7 +160,14 @@ export const en = {
   // 2 — Real-data proof wall, set as a broadsheet classifieds page
   proof: {
     eyebrow: "In the index right now",
-    headline: "The classifieds page, printed from the index.",
+    // v7: this section is now where BREADTH lives. It left the hero on Jay's instruction
+    // (2026-08-06) — the opening frame reads professional/tech, and every kind of work
+    // arrives once the reader understands the mechanism. Moving it here also makes it a
+    // stronger claim, not a weaker one: in the hero it was a promise, and here it is a
+    // printout. The rows below are whatever the last scan actually returned, in feed order.
+    headline: "Every kind of work, printed from the index.",
+    breadth:
+      "Kitchen, warehouse, delivery, care, retail, trades, office — these are the rows the last scan returned, in the order it returned them. Nothing here was picked to make a point.",
     /**
      * The dateline under the masthead. Every value is a live claim, none is typed by hand —
      * a broadsheet dates its edition, and this one can only date itself from the last scrape.
@@ -590,7 +680,10 @@ export const en = {
         title: "Product",
         links: [
           { label: "How it works", href: "/#how-it-works" },
-          { label: "Germany", href: "/#germany" },
+          // Was "Germany" → "/#germany". The section became `Eligibility` with a matching id
+          // in v6 and this link was left behind pointing at an anchor that no longer exists,
+          // so it silently did nothing. Matches `nav.links` now.
+          { label: "Eligibility", href: "/#eligibility" },
           { label: "Pricing", href: "/pricing" },
           { label: "FAQ", href: "/faq" },
         ],
@@ -604,7 +697,29 @@ export const en = {
       },
     ],
     gdpr: "EU-hosted · GDPR-first. Export or delete your data at any time, documents included.",
-    smallPrint: "Made in Berlin · Hosted in the EU · GDPR-first",
+    /**
+     * The colophon — what used to be the one-line "Made in Berlin · Hosted in the EU ·
+     * GDPR-first" small print, promoted into a printed deploy receipt.
+     *
+     * Only LABELS live here. The commit sha, the build date and the scan clock are read by
+     * the component from the environment and from live-data — if the scan time were copy,
+     * this file could hand-type it, which is the exact failure content/claims.ts exists to
+     * prevent. A missing sha drops its field entirely rather than printing a placeholder.
+     *
+     * The EU/GDPR line is deliberately the most crafted thing in the footer rather than the
+     * smallest: a scan of twelve rivals found exactly one showing any compliance signal at
+     * all, so it is an unclaimed trust wedge, not boilerplate to be shrunk.
+     */
+    colophon: {
+      madeIn: "Made in Berlin",
+      coordinates: "52.5200° N, 13.4050° E",
+      hosting: "Hosted in the EU",
+      gdpr: "GDPR-first",
+      gdprDetail: "export or delete everything, any time",
+      buildLabel: "Build",
+      scanLabel: "Last scan",
+      timezone: "CET",
+    },
   },
 
   frames: {

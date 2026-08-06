@@ -135,6 +135,16 @@ export function ProofWall() {
           <Split text={proof.headline} />
         </h2>
 
+        {/*
+         * Breadth. This claim used to live in the hero sub, where it was a promise; here it
+         * sits directly above the rows that substantiate it, printed in feed order. That is
+         * why the sentence ends by saying nothing was picked to make a point — it is the
+         * one claim on this page that the layout itself can be checked against.
+         */}
+        <p className="mt-5 max-w-prose text-lead text-text-mute" data-reveal>
+          {proof.breadth}
+        </p>
+
         {/* Dateline. A broadsheet dates its edition; this one can only date itself from the scrape. */}
         <p className="receipt mt-8 border-y-[3px] border-double border-ink/20 py-3" data-reveal>
           {proof.dateline}

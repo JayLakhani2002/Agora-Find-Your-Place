@@ -62,6 +62,13 @@ type DrawnScene = {
   stageVh: number
   alt: string
   overlay?: React.ReactNode
+  /**
+   * What the stage sits on. Defaults to ivory for a drawn scene, because the first thing that
+   * ever used one was an architectural drawing on paper — but that was a property of THAT
+   * scene, not of drawn scenes in general. A drawn scene continuing a dark film needs `ink`, or
+   * the film flashes white every time the footage ends.
+   */
+  backdrop?: "ink" | "ivory"
 }
 
 export type FilmScene = FramesScene | DrawnScene
@@ -309,14 +316,14 @@ export function FilmScrub({ scenes, rail, children, className = "" }: FilmScrubP
             if (i !== idx) el.style.setProperty("--scrub-p", i < idx ? "1" : "0")
           }
           lastScrubP = -1
-          // A `drawn` scene has no footage behind it, so the stage itself becomes the page's
-          // ivory. This is the whole mechanism for the final cut: the dip covers the boundary
-          // in ink, the backdrop swaps underneath while it is opaque, and the lift therefore
-          // arrives on IVORY instead of back on the footage — the register change from recorded
-          // to drawn. Driven by the scene's own `kind`, so adding or reordering scenes cannot
-          // strand it on the wrong boundary.
+          // A drawn scene has no footage behind it, so the stage itself supplies the colour.
+          // The swap happens while the ink dip is fully opaque, so the change is never seen —
+          // that is the mechanism a register change rides on. Scenes may name their own
+          // backdrop; a drawn scene defaults to ivory only for backwards compatibility with the
+          // blueprint sheet, and a dark film must ask for `ink` or it strobes at every cut.
           if (root) {
-            root.style.backgroundColor = sc?.kind === "drawn" ? "var(--ivory)" : "var(--ink)"
+            const backdrop = sc?.kind === "drawn" ? (sc.backdrop ?? "ivory") : "ink"
+            root.style.backgroundColor = backdrop === "ivory" ? "var(--ivory)" : "var(--ink)"
           }
           const line = rail[idx]
           if (railLabelRef.current) railLabelRef.current.textContent = line?.label ?? ""

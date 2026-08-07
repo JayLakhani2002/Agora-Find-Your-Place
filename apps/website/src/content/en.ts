@@ -66,89 +66,153 @@ export const en = {
   },
 
   /**
-   * The hero film — four scroll-scrubbed scenes, told without narration.
+   * The hero film — "the launch film". THREE ACTS ON THREE DEVICES, PLUS A CLOSING REVEAL.
    *
-   * TWO REGISTERS, AND THE REGISTER IS THE LEGAL MARKING.
+   * SUPERSEDES the recorded/drawn two-register hero (2026-08-06). Jay's instruction,
+   * 2026-08-07: "it should mirror the final result what we are going to do not the current
+   * state." So the film depicts the FINISHED product — the workspace, the CLI, the chat —
+   * rather than an inventory of what currently executes.
    *
-   * Scenes 01–03 are RECORDED: real footage of hands and devices, every screen shot blank
-   * and the real product UI composited over it as live DOM reading from live-data.json.
-   * Nothing on a recorded screen can be false, because it is the shipped interface printing
-   * real rows.
+   * WHICH MOVES THE HONESTY CONTROL, IT DOES NOT REMOVE IT. Root CLAUDE.md is explicit that
+   * marketing may describe auto-apply "only as clearly-labeled roadmap, never as an existing
+   * feature", and this is the page AWS reads when reviewing the Bedrock use-case. The control
+   * is now three things, and all three must survive any edit:
    *
-   * Scene 04 is DRAWN: dashed wireframes on ivory, the same drawing language `platforms`
-   * already uses for its four closed doors. WhatsApp, Claude/MCP and agent submission are
-   * NOT BUILT, and a drawing cannot be mistaken for a recording the way a polished mockup
-   * with a small label can. See components/film/Blueprint.tsx — the reasoning is written at
-   * the top of that file and must not be "upgraded" to video.
+   *  1. `frameChip` — the film is named as a launch film, in the headline block.
+   *  2. `rail` — a chyron carried at EVERY scroll position, never faded, never dipped over,
+   *     announced via aria-live, and printed as a visible caption in the static stack. This
+   *     matters because a scrubbed film has no guaranteed cold open: people arrive mid-scroll
+   *     from anchors and back-buttons, so any once-only framing can be missed entirely.
+   *     Every act carries `shipped: false` — the nuance lives in the status text.
+   *  3. The receipt band immediately below the film (`theater`), which prints what actually
+   *     ran last night from live data. Trailer, then spec sheet.
    *
-   * `rail` is the third marking, alongside the sheet title block and the per-panel chips.
-   * It is real text in the DOM, never fades, and is announced to screen readers — so the
-   * shipped/unshipped status arrives in the same breath as the picture, for everyone.
+   * NOTHING IN THE FOOTAGE IS A GENERATED SCREEN. Every device was filmed with a blank warm
+   * glow and the interface is composited over it as real DOM, so what is depicted is the
+   * product's specification, not a fabricated screenshot.
    *
-   * The order of the scenes is the order of the product: it finds, it explains why, it
-   * drafts — and then you apply. Step 03 of `pipeline` (the agent filling the form itself)
-   * carries `atLaunch: true`, so this film must NOT show it happening in a recorded scene.
-   * It appears exactly once, in the drawing.
+   * Two deliberate departures from Jay's shot script, both on honesty grounds:
+   *  - The CLI shows an approval step. `agora apply` ending in "applied" with no consent beat
+   *    would depict submission without per-application approval, contradicting the submission
+   *    model in root CLAUDE.md on the exact page under review.
+   *  - "in 12 seconds" is cut. It is a measurable benchmark about an unbuilt feature, i.e. a
+   *    claim we cannot substantiate. The progress rows carry the speed without asserting one.
    */
   film: {
+    /** Names the film, beside the early-access badge. Half of the frame; do not remove. */
+    frameChip: "The launch film — where this is going",
     rail: [
-      { label: "01 · Find", status: "running tonight", shipped: true },
-      { label: "02 · Match", status: "running tonight", shipped: true },
-      { label: "03 · Draft", status: "today, you apply", shipped: true },
-      { label: "04 · At launch", status: "drawn, not built", shipped: false },
+      {
+        label: "01 · Open it",
+        status: "matching, scoring and drafts run tonight · sending at launch",
+        shipped: false,
+      },
+      {
+        label: "02 · The workspace",
+        status: "matching, scoring and drafts run tonight · sending at launch",
+        shipped: false,
+      },
+      { label: "03 · The terminal", status: "CLI and MCP — at launch", shipped: false },
+      { label: "04 · In your chat", status: "chat apps — at launch", shipped: false },
+      {
+        label: "The launch film",
+        status: "what runs tonight is printed below",
+        shipped: false,
+      },
     ],
     /**
-     * Each `alt` describes that scene's POSTER — the still a mobile visitor sees, and the
-     * only thing anyone with the sequence disabled ever gets. Written so the four of them
-     * read in sequence as the story itself, because for a screen-reader user that is
-     * precisely what they are.
+     * Each `alt` describes that scene's poster — the still a mobile visitor sees, and the only
+     * thing anyone with the sequence disabled ever gets. Written to read in sequence as the
+     * story, because for a screen-reader user that is exactly what they are.
      */
     alts: [
-      "A dark Berlin kitchen after midnight. A laptop stands open on a worn wooden table, its screen the only light in the room, spilling warm amber across a mug and a set of keys. A hand at the edge of frame sets a phone down and withdraws. Nobody is at the keyboard.",
-      "The same table in morning light. Two hands hold a phone above it; beside them sit a coffee cup, keys and the folded orange sleeve of a hi-vis jacket. The phone screen is lit and waiting.",
-      "A laptop on a desk in daylight, a notebook and a mug beside it. One hand rests on the trackpad, index finger poised over it.",
-      "An architectural plan sheet drawn in dashed terracotta lines on pale paper: a wireframe phone showing a chat, a wireframe terminal window, and a wireframe application form with a dimension line pointing at its approval button. Every panel is marked as not yet built.",
+      "In a dark room, one hand lifts the lid of a closed MacBook Pro; the screen wakes to a blank glow as the camera moves in and settles square to it. No face is visible.",
+      "The laptop screen, now filling the frame: the Agora workspace open at agora.jobs, showing the headline and sign-up, then a matched role, the reasons it matched, the tailored draft with every change marked, its quality score, and the application being approved and sent.",
+      "The same screen running the Agora command-line tool: it fetches matched roles, tailors three documents, asks for approval, and submits them once approved.",
+      "The same screen showing a chat with the Agora agent: it reports three matches found overnight, offers to apply to all of them, and confirms once the user agrees.",
+      "The closing frame on black: the words At launch above the line Every job. Every device. One click., with the sign-up buttons beneath.",
     ],
-    /**
-     * Mono receipt lines under the composited UI. The 92/100 figure is the same EXAMPLE
-     * document graded in `frames`, and is labelled as an example here for the same reason
-     * it is there — it is a demonstration of the grader, not a measured result from a user.
-     */
-    receipts: [
-      "",
-      "scored against your profile · reason attached to every match",
-      "example draft · scored 92/100 · every change shown before you send it",
-      "",
-    ],
-    blueprint: {
-      titleBlock: "Sheet 2/2 · At launch · Drawn, not built",
-      launchTag: "at launch",
-      chat: {
-        title: "In your chat apps",
-        question: "Anything good today?",
-        answer: "Ask in the app you already use. The agent answers from your index.",
-      },
-      terminal: {
-        title: "Claude / MCP",
-        prompt: "search my index and draft the applications",
-        response: [
-          "Runs inside the agent you already use.",
-          "Same index, same drafts, no new tool to learn.",
-        ],
-      },
-      form: {
-        title: "Filed for you",
-        fields: ["Cover letter", "Screening questions", "Salary expectation"],
-        button: "Approve",
-        annotation: "your approval, per application",
-      },
-      alt: "An architectural plan sheet, drawn rather than photographed because none of it is built yet: a wireframe phone showing a chat with the agent, a wireframe terminal window labelled Claude and MCP, and a wireframe application form whose approval button is called out with a dimension line reading 'your approval, per application'. Each panel is tagged 'at launch', and the sheet's title block reads 'drawn, not built'.",
+    /** Act 1 — the workspace. The address bar is the only browser chrome we draw. */
+    act1: {
+      url: "agora.jobs",
+      dropFilename: "master-cv.pdf",
+      dropLabel: "Master CV saved",
+      sentTitle: "Application sent",
+      sentBody: "Receipt saved to your tracker.",
+      sentAlt:
+        "Confirmation card: the application has been sent and a receipt saved to the tracker.",
+      dropAlt: "A CV file being dropped into the workspace and saved as the master CV.",
+      receipt: "matching, scoring and drafts — tonight · one-click send — at launch",
+      alt: "A browser window on the laptop screen showing the Agora workspace: a CV being uploaded, a tailored draft with every change marked, a quality score, a matched role, and a sent confirmation.",
     },
-    close: "The rest is drawn. You'll know the day each line ships.",
+    /**
+     * Act 2 — the terminal. The `prompt` line is load-bearing, not decoration: it is the beat
+     * that shows a person approving before anything is submitted. Never cut it to tighten the
+     * transcript. No timing claim appears anywhere in these lines, deliberately.
+     */
+    act2: {
+      title: "agora — zsh",
+      lines: [
+        {
+          kind: "command" as const,
+          text: 'agora apply --role "Senior Data Engineer" --location "Berlin"',
+        },
+        { kind: "step" as const, label: "fetching matches", result: "6 roles · top 8.7/10" },
+        {
+          kind: "step" as const,
+          label: "tailoring documents",
+          result: "3 drafts · scored 91–94/100",
+        },
+        { kind: "prompt" as const, text: "3 drafts ready — approve all? [y/N] y" },
+        { kind: "step" as const, label: "submitting", result: "3 of 3" },
+        { kind: "done" as const, text: "3 applications submitted · receipts saved" },
+      ],
+      receipt: "the CLI and MCP, into the same engine — at launch",
+      alt: "A terminal running the Agora command-line tool: it fetches matched roles, tailors three documents, asks for approval, and submits them once approved.",
+    },
+    /**
+     * Act 3 — chat. Generic messaging affordances only: no third-party product's colours,
+     * bubble shapes or marks. "Apply to all three?" then an explicit yes — the approval beat
+     * again, because a batch action is exactly where consent must be visible.
+     */
+    act3: {
+      messages: [
+        {
+          from: "agent" as const,
+          text: "3 new matches overnight. Best: Senior Data Engineer, Berlin — 8.7/10. Apply to all three?",
+        },
+        { from: "user" as const, text: "Yes." },
+        { from: "agent" as const, text: "Done. 3 submitted, receipts in your tracker." },
+      ],
+      receipt: "in the chat app you already use · your yes, per batch — at launch",
+      alt: "A chat thread with the Agora agent: it reports three new matches overnight, offers to apply to all of them, and confirms once the user agrees.",
+    },
+    /**
+     * The closing reveal. The kicker is part of the tagline and must never be separated from
+     * it — not in the static stack, not in a crop, not in a deck. "Every job. Every device.
+     * One click." is the boldest claim on the page; above the words "At launch" it is a
+     * labelled promise, and on its own it is a statement about today that is not true.
+     */
+    close: {
+      kicker: "At launch",
+      tagline: "Every job. Every device. One click.",
+      /** Words from here render in the accent colour. */
+      taglineAccent: 4,
+    },
   },
 
-  /** The engine terminal — labelled a replay, because that is exactly what it is. */
+  /**
+   * The engine terminal — labelled a replay, because that is exactly what it is.
+   *
+   * It used to be composited inside the hero's first scene. It is now its own band, directly
+   * under the film, and that position is the third leg of the film's honesty frame: the film
+   * shows the product at launch, and the very next thing on the page is what actually ran
+   * last night, printed from live data. Trailer, then spec sheet. `lead` is the sentence that
+   * joins the two — without it the page reads as a claim followed by a retraction, rather
+   * than one argument. Do not move this band above the film or below the fold.
+   */
   theater: {
+    lead: "That was the launch film. This is what ran last night.",
     eyebrow: "That screen, last night",
     title: "agora.engine",
     status: "live",
@@ -774,7 +838,12 @@ export const en = {
     jobCard: {
       company: "Product engineering · Berlin",
       title: "Senior Frontend Engineer",
-      chips: ["match 94", "full time", "permit-checked"],
+      // "match 8.7", not "match 94". The app's badge is titled "Match score out of 10" and
+      // renders a decimal (apps/web/src/lib/ui.ts) — this said 94, which reads as a
+      // percentage and matches nothing in the product. A percentage is also the category's
+      // fake-precision tell; every rival prints "99.8% match". The /100 form stays reserved
+      // for the six-dimension DOCUMENT quality score, so the two numbers never blur.
+      chips: ["match 8.7", "full time", "permit-checked"],
       alt: "Example job card: a senior frontend engineering role in Berlin, matched at 94, full time, permit-checked.",
     },
     draftCard: {

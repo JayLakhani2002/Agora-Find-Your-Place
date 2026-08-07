@@ -8,6 +8,7 @@ import { Pipeline } from "@/components/sections/Pipeline"
 import { Platforms } from "@/components/sections/Platforms"
 import { Problem } from "@/components/sections/Problem"
 import { ProofWall } from "@/components/sections/ProofWall"
+import { Receipt } from "@/components/sections/Receipt"
 import { Reviews } from "@/components/sections/Reviews"
 
 /**
@@ -16,7 +17,8 @@ import { Reviews } from "@/components/sections/Reviews"
  * The order below IS the design. Shell bands are about the reader, dark bands are about
  * the machine, and that alternation is what the "split canvas" direction means:
  *
- *   FILM   Hero        — four scrubbed scenes: it finds, it explains, it drafts, you apply
+ *   FILM   Hero        — the launch film: three devices, then the reveal
+ *   shell  Receipt     — "that was the launch film; this is what ran last night"
  *   DARK   Problem     — the mess the machine exists to absorb
  *   shell  Pipeline    — the four steps, handed back to you
  *   shell  ProofWall   — every kind of work, printed from the index
@@ -44,6 +46,9 @@ export default function Home() {
   return (
     <>
       <Hero />
+      {/* Directly under the film, always. See the block comment in Receipt.tsx — this
+          adjacency is the third leg of the film's honesty frame, not a layout preference. */}
+      <Receipt />
       <Problem />
       <Pipeline />
       <ProofWall />

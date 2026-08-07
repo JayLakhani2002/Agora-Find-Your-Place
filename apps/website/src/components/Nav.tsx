@@ -26,9 +26,13 @@ export function Nav() {
   }, [open])
 
   /**
-   * The hero is a full-bleed night photograph, so at the top of the page the nav sits on
-   * near-black and has to invert. Once it gains its ivory backing on scroll it goes back
-   * to the normal ink-on-light treatment. Without this the wordmark and links vanish.
+   * The hero opens on a near-black room, so at the top of the page the nav sits on black and has
+   * to invert to white; once it gains its ivory backing on scroll it returns to ink-on-light.
+   *
+   * This flag is load-bearing and has flipped twice in one day as the hero went dark → white →
+   * dark again. It stays a single named boolean for exactly that reason: whoever changes the
+   * hero's tone next should find one decision here, not the assumption spread across six
+   * className branches. Get it wrong and the wordmark and every link go invisible.
    */
   const onDark = !scrolled && !open
 

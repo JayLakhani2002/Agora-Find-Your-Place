@@ -23,9 +23,7 @@ function resolveModelId(model: ClaudeModel): string {
   // Fail here instead, where the message can name the fix.
   if (id.startsWith("anthropic.")) {
     throw new Error(
-      `${env}="${id}" is a bare foundation-model id. Bedrock requires a regional ` +
-        `inference profile for this model family — prefix it with the region, ` +
-        `e.g. "eu.${id}".`,
+      `${env}="${id}" is a bare foundation-model id. Bedrock requires a regional inference profile for this model family — prefix it with the region, e.g. "eu.${id}".`,
     )
   }
   return id

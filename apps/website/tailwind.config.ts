@@ -82,10 +82,7 @@ export default {
         d1: ["clamp(2.75rem, 6.2vw, 5.75rem)", { lineHeight: "1.04", letterSpacing: "-0.015em" }],
         d2: ["clamp(2.125rem, 4.3vw, 3.5rem)", { lineHeight: "1.1", letterSpacing: "-0.012em" }],
         d3: ["clamp(1.5rem, 2.4vw, 2.125rem)", { lineHeight: "1.18", letterSpacing: "-0.008em" }],
-        quote: [
-          "clamp(1.5rem, 3vw, 2.25rem)",
-          { lineHeight: "1.3", letterSpacing: "-0.006em" },
-        ],
+        quote: ["clamp(1.5rem, 3vw, 2.25rem)", { lineHeight: "1.3", letterSpacing: "-0.006em" }],
         lead: ["clamp(1.125rem, 1.25vw, 1.3125rem)", { lineHeight: "1.6" }],
         eyebrow: ["0.75rem", { lineHeight: "1.4", letterSpacing: "0.16em" }],
         micro: ["0.8125rem", { lineHeight: "1.5" }],
